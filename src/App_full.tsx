@@ -114,8 +114,6 @@ const App = () => {
   const [showServiceFilters, setShowServiceFilters] = useState(false);
   const [categorySearchTerm, setCategorySearchTerm] = useState('');
   const [showSubmissionSuccess, setShowSubmissionSuccess] = useState(false);
-  const [currentService, setCurrentService] = useState('');
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategoryName, setCustomCategoryName] = useState('');
   const [showEditCustomCategory, setShowEditCustomCategory] = useState(false);
@@ -218,24 +216,6 @@ const App = () => {
     setManagedPlaces(prev => [...prev, { ...newPlace, id: newId, likes: 0, isVisible: true }]);
     setShowAddForm(false);
     setUploadedImage(null);
-  };
-
-  const addService = () => {
-    if (currentService.trim() && !selectedServices.includes(currentService.trim())) {
-      setSelectedServices([...selectedServices, currentService.trim()]);
-      setCurrentService('');
-    }
-  };
-
-  const removeService = (serviceToRemove: string) => {
-    setSelectedServices(selectedServices.filter(service => service !== serviceToRemove));
-  };
-
-  const handleServiceKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addService();
-    }
   };
 
   const handleSubmitServiceForReview = (newPlace: any) => {
@@ -1363,17 +1343,15 @@ ${markets.map(market => `• ${market.name}
                   hours: hours,
                   description: formData.get('description') as string,
                   image: uploadedImage || 'https://images.unsplash.com/photo-1555529902-de4e0750ea48?w=400',
-                  services: selectedServices,
+                  services: (formData.get('services') as string).split(',').map(s => s.trim()).filter(s => s),
                   submitterMobile: submitterMobile && submitterMobile.length === 11 ? submitterMobile : null,
                   customCategoryData: customCategoryData
                 };
                 handleSubmitServiceForReview(newPlace);
                 setShowCustomCategory(false);
                 setCustomCategoryName('');
-                setSelectedServices([]);
-                setCurrentService('');
               }}>
-                <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       اسم الخدمة *
@@ -1428,7 +1406,7 @@ ${markets.map(market => `• ${market.name}
                     )}
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       العنوان *
                     </label>
@@ -1460,38 +1438,51 @@ ${markets.map(market => `• ${market.name}
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ساعات العمل *
+                      رقم موبايلك (اختياري)
                     </label>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-2">وقت الفتح</label>
-                        <input
-                          type="time"
-                          name="startTime"
-                          required
-                          defaultValue="09:00"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                          placeholder="09:00"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-2">وقت الإغلاق</label>
-                        <input
-                          type="time"
-                          name="endTime"
-                          required
-                          defaultValue="22:00"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                          placeholder="22:00"
-                        />
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-2">
-                      مثال: من 9:00 صباحاً إلى 10:00 مساءً
+                    <input
+                      type="tel"
+                      name="submitterMobile"
+                      pattern="[0-9]{11}"
+                      maxLength={11}
+                      inputMode="numeric"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="مثال: 01234567890"
+                      title="لإرسال إشعار عند قبول الطلب"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      سنرسل لك رسالة نصية عند قبول ونشر طلبك
                     </p>
                   </div>
 
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      ساعات العمل *
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <label className="block text-xs text-gray-500 mb-1">من</label>
+                        <input
+                          type="time"
+                          name="startTime"
+                          required
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        />
+                      </div>
+                      <div className="text-gray-500 mt-5">إلى</div>
+                      <div className="flex-1">
+                        <label className="block text-xs text-gray-500 mb-1">إلى</label>
+                        <input
+                          type="time"
+                          name="endTime"
+                          required
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       وصف الخدمة *
                     </label>
@@ -1504,52 +1495,15 @@ ${markets.map(market => `• ${market.name}
                     />
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      الخدمات المتاحة
+                      الخدمات المتاحة (مفصولة بفواصل)
                     </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={currentService}
-                        onChange={(e) => setCurrentService(e.target.value)}
-                        onKeyPress={handleServiceKeyPress}
-                        className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        placeholder="اكتب اسم الخدمة واضغط إضافة"
-                      />
-                      <button
-                        type="button"
-                        onClick={addService}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {selectedServices.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {selectedServices.map((service, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-                          >
-                            {service}
-                            <button
-                              type="button"
-                              onClick={() => removeService(service)}
-                              className="text-blue-600 hover:text-blue-800 transition-colors"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
                     <input
-                      type="hidden"
+                      type="text"
                       name="services"
-                      value={selectedServices.join(', ')}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="مثال: خدمة التوصيل, مواقف مجانية, صراف آلي"
                     />
                   </div>
 
@@ -1569,25 +1523,6 @@ ${markets.map(market => `• ${market.name}
                         <img src={uploadedImage} alt="معاينة" className="w-32 h-32 object-cover rounded-lg border" />
                       </div>
                     )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      رقم موبايلك (اختياري)
-                    </label>
-                    <input
-                      type="tel"
-                      name="submitterMobile"
-                      pattern="[0-9]{11}"
-                      maxLength={11}
-                      inputMode="numeric"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      placeholder="مثال: 01234567890"
-                      title="لإرسال إشعار عند قبول الطلب"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      سنرسل لك رسالة نصية عند قبول ونشر طلبك
-                    </p>
                   </div>
                 </div>
 
@@ -1966,15 +1901,13 @@ ${markets.map(market => `• ${market.name}
                   hours: hours,
                   description: formData.get('description') as string,
                   image: uploadedImage || 'https://images.unsplash.com/photo-1555529902-de4e0750ea48?w=400',
-                  services: selectedServices
+                  services: (formData.get('services') as string).split(',').map(s => s.trim()).filter(s => s)
                 };
                 handleAddPlace(newPlace);
                 setShowEditCustomCategory(false);
                 setEditCustomCategoryName('');
-                setSelectedServices([]);
-                setCurrentService('');
               }}>
-                <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       اسم الخدمة
@@ -2028,7 +1961,7 @@ ${markets.map(market => `• ${market.name}
                     )}
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       العنوان
                     </label>
@@ -2061,36 +1994,30 @@ ${markets.map(market => `• ${market.name}
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       ساعات العمل
                     </label>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-2">وقت الفتح</label>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <label className="block text-xs text-gray-500 mb-1">من</label>
                         <input
                           type="time"
                           name="startTime"
                           required
-                          defaultValue="09:00"
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                          placeholder="09:00"
                         />
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-2">وقت الإغلاق</label>
+                      <div className="text-gray-500 mt-5">إلى</div>
+                      <div className="flex-1">
+                        <label className="block text-xs text-gray-500 mb-1">إلى</label>
                         <input
                           type="time"
                           name="endTime"
                           required
-                          defaultValue="22:00"
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                          placeholder="22:00"
                         />
                       </div>
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">
-                      مثال: من 9:00 صباحاً إلى 10:00 مساءً
-                    </p>
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       الوصف
                     </label>
@@ -2102,56 +2029,19 @@ ${markets.map(market => `• ${market.name}
                     />
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      الخدمات المتاحة
+                      الخدمات المتاحة (مفصولة بفواصل)
                     </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={currentService}
-                        onChange={(e) => setCurrentService(e.target.value)}
-                        onKeyPress={handleServiceKeyPress}
-                        className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        placeholder="اكتب اسم الخدمة واضغط إضافة"
-                      />
-                      <button
-                        type="button"
-                        onClick={addService}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {selectedServices.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {selectedServices.map((service, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-                          >
-                            {service}
-                            <button
-                              type="button"
-                              onClick={() => removeService(service)}
-                              className="text-blue-600 hover:text-blue-800 transition-colors"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
                     <input
-                      type="hidden"
+                      type="text"
                       name="services"
-                      value={selectedServices.join(', ')}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="مثال: خدمة التوصيل, مواقف مجانية, صراف آلي"
                     />
                   </div>
 
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       صورة الخدمة
                     </label>
@@ -2374,9 +2264,9 @@ ${markets.map(market => `• ${market.name}
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     ساعات العمل
                   </label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600 mb-2">وقت الفتح</label>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <label className="block text-xs text-gray-500 mb-1">من</label>
                       <input
                         type="time"
                         value={parseHours(editingPlace.hours).startTime}
@@ -2386,11 +2276,11 @@ ${markets.map(market => `• ${market.name}
                           setEditingPlace({...editingPlace, hours});
                         }}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        placeholder="09:00"
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600 mb-2">وقت الإغلاق</label>
+                    <div className="text-gray-500 mt-5">إلى</div>
+                    <div className="flex-1">
+                      <label className="block text-xs text-gray-500 mb-1">إلى</label>
                       <input
                         type="time"
                         value={parseHours(editingPlace.hours).endTime}
@@ -2400,13 +2290,9 @@ ${markets.map(market => `• ${market.name}
                           setEditingPlace({...editingPlace, hours});
                         }}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        placeholder="22:00"
                       />
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    مثال: من 9:00 صباحاً إلى 10:00 مساءً
-                  </p>
                 </div>
 
                 <div className="md:col-span-2">
