@@ -1,0 +1,3407 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, MapPin, ThumbsUp, Phone, Clock, Filter, Heart, Navigation, Settings, Plus, Edit2, Edit3, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2, Bell, AlertCircle } from 'lucide-react';
+import './App.css';
+
+const App = () => {
+  const places = [
+    {
+      id: 1,
+      name: 'كارفور مول C3',
+      category: 'mall',
+      likes: 287,
+      address: 'مول C3، المجاورة الثالثة، مدينة 15 مايو',
+      phone: '16789',
+      hours: '9:00 ص - 12:00 ص',
+      image: 'https://images.unsplash.com/photo-1555529902-de4e0750ea48?w=400',
+      services: ['مواقف مجانية', 'فروع كارفور', 'مطاعم ومقاهي', 'صراف آلي'],
+      description: 'مول تجاري شامل يضم كارفور وعدد كبير من المحلات التجارية والمطاعم',
+      isVisible: true
+    },
+    {
+      id: 2,
+      name: 'ميجا مول مدينة 15 مايو',
+      category: 'mall',
+      likes: 156,
+      address: 'القطعة 22، المجاورة الثالثة، مركز المدينة',
+      phone: '02-38951200',
+      hours: '10:00 ص - 11:00 م',
+      image: 'https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=400',
+      services: ['سينما', 'منطقة ألعاب أطفال', 'فود كورت', 'محلات الملابس'],
+      description: 'مجمع تجاري متكامل يضم العديد من المتاجر ومنطقة ترفيهية',
+      isVisible: true
+    },
+    {
+      id: 3,
+      name: 'مطعم باك باك',
+      category: 'restaurant',
+      likes: 178,
+      address: 'المجاورة الثالثة، كمباوند وسط البلد',
+      phone: '02-38951400',
+      hours: '1:00 ظ - 12:00 ص',
+      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400',
+      services: ['دليفري', 'وجبات سريعة', 'تيك اواي', 'عروض عائلية'],
+      description: 'مطعم متخصص في الوجبات السريعة والبرجر',
+      isVisible: true
+    },
+    {
+      id: 4,
+      name: 'سوق 15 مايو الجديد',
+      category: 'market',
+      likes: 145,
+      address: 'جنوب مدينة 15 مايو، بجوار الطريق الدائري',
+      phone: '02-38951600',
+      hours: '5:00 ص - 8:00 م',
+      image: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=400',
+      services: ['خضار وفاكهة', 'أسماك طازجة', 'تجارة جملة', 'أسعار منافسة'],
+      description: 'أكبر سوق جملة للخضراوات والفاكهة والأسماك جنوب القاهرة',
+      isVisible: true
+    },
+    {
+      id: 5,
+      name: 'مستشفى 15 مايو العام',
+      category: 'hospital',
+      likes: 234,
+      address: 'المجاورة الأولى، مدينة 15 مايو',
+      phone: '02-38951700',
+      hours: '24 ساعة',
+      image: 'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=400',
+      services: ['طوارئ 24 ساعة', 'عيادات خارجية', 'معامل تحاليل', 'صيدلية'],
+      description: 'المستشفى الحكومي الرئيسي بمدينة 15 مايو',
+      isVisible: true
+    },
+    {
+      id: 6,
+      name: 'صيدلية الشفاء الجديدة',
+      category: 'pharmacy',
+      likes: 0,
+      address: 'المجاورة الخامسة، مدينة 15 مايو',
+      phone: '01234567890',
+      hours: '9:00 ص - 12:00 م',
+      image: 'https://images.unsplash.com/photo-1585435557343-3b092031d269?w=400',
+      services: ['أدوية عامة', 'مستحضرات تجميل', 'فيتامينات'],
+      description: 'صيدلية جديدة تقدم خدمات صيدلانية متميزة',
+      isVisible: false,
+      isPending: true,
+      applicantPhone: '01098765432'
+    },
+    {
+      id: 7,
+      name: 'بنك الإسكندرية - فرع 15 مايو',
+      category: 'bank',
+      likes: 98,
+      address: 'المجاورة الثالثة، حي رجال الأعمال',
+      phone: '16247',
+      hours: '8:30 ص - 3:30 م',
+      image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400',
+      services: ['حسابات جارية', 'قروض', 'صراف آلي', 'تحويلات'],
+      description: 'فرع البنك الرئيسي لخدمة سكان مدينة 15 مايو',
+      isVisible: true
+    }
+  ];
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const [likes, setLikes] = useState<{[key: number]: boolean}>({});
+  const [selectedPlace, setSelectedPlace] = useState<any>(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const [currentView, setCurrentView] = useState('search');
+  const [sortBy, setSortBy] = useState('name');
+  // Load places from localStorage or use default places
+  const [managedPlaces, setManagedPlaces] = useState(() => {
+    const saved = localStorage.getItem('managedPlaces');
+    return saved ? JSON.parse(saved) : places;
+  });
+  const [editingPlace, setEditingPlace] = useState<any>(null);
+  const [isEditingService, setIsEditingService] = useState(false);
+  const [showEditCustomCategory, setShowEditCustomCategory] = useState(false);
+  const [editCustomCategoryName, setEditCustomCategoryName] = useState('');
+  const [editingFields, setEditingFields] = useState<{[key: string]: boolean}>({});
+  const [showComparison, setShowComparison] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [reviewNotes, setReviewNotes] = useState('');
+  const [originalData, setOriginalData] = useState<any>(null);
+  const [notificationSettings, setNotificationSettings] = useState({
+    soundEnabled: true,
+    browserNotifications: true,
+    autoMarkAsRead: false
+  });
+  const [notificationFilter, setNotificationFilter] = useState('all');
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [editUploadedImage, setEditUploadedImage] = useState<string | null>(null);
+  // Load categories from localStorage or use default categories
+  const [managedCategories, setManagedCategories] = useState(() => {
+    const saved = localStorage.getItem('managedCategories');
+    return saved ? JSON.parse(saved) : {
+      all: { name: 'الكل', icon: '🏪', isVisible: true },
+      mall: { name: 'مولات', icon: '🛍️', isVisible: true },
+      restaurant: { name: 'مطاعم', icon: '🍽️', isVisible: true },
+      market: { name: 'أسواق', icon: '🛒', isVisible: true },
+      hospital: { name: 'مستشفيات', icon: '🏥', isVisible: true },
+      bank: { name: 'بنوك', icon: '🏦', isVisible: true }
+    };
+  });
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [settingsView, setSettingsView] = useState('main');
+  const [serviceFilterCategory, setServiceFilterCategory] = useState('all');
+  const [serviceFilterStatus, setServiceFilterStatus] = useState('all');
+  const [serviceSearchTerm, setServiceSearchTerm] = useState('');
+  const [showServiceFilters, setShowServiceFilters] = useState(false);
+  const [categorySearchTerm, setCategorySearchTerm] = useState('');
+  const [showSubmissionSuccess, setShowSubmissionSuccess] = useState(false);
+  const [currentService, setCurrentService] = useState('');
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
+  const [customCategoryName, setCustomCategoryName] = useState('');
+  const [showChat, setShowChat] = useState(false);
+  const [notifications, setNotifications] = useState<Array<{id: number, message: string, type: 'new_request' | 'review_pending', serviceId: number, timestamp: Date, priority?: string}>>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Array<{id: number, text: string, isBot: boolean, timestamp: Date}>>([
+    {
+      id: 1,
+      text: 'مرحباً! أنا مساعدك الذكي في دليل خدمات مدينة 15 مايو. كيف يمكنني مساعدتك اليوم؟',
+      isBot: true,
+      timestamp: new Date()
+    }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [isChatMinimized, setIsChatMinimized] = useState(false);
+  const chatMessagesRef = useRef<HTMLDivElement>(null);
+
+  const categories = managedCategories;
+
+  const filteredPlaces = managedPlaces.filter(place => {
+    const matchesSearch = place.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || place.category === selectedCategory;
+    const isVisible = place.isVisible !== false;
+    return matchesSearch && matchesCategory && isVisible;
+  }).sort((a, b) => {
+    if (sortBy === 'likes') return (b.likes + (likes[b.id] ? 1 : 0)) - (a.likes + (likes[a.id] ? 1 : 0));
+    return a.name.localeCompare(b.name);
+  });
+
+  const favoritesList = managedPlaces.filter(place => favorites.includes(place.id) && place.isVisible !== false);
+
+  const toggleFavorite = (placeId: number) => {
+    setFavorites(prev =>
+      prev.includes(placeId)
+        ? prev.filter(id => id !== placeId)
+        : [...prev, placeId]
+    );
+  };
+
+  const toggleLike = (placeId: number) => {
+    setLikes(prev => ({
+      ...prev,
+      [placeId]: !prev[placeId]
+    }));
+  };
+
+  const handleDirection = (address: string) => {
+    const encodedAddress = encodeURIComponent(address);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+  };
+
+  const handleDeletePlace = (placeId: number) => {
+    if (window.confirm('هل أنت متأكد من حذف هذه الخدمة؟')) {
+      setManagedPlaces(prev => prev.filter(p => p.id !== placeId));
+    }
+  };
+
+  const handleEditPlace = (place: any) => {
+    setEditingPlace({...place, category: ''});
+    setEditUploadedImage(null);
+    setShowEditCustomCategory(false);
+    setEditCustomCategoryName('');
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingPlace.phone || editingPlace.phone.length !== 11 || !/^[0-9]{11}$/.test(editingPlace.phone)) {
+      alert('يجب أن يكون رقم الهاتف 11 رقم بالضبط (أرقام فقط)');
+      return;
+    }
+
+    let finalEditingPlace = {...editingPlace};
+
+    // إذا تم اختيار فئة جديدة
+    if (editingPlace.category === 'other' && editCustomCategoryName) {
+      const categoryKey = editCustomCategoryName.toLowerCase().replace(/\s+/g, '_').replace(/[^\w_]/g, '');
+
+      // إضافة الفئة الجديدة
+      setManagedCategories(prev => ({
+        ...prev,
+        [categoryKey]: {
+          name: editCustomCategoryName,
+          icon: '🏪',
+          isVisible: true
+        }
+      }));
+
+      finalEditingPlace.category = categoryKey;
+      alert(`تم تحديث الخدمة وإضافة فئة "${editCustomCategoryName}" الجديدة`);
+    }
+
+    setManagedPlaces(prev => prev.map(p =>
+      p.id === editingPlace.id ? finalEditingPlace : p
+    ));
+    setEditingPlace(null);
+    setShowEditCustomCategory(false);
+    setEditCustomCategoryName('');
+  };
+
+  const handleAddPlace = (newPlace: any) => {
+    const newId = Math.max(...managedPlaces.map(p => p.id)) + 1;
+    setManagedPlaces(prev => [...prev, { ...newPlace, id: newId, likes: 0, isVisible: true }]);
+    setShowAddForm(false);
+    setUploadedImage(null);
+  };
+
+  const addService = () => {
+    if (currentService.trim() && !selectedServices.includes(currentService.trim())) {
+      setSelectedServices([...selectedServices, currentService.trim()]);
+      setCurrentService('');
+    }
+  };
+
+  // اختصارات لوحة المفاتيح
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!editingPlace) return;
+
+      if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        // حفظ سريع - نفس وظيفة قبول مع التعديلات
+        document.querySelector('[data-action="save-with-edits"]')?.click();
+      }
+
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        // موافقة سريعة
+        document.querySelector('[data-action="quick-approve"]')?.click();
+      }
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        // إلغاء
+        setEditingPlace(null);
+        setEditingFields({});
+        setShowComparison(false);
+        setShowPreview(false);
+        setReviewNotes('');
+      }
+
+      if (e.ctrlKey && e.key === 'd') {
+        e.preventDefault();
+        // تبديل المقارنة
+        setShowComparison(!showComparison);
+      }
+
+      if (e.ctrlKey && e.key === 'p') {
+        e.preventDefault();
+        // تبديل المعاينة
+        setShowPreview(!showPreview);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [editingPlace, showComparison, showPreview]);
+
+  // دالة التحقق الذكي من البيانات
+  const getDataValidation = (place: any) => {
+    const issues = [];
+    const suggestions = [];
+
+    // فحص الاسم
+    if (place.name.length < 5) {
+      issues.push('اسم الخدمة قصير جداً');
+      suggestions.push('ينصح بإسم أكثر وصفية');
+    }
+
+    // فحص رقم الهاتف
+    if (!/^01[0-9]{9}$/.test(place.phone)) {
+      issues.push('رقم الهاتف غير صحيح');
+      suggestions.push('يجب أن يبدأ ب 01 ويكون 11 رقم');
+    }
+
+    // فحص العنوان
+    if (place.address.length < 10) {
+      issues.push('العنوان غير مفصل بما فيه الكفاية');
+      suggestions.push('أضف تفاصيل أكثر للموقع');
+    }
+
+    // فحص الوصف
+    if (!place.description || place.description.length < 20) {
+      issues.push('الوصف قصير أو غير موجود');
+      suggestions.push('أضف وصف مفصل للخدمة');
+    }
+
+    return { issues, suggestions };
+  };
+
+  // دالة تشغيل أصوات الإشعارات
+  const playNotificationSound = (priority: string = 'medium') => {
+    if (!notificationSettings.soundEnabled) return;
+
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // ترددات مختلفة حسب الأولوية
+    const frequencies = {
+      high: [800, 1000, 1200], // نغمة تصاعدية للأولوية العالية
+      medium: [600, 800], // نغمة بسيطة للأولوية المتوسطة
+      low: [400] // نغمة واحدة للأولوية المنخفضة
+    };
+
+    const freqs = frequencies[priority] || frequencies.medium;
+
+    freqs.forEach((freq, index) => {
+      setTimeout(() => {
+        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+        if (index === 0) {
+          oscillator.start(audioContext.currentTime);
+        }
+        if (index === freqs.length - 1) {
+          oscillator.stop(audioContext.currentTime + 0.3);
+        }
+      }, index * 200);
+    });
+  };
+
+  // طلب إذن الإشعارات من المتصفح
+  useEffect(() => {
+    if (notificationSettings.browserNotifications && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }
+  }, [notificationSettings.browserNotifications]);
+
+  const removeService = (serviceToRemove: string) => {
+    setSelectedServices(selectedServices.filter(service => service !== serviceToRemove));
+  };
+
+  const handleServiceKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addService();
+    }
+  };
+
+  const handleSubmitServiceForReview = (newPlace: any) => {
+    const newId = Math.max(...managedPlaces.map(p => p.id)) + 1;
+    const serviceWithId = {
+      ...newPlace,
+      id: newId,
+      likes: 0,
+      isVisible: false,
+      isPending: true,
+      submittedAt: new Date().toISOString(),
+      applicantPhone: newPlace.submitterMobile
+    };
+
+    setManagedPlaces(prev => [...prev, serviceWithId]);
+
+    // إضافة إشعار ذكي للإدارة
+    const priority = newPlace.customCategoryData ? 'high' : 'medium'; // فئة جديدة = أولوية عالية
+    const newNotification = {
+      id: Date.now(),
+      message: `طلب خدمة جديد: ${newPlace.name}`,
+      type: 'new_request' as const,
+      serviceId: newId,
+      timestamp: new Date(),
+      priority: priority
+    };
+    setNotifications(prev => [newNotification, ...prev]);
+
+    // تشغيل صوت إشعار إذا كان مفعلاً
+    if (notificationSettings.soundEnabled) {
+      playNotificationSound(priority);
+    }
+
+    // إشعار المتصفح إذا كان مدعوماً
+    if (notificationSettings.browserNotifications && 'Notification' in window) {
+      if (Notification.permission === 'granted') {
+        new Notification('طلب خدمة جديد', {
+          body: `${newPlace.name} - ${newPlace.address}`,
+          icon: '/favicon.ico',
+          tag: newNotification.id.toString()
+        });
+      }
+    }
+
+    setCurrentView('search');
+    setUploadedImage(null);
+    setShowSubmissionSuccess(true);
+    setTimeout(() => setShowSubmissionSuccess(false), 5000);
+  };
+
+  const sendSMSNotification = (phoneNumber: string, serviceName: string) => {
+    // محاكاة إرسال SMS
+    console.log(`SMS sent to ${phoneNumber}: تم نشر خدمة "${serviceName}" بنجاح في دليل خدمات مدينة 15 مايو`);
+
+    // في التطبيق الحقيقي، هنا سنستخدم خدمة SMS API مثل Twilio أو أي خدمة أخرى
+    // مثال:
+    // fetch('/api/send-sms', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({
+    //     to: phoneNumber,
+    //     message: `تم نشر خدمة "${serviceName}" بنجاح في دليل خدمات مدينة 15 مايو`
+    //   })
+    // });
+  };
+
+  const toggleVisibility = (placeId: number) => {
+    setManagedPlaces(prev => prev.map(p =>
+      p.id === placeId ? { ...p, isVisible: !p.isVisible } : p
+    ));
+  };
+
+  const handleAddCategory = (categoryData: any) => {
+    const categoryKey = categoryData.key.toLowerCase().replace(/\s+/g, '_');
+    setManagedCategories(prev => ({
+      ...prev,
+      [categoryKey]: { name: categoryData.name, icon: categoryData.icon, isVisible: true }
+    }));
+    setShowCategoryForm(false);
+  };
+
+  const handleEditCategory = (key: string) => {
+    if (key === 'all') {
+      alert('لا يمكن تعديل فئة "الكل"');
+      return;
+    }
+    setEditingCategory({ key, ...managedCategories[key] });
+  };
+
+  const handleSaveCategoryEdit = () => {
+    setManagedCategories(prev => ({
+      ...prev,
+      [editingCategory.key]: {
+        name: editingCategory.name,
+        icon: editingCategory.icon,
+        isVisible: prev[editingCategory.key].isVisible
+      }
+    }));
+    setEditingCategory(null);
+  };
+
+  const handleDeleteCategory = (key: string) => {
+    if (key === 'all') {
+      alert('لا يمكن حذف فئة "الكل"');
+      return;
+    }
+
+    const hasPlaces = managedPlaces.some(p => p.category === key);
+    if (hasPlaces) {
+      alert('لا يمكن حذف هذه الفئة لأنها تحتوي على خدمات.');
+      return;
+    }
+
+    if (window.confirm('هل أنت متأكد من حذف هذه الفئة؟')) {
+      const newCategories = { ...managedCategories };
+      delete newCategories[key];
+      setManagedCategories(newCategories);
+      if (selectedCategory === key) {
+        setSelectedCategory('all');
+      }
+    }
+  };
+
+  const toggleCategoryVisibility = (key: string) => {
+    if (key === 'all') {
+      alert('لا يمكن إخفاء فئة "الكل"');
+      return;
+    }
+
+    setManagedCategories(prev => ({
+      ...prev,
+      [key]: { ...prev[key], isVisible: !prev[key].isVisible }
+    }));
+  };
+
+  const parseHours = (hours: string) => {
+    if (!hours || !hours.includes(' - ')) {
+      return { startTime: '', endTime: '' };
+    }
+    const [startTime, endTime] = hours.split(' - ');
+    return { startTime: startTime.trim(), endTime: endTime.trim() };
+  };
+
+  const handleImageUpload = (e: any, isEdit = false) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (isEdit) {
+          setEditUploadedImage(reader.result as string);
+          setEditingPlace({...editingPlace, image: reader.result});
+        } else {
+          setUploadedImage(reader.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const getClaudeAIResponse = async (userMessage: string): Promise<string> => {
+    try {
+      // نصوص ومحتوى خاص بالبيانات المحلية
+      const localContext = `
+أنت مساعد ذكي لدليل خدمات مدينة 15 مايو في مصر. لديك معلومات عن الخدمات التالية:
+
+المولات:
+- كارفور مول C3: مول C3، المجاورة الثالثة، مدينة 15 مايو، هاتف: 16789، الساعات: 9:00 ص - 12:00 ص
+- ميجا مول مدينة 15 مايو: القطعة 22، المجاورة الثالثة، مركز المدينة، هاتف: 02-38951200، الساعات: 10:00 ص - 11:00 م
+
+المطاعم:
+- مطعم باك باك: المجاورة الثالثة، كمباوند وسط البلد، هاتف: 02-38951400، الساعات: 1:00 ظ - 12:00 ص
+
+الأسواق:
+- سوق 15 مايو الجديد: جنوب مدينة 15 مايو، بجوار الطريق الدائري، هاتف: 02-38951600، الساعات: 5:00 ص - 8:00 م
+
+المستشفيات:
+- مستشفى 15 مايو العام: المجاورة الأولى، مدينة 15 مايو، هاتف: 02-38951700، ساعات: 24 ساعة
+
+البنوك:
+- بنك الإسكندرية - فرع 15 مايو: المجاورة الثالثة، حي رجال الأعمال، هاتف: 16247، الساعات: 8:30 ص - 3:30 م
+
+استخدم هذه المعلومات للإجابة على أسئلة المستخدمين بطريقة مفيدة ودقيقة. إذا سأل المستخدم عن خدمة غير موجودة في القائمة، أعلمه بأنها غير متوفرة حالياً في قاعدة البيانات.
+`;
+
+      // محاكاة Claude AI مع الذكاء المحلي المحسن
+      const message = userMessage.toLowerCase();
+
+      // البحث الذكي عن الخدمات
+      if (message.includes('بحث') || message.includes('ابحث') || message.includes('أين') || message.includes('فين')) {
+        const searchTerms = message.split(' ');
+        const matchingPlaces = managedPlaces.filter(place =>
+          searchTerms.some(term =>
+            place.name.toLowerCase().includes(term) ||
+            place.description.toLowerCase().includes(term) ||
+            place.address.toLowerCase().includes(term) ||
+            place.services.some(service => service.toLowerCase().includes(term))
+          )
+        );
+
+        if (matchingPlaces.length > 0) {
+          const place = matchingPlaces[0];
+          return `🏢 وجدت "${place.name}"
+📍 العنوان: ${place.address}
+📞 الهاتف: [اضغط للاتصال](tel:${place.phone.replace(/[\s-]/g, '')}) ${place.phone}
+⏰ ساعات العمل: ${place.hours}
+✨ الخدمات: ${place.services.slice(0, 3).join('، ')}
+
+هل تريد معلومات أكثر عن هذا المكان؟`;
+        } else {
+          return 'عذراً، لم أجد ما تبحث عنه. جرب البحث بكلمات أخرى أو اسأل عن الخدمات المتاحة: المولات، المطاعم، المستشفيات، البنوك، أو الأسواق.';
+        }
+      }
+
+      // معلومات مفصلة عن الفئات
+      if (message.includes('مول') || message.includes('تسوق') || message.includes('شراء')) {
+        const malls = managedPlaces.filter(p => p.category === 'mall' && p.isVisible !== false);
+        return `🛍️ المولات المتاحة في مدينة 15 مايو (${malls.length} مول):
+
+${malls.map(mall => `• ${mall.name}
+   📍 ${mall.address}
+   📞 [اتصل الآن](tel:${mall.phone.replace(/[\s-]/g, '')}) ${mall.phone}`).join('\n\n')}
+
+هل تريد تفاصيل أكثر عن مول معين؟`;
+      }
+
+      // البحث في جميع الفئات (بما في ذلك الفئات الجديدة)
+      const allCategories = Object.keys(managedCategories).filter(key => key !== 'all');
+      for (const categoryKey of allCategories) {
+        const category = managedCategories[categoryKey];
+        if (message.includes(category.name.toLowerCase())) {
+          const places = managedPlaces.filter(p => p.category === categoryKey && p.isVisible !== false);
+          return `${category.icon} ${category.name} المتاحة في مدينة 15 مايو (${places.length} خدمة):
+
+${places.map(place => `• ${place.name}
+   📍 ${place.address}
+   📞 [اتصل الآن](tel:${place.phone.replace(/[\s-]/g, '')}) ${place.phone}`).join('\n\n')}
+
+هل تريد تفاصيل أكثر عن أي منها؟`;
+        }
+      }
+
+      if (message.includes('مطعم') || message.includes('أكل') || message.includes('طعام')) {
+        const restaurants = managedPlaces.filter(p => p.category === 'restaurant');
+        return `🍽️ المطاعم المتاحة في مدينة 15 مايو (${restaurants.length} مطعم):
+
+${restaurants.map(restaurant => `• ${restaurant.name}
+   📍 ${restaurant.address}
+   📞 [اتصل للطلب](tel:${restaurant.phone.replace(/[\s-]/g, '')}) ${restaurant.phone}
+   ⏰ ${restaurant.hours}`).join('\n\n')}
+
+أي مطعم يهمك أكثر؟`;
+      }
+
+      if (message.includes('مستشفى') || message.includes('طبيب') || message.includes('علاج') || message.includes('صحة')) {
+        const hospitals = managedPlaces.filter(p => p.category === 'hospital');
+        return `🏥 المستشفيات المتاحة في مدينة 15 مايو (${hospitals.length} مستشفى):
+
+${hospitals.map(hospital => `• ${hospital.name}
+   📍 ${hospital.address}
+   📞 [اتصل فوراً](tel:${hospital.phone.replace(/[\s-]/g, '')}) ${hospital.phone}
+   ⏰ ${hospital.hours}
+   🩺 الخدمات: ${hospital.services.join('، ')}`).join('\n\n')}
+
+هل تحتاج معلومات عن خدمة طبية معينة؟`;
+      }
+
+      if (message.includes('بنك') || message.includes('صراف') || message.includes('فلوس') || message.includes('حساب')) {
+        const banks = managedPlaces.filter(p => p.category === 'bank');
+        return `🏦 البنوك المتاحة في مدينة 15 مايو (${banks.length} بنك):
+
+${banks.map(bank => `• ${bank.name}
+   📍 ${bank.address}
+   📞 [اتصل بالفرع](tel:${bank.phone.replace(/[\s-]/g, '')}) ${bank.phone}
+   ⏰ ${bank.hours}
+   💳 الخدمات: ${bank.services.join('، ')}`).join('\n\n')}
+
+أي خدمة مصرفية تحتاجها؟`;
+      }
+
+      if (message.includes('سوق') || message.includes('خضار') || message.includes('فاكهة') || message.includes('سمك')) {
+        const markets = managedPlaces.filter(p => p.category === 'market');
+        return `🛒 الأسواق المتاحة في مدينة 15 مايو (${markets.length} سوق):
+
+${markets.map(market => `• ${market.name}
+   📍 ${market.address}
+   📞 [اتصل بالسوق](tel:${market.phone.replace(/[\s-]/g, '')}) ${market.phone}
+   ⏰ ${market.hours}
+   🥬 المتوفر: ${market.services.join('، ')}`).join('\n\n')}
+
+هل تبحث عن منتج معين؟`;
+      }
+
+      // ردود ذكية على الاستفسارات العامة
+      if (message.includes('مساعدة') || message.includes('ساعدني') || message.includes('help')) {
+        return `🤖 أهلاً! أنا مساعدك الذكي في دليل خدمات مدينة 15 مايو
+
+يمكنني مساعدتك في:
+🔍 البحث عن الخدمات والأماكن
+📍 معرفة العناوين وأرقام الهواتف
+⏰ معرفة ساعات العمل
+🗺️ الحصول على الاتجاهات
+
+جرب أن تسأل:
+• "أين أقرب مطعم؟"
+• "أريد معلومات عن المولات"
+• "ابحث عن مستشفى"
+• "أين يوجد بنك؟"`;
+      }
+
+      if (message.includes('شكرا') || message.includes('شكراً') || message.includes('thanks')) {
+        return '😊 العفو! سعيد جداً لمساعدتك. إذا احتجت أي معلومات أخرى عن خدمات مدينة 15 مايو، أنا هنا دائماً!';
+      }
+
+      if (message.includes('وقت') || message.includes('ساعة') || message.includes('متى')) {
+        return `🕐 معلومات أوقات العمل:
+
+🛍️ المولات: عادة من 9-10 صباحاً حتى 11-12 منتصف الليل
+🍽️ المطاعم: أوقات متنوعة، أغلبها من الظهر حتى منتصف الليل
+🏥 المستشفيات: 24 ساعة (الطوارئ)
+🏦 البنوك: من 8:30 صباحاً حتى 3:30 عصراً
+🛒 الأسواق: من الفجر (5 ص) حتى المساء (8 م)
+
+أي مكان محدد تريد معرفة أوقات عمله؟`;
+      }
+
+      // الرد الافتراضي الذكي
+      return `🤔 لم أفهم طلبك تماماً، لكن يمكنني مساعدتك!
+
+جرب أن تسأل بطريقة أخرى، مثل:
+• "أين يوجد [اسم المكان]؟"
+• "أريد معلومات عن [نوع الخدمة]"
+• "ابحث عن [ما تحتاجه]"
+
+أو اختر من الخدمات المتاحة: المولات، المطاعم، المستشفيات، البنوك، الأسواق`;
+
+    } catch (error) {
+      return 'عذراً، حدث خطأ تقني. الرجاء المحاولة مرة أخرى.';
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!chatInput.trim()) return;
+
+    const userMessageText = chatInput;
+    const newMessage = {
+      id: chatMessages.length + 1,
+      text: userMessageText,
+      isBot: false,
+      timestamp: new Date()
+    };
+
+    setChatMessages(prev => [...prev, newMessage]);
+    setChatInput('');
+    setIsTyping(true);
+
+    try {
+      // الحصول على رد ذكي من AI
+      const response = await getClaudeAIResponse(userMessageText);
+
+      // تأخير واقعي للرد
+      setTimeout(() => {
+        const botResponse = {
+          id: chatMessages.length + 2,
+          text: response,
+          isBot: true,
+          timestamp: new Date()
+        };
+        setChatMessages(prev => [...prev, botResponse]);
+        setIsTyping(false);
+      }, 1000 + Math.random() * 1500);
+    } catch (error) {
+      setTimeout(() => {
+        const errorResponse = {
+          id: chatMessages.length + 2,
+          text: 'عذراً، حدث خطأ في الاتصال. الرجاء المحاولة مرة أخرى.',
+          isBot: true,
+          timestamp: new Date()
+        };
+        setChatMessages(prev => [...prev, errorResponse]);
+        setIsTyping(false);
+      }, 1000);
+    }
+  };
+
+  // Save managed places to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('managedPlaces', JSON.stringify(managedPlaces));
+  }, [managedPlaces]);
+
+  // Save managed categories to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('managedCategories', JSON.stringify(managedCategories));
+  }, [managedCategories]);
+
+  // التمرير التلقائي للأسفل عند إضافة رسائل جديدة
+  useEffect(() => {
+    if (chatMessagesRef.current) {
+      chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+    }
+  }, [chatMessages, isTyping]);
+
+  // تحويل النص إلى روابط قابلة للنقر
+  const renderMessageWithLinks = (text: string) => {
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = linkRegex.exec(text)) !== null) {
+      // إضافة النص قبل الرابط
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
+      }
+
+      // إضافة الرابط
+      const linkText = match[1];
+      const linkUrl = match[2];
+      parts.push(
+        <a
+          key={match.index}
+          href={linkUrl}
+          className="text-blue-600 underline hover:text-blue-800 font-medium"
+          onClick={(e) => {
+            e.preventDefault();
+            window.location.href = linkUrl;
+          }}
+        >
+          {linkText}
+        </a>
+      );
+
+      lastIndex = linkRegex.lastIndex;
+    }
+
+    // إضافة النص المتبقي
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : text;
+  };
+
+  const PlaceCard = ({ place }: { place: any }) => (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+      <div className="relative">
+        <img
+          src={place.image}
+          alt={place.name}
+          className="w-full h-48 object-cover"
+        />
+        <button
+          onClick={() => toggleFavorite(place.id)}
+          className="absolute top-2 right-2 p-2 rounded-full bg-white shadow-md hover:bg-red-50"
+        >
+          <Heart
+            className={`w-5 h-5 ${
+              favorites.includes(place.id)
+                ? 'text-red-500 fill-current'
+                : 'text-gray-400'
+            }`}
+          />
+        </button>
+      </div>
+
+      <div className="p-4">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-lg font-semibold text-gray-800">{place.name}</h3>
+          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+            {categories[place.category]?.name}
+          </span>
+        </div>
+
+        <div className="flex items-center mb-2">
+          <button
+            onClick={() => toggleLike(place.id)}
+            className="flex items-center gap-1 hover:bg-gray-100 p-1 rounded"
+          >
+            <ThumbsUp
+              className={`w-4 h-4 ${
+                likes[place.id] ? 'text-blue-500 fill-current' : 'text-gray-400'
+              }`}
+            />
+            <span className="text-sm text-gray-600">
+              {place.likes + (likes[place.id] ? 1 : 0)}
+            </span>
+          </button>
+        </div>
+
+        <div className="flex items-start mb-2">
+          <MapPin className="w-4 h-4 text-gray-500 mt-0.5 ml-1" />
+          <p className="text-sm text-gray-600">{place.address}</p>
+        </div>
+
+        <div className="flex items-center mb-3">
+          <Clock className="w-4 h-4 text-gray-500 ml-1" />
+          <p className="text-sm text-gray-600">{place.hours}</p>
+        </div>
+
+        <div className="flex flex-wrap gap-1 mb-3">
+          {place.services.slice(0, 2).map((service: string, index: number) => (
+            <span key={index} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+              {service}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              setSelectedPlace(place);
+              setShowDetails(true);
+            }}
+            className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600"
+          >
+            عرض التفاصيل
+          </button>
+          <a
+            href={`tel:${place.phone.replace(/[\s-]/g, '')}`}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-green-500 text-white px-4 py-2 rounded-md text-sm hover:bg-green-600 flex items-center justify-center"
+          >
+            <Phone className="w-4 h-4" />
+          </a>
+          <button
+            onClick={() => handleDirection(place.address)}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600"
+          >
+            <Navigation className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50" dir="rtl">
+      <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 shadow-lg">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <h1 className="text-2xl font-bold">دليل خدمات مدينة 15 مايو الشامل</h1>
+            </div>
+          </div>
+          <p className="text-blue-100 text-sm mb-4">اكتشف جميع الخدمات والأماكن المهمة في مدينتك بسهولة</p>
+
+          <div className="relative mb-4">
+            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="ابحث عن خدمة أو مكان..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pr-10 pl-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+            />
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto p-4 pb-20">
+        {currentView === 'search' && (
+          <>
+            <div className="mb-6 overflow-x-auto">
+              <div className="flex gap-2 pb-2">
+                {Object.entries(categories).filter(([key, category]) =>
+                  key === 'all' || category.isVisible !== false
+                ).map(([key, category]) => (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedCategory(key)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
+                      selectedCategory === key
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-white text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <span>{category.icon}</span>
+                    <span className="text-sm">{category.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-4 text-gray-600">
+              <p>عدد النتائج المتطابقة مع البحث: {filteredPlaces.length} من إجمالي {managedPlaces.filter(p => p.isVisible !== false).length} خدمة متاحة</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredPlaces.map(place => (
+                <PlaceCard key={place.id} place={place} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {currentView === 'favorites' && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold mb-4">الأماكن والخدمات المفضلة لديك</h2>
+            {favoritesList.length === 0 ? (
+              <div className="text-center py-12">
+                <Heart className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">لا توجد أماكن مفضلة حتى الآن</h3>
+                <p className="text-gray-500">أضف الأماكن والخدمات التي تعجبك إلى قائمة المفضلات لسهولة الوصول إليها لاحقاً</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {favoritesList.map(place => (
+                  <PlaceCard key={place.id} place={place} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {currentView === 'map' && (
+          <div className="space-y-4">
+            <div className="text-center py-6">
+              <MapPin className="w-16 h-16 mx-auto text-blue-500 mb-4" />
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">خريطة تفاعلية لمدينة 15 مايو</h3>
+              <p className="text-gray-500 mb-4">اختر أي مكان أو خدمة من القائمة أدناه لعرض موقعه التقريبي على خرائط جوجل</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3">
+              {managedPlaces.filter(p => p.isVisible !== false).map(place => (
+                <div key={place.id} className="bg-white p-3 rounded-lg shadow-sm border">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl">{categories[place.category]?.icon}</div>
+                      <div>
+                        <h4 className="font-semibold text-sm">{place.name}</h4>
+                        <p className="text-xs text-gray-500">{place.address}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleDirection(place.address)}
+                      className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
+                    >
+                      عرض الموقع
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {currentView === 'settings' && settingsView === 'main' && (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold mb-6">إعدادات وإدارة النظام</h2>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => setSettingsView('categories')}
+                className="w-full bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-purple-100 p-3 rounded-lg">
+                    <Folder className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div className="text-right">
+                    <h3 className="font-semibold text-lg">إدارة فئات الخدمات</h3>
+                    <p className="text-sm text-gray-500">
+                      إضافة وتعديل وحذف فئات الخدمات المختلفة (إجمالي {Object.keys(managedCategories).length - 1} فئة نشطة)
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-6 h-6 text-gray-400" />
+              </button>
+
+              <button
+                onClick={() => setSettingsView('services')}
+                className="w-full bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-blue-100 p-3 rounded-lg">
+                    <List className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="text-right">
+                    <h3 className="font-semibold text-lg">إدارة قاعدة بيانات الخدمات</h3>
+                    <p className="text-sm text-gray-500">
+                      إضافة وتعديل وحذف ومراجعة جميع الخدمات والأماكن (إجمالي {managedPlaces.length} خدمة مسجلة)
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-6 h-6 text-gray-400" />
+              </button>
+
+              <button
+                onClick={() => setSettingsView('about')}
+                className="w-full bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-green-100 p-3 rounded-lg">
+                    <Info className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="text-right">
+                    <h3 className="font-semibold text-lg">معلومات تفصيلية عن النظام</h3>
+                    <p className="text-sm text-gray-500">
+                      عرض معلومات التطبيق والإصدار الحالي والميزات المتاحة
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-6 h-6 text-gray-400" />
+              </button>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6 mt-6">
+              <h3 className="text-xl font-semibold mb-4">إحصائيات شاملة للنظام</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-blue-50 p-4 rounded-lg text-center">
+                  <div className="text-3xl font-bold text-blue-600">{managedPlaces.length}</div>
+                  <div className="text-sm text-gray-600 mt-1">إجمالي الخدمات المسجلة</div>
+                </div>
+                <div className="bg-green-50 p-4 rounded-lg text-center">
+                  <div className="text-3xl font-bold text-green-600">{managedPlaces.filter(p => p.isVisible !== false).length}</div>
+                  <div className="text-sm text-gray-600 mt-1">خدمات نشطة ومتاحة</div>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-lg text-center">
+                  <div className="text-3xl font-bold text-purple-600">{Object.keys(managedCategories).length - 1}</div>
+                  <div className="text-sm text-gray-600 mt-1">فئات الخدمات المتاحة</div>
+                </div>
+                <div className="bg-red-50 p-4 rounded-lg text-center">
+                  <div className="text-3xl font-bold text-red-600">{favorites.length}</div>
+                  <div className="text-sm text-gray-600 mt-1">الأماكن المفضلة</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {currentView === 'settings' && settingsView === 'categories' && (
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => setSettingsView('main')}
+                className="text-blue-600 hover:text-blue-800 font-medium"
+              >
+                ← رجوع
+              </button>
+              <h2 className="text-2xl font-bold">إدارة الفئات</h2>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex flex-col md:flex-row gap-4 mb-4">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    placeholder="البحث في الفئات..."
+                    value={categorySearchTerm}
+                    onChange={(e) => setCategorySearchTerm(e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+                <button
+                  onClick={() => setShowCategoryForm(true)}
+                  className="bg-purple-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-600"
+                >
+                  <Plus className="w-5 h-5" />
+                  إضافة فئة جديدة
+                </button>
+              </div>
+
+              <div className="mb-4 text-sm text-gray-600">
+                عرض {Object.entries(managedCategories).filter(([key, category]) => {
+                  if (key === 'all') return false;
+                  return category.name.toLowerCase().includes(categorySearchTerm.toLowerCase()) ||
+                         key.toLowerCase().includes(categorySearchTerm.toLowerCase());
+                }).length} من {Object.keys(managedCategories).length - 1} فئة
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {Object.entries(managedCategories).filter(([key, category]) => {
+                  if (key === 'all') return false;
+                  if (!categorySearchTerm) return true;
+                  return category.name.toLowerCase().includes(categorySearchTerm.toLowerCase()) ||
+                         key.toLowerCase().includes(categorySearchTerm.toLowerCase());
+                }).map(([key, category]) => (
+                  <div key={key} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl">{category.icon}</span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold">{category.name}</h4>
+                            {category.isVisible === false && (
+                              <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
+                                مخفية
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500">
+                            {key === 'all' ? 'جميع الفئات' : `${managedPlaces.filter(p => p.category === key).length} خدمة`}
+                          </p>
+                        </div>
+                      </div>
+                      {key !== 'all' && (
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => toggleCategoryVisibility(key)}
+                            className={`p-1 rounded ${
+                              category.isVisible === false
+                                ? 'text-green-600 hover:text-green-800'
+                                : 'text-gray-600 hover:text-gray-800'
+                            }`}
+                            title={category.isVisible === false ? 'إظهار' : 'إخفاء'}
+                          >
+                            {category.isVisible === false ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                          </button>
+                          <button
+                            onClick={() => handleEditCategory(key)}
+                            className="text-blue-600 hover:text-blue-800 p-1"
+                            title="تعديل"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteCategory(key)}
+                            className="text-red-600 hover:text-red-800 p-1"
+                            title="حذف"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {categorySearchTerm && Object.entries(managedCategories).filter(([key, category]) => {
+                if (key === 'all') return false;
+                return category.name.toLowerCase().includes(categorySearchTerm.toLowerCase()) ||
+                       key.toLowerCase().includes(categorySearchTerm.toLowerCase());
+              }).length === 0 && (
+                <div className="text-center py-8">
+                  <div className="text-gray-400 mb-2">
+                    <Search className="w-12 h-12 mx-auto" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-700 mb-1">لا توجد نتائج</h3>
+                  <p className="text-gray-500">لم يتم العثور على فئات تتطابق مع البحث "{categorySearchTerm}"</p>
+                </div>
+              )}
+
+              <div className="mt-4 text-sm text-gray-600">
+                إجمالي الفئات: {Object.keys(managedCategories).length - 1}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {currentView === 'settings' && settingsView === 'services' && (
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => setSettingsView('main')}
+                className="text-blue-600 hover:text-blue-800 font-medium"
+              >
+                ← رجوع
+              </button>
+              <h2 className="text-2xl font-bold">إدارة الخدمات</h2>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              <div className="flex flex-col md:flex-row gap-4 mb-4">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    placeholder="البحث في الخدمات..."
+                    value={serviceSearchTerm}
+                    onChange={(e) => setServiceSearchTerm(e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <select
+                    value={serviceFilterCategory}
+                    onChange={(e) => setServiceFilterCategory(e.target.value)}
+                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="all">جميع الفئات</option>
+                    {Object.entries(managedCategories).filter(([key]) => key !== 'all').map(([key, category]) => (
+                      <option key={key} value={key}>{category.name}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={serviceFilterStatus}
+                    onChange={(e) => setServiceFilterStatus(e.target.value)}
+                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="all">جميع الحالات</option>
+                    <option value="visible">ظاهرة</option>
+                    <option value="hidden">مخفية</option>
+                    <option value="pending">قيد المراجعة</option>
+                  </select>
+                  <button
+                    onClick={() => setShowAddForm(true)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600"
+                  >
+                    <Plus className="w-5 h-5" />
+                    إضافة خدمة
+                  </button>
+                </div>
+              </div>
+
+              <div className="mb-4 text-sm text-gray-600">
+                عرض {managedPlaces.filter(place => {
+                  const matchesCategory = serviceFilterCategory === 'all' || place.category === serviceFilterCategory;
+                  const matchesStatus =
+                    serviceFilterStatus === 'all' ||
+                    (serviceFilterStatus === 'visible' && place.isVisible !== false && !place.isPending) ||
+                    (serviceFilterStatus === 'hidden' && place.isVisible === false && !place.isPending) ||
+                    (serviceFilterStatus === 'pending' && place.isPending);
+                  const matchesSearch =
+                    place.name.toLowerCase().includes(serviceSearchTerm.toLowerCase()) ||
+                    place.phone.toLowerCase().includes(serviceSearchTerm.toLowerCase());
+                  return matchesCategory && matchesStatus && matchesSearch;
+                }).length} من {managedPlaces.length} خدمة
+              </div>
+
+              <div className="space-y-3">
+                {managedPlaces.filter(place => {
+                  const matchesCategory = serviceFilterCategory === 'all' || place.category === serviceFilterCategory;
+                  const matchesStatus =
+                    serviceFilterStatus === 'all' ||
+                    (serviceFilterStatus === 'visible' && place.isVisible !== false && !place.isPending) ||
+                    (serviceFilterStatus === 'hidden' && place.isVisible === false && !place.isPending) ||
+                    (serviceFilterStatus === 'pending' && place.isPending);
+                  const matchesSearch =
+                    place.name.toLowerCase().includes(serviceSearchTerm.toLowerCase()) ||
+                    place.phone.toLowerCase().includes(serviceSearchTerm.toLowerCase());
+                  return matchesCategory && matchesStatus && matchesSearch;
+                }).map(place => (
+                  <div key={place.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-4 flex-1">
+                        <img
+                          src={place.image}
+                          alt={place.name}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-semibold text-lg">{place.name}</h4>
+                            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                              {managedCategories[place.category]?.name || (place.customCategoryData ? place.customCategoryData.name : place.category)}
+                            </span>
+                            {place.customCategoryData && (
+                              <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">
+                                فئة جديدة
+                              </span>
+                            )}
+                            {place.isPending && (
+                              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+                                قيد المراجعة
+                              </span>
+                            )}
+                            {place.isVisible === false && !place.isPending && (
+                              <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
+                                مخفية
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-sm text-gray-600 mb-2">
+                            <div className="flex items-center gap-1 mb-1">
+                              <MapPin className="w-4 h-4" />
+                              <span>{place.address}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Phone className="w-4 h-4" />
+                              <span>{place.phone}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 text-sm text-gray-500">
+                            <ThumbsUp className="w-4 h-4" />
+                            <span>{place.likes} إعجاب</span>
+                          </div>
+                          {place.submittedAt && (
+                            <div className="text-xs text-gray-400 mt-1">
+                              تم التقديم: {new Date(place.submittedAt).toLocaleDateString('ar-EG')}
+                              {place.submitterMobile && (
+                                <div className="text-xs text-green-600 mt-1">
+                                  📱 رقم التواصل: {place.submitterMobile}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {place.isPending ? (
+                          <>
+                            <button
+                              onClick={() => {
+                                console.log('Review button clicked for place:', place);
+                                setEditingPlace(place);
+                                setOriginalData({...place}); // حفظ البيانات الأصلية للمقارنة
+                                setShowComparison(false);
+                                setShowPreview(false);
+                                setReviewNotes('');
+                              }}
+                              className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
+                              title="مراجعة الطلب"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                // موافقة سريعة
+                                if (place.customCategoryData) {
+                                  setManagedCategories(prev => ({
+                                    ...prev,
+                                    [place.customCategoryData.key]: {
+                                      name: place.customCategoryData.name,
+                                      icon: place.customCategoryData.icon,
+                                      isVisible: true
+                                    }
+                                  }));
+                                }
+                                setManagedPlaces(prev => prev.map(p =>
+                                  p.id === place.id ? { ...p, isPending: false, isVisible: true } : p
+                                ));
+                                if (place.applicantPhone) {
+                                  sendSMSNotification(place.applicantPhone, place.name);
+                                }
+                                alert('تم قبول الطلب ونشر الخدمة بنجاح!');
+                              }}
+                              className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200"
+                              title="موافقة ونشر"
+                            >
+                              <Save className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeletePlace(place.id)}
+                              className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+                              title="رفض وحذف"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => toggleVisibility(place.id)}
+                              className={`p-2 rounded-lg ${
+                                place.isVisible === false
+                                  ? 'bg-green-100 text-green-600 hover:bg-green-200'
+                                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                              }`}
+                              title={place.isVisible === false ? 'إظهار' : 'إخفاء'}
+                            >
+                              {place.isVisible === false ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                            </button>
+                            <button
+                              onClick={() => handleEditPlace(place)}
+                              className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
+                              title="تعديل"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeletePlace(place.id)}
+                              className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+                              title="حذف"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {currentView === 'settings' && settingsView === 'about' && (
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => setSettingsView('main')}
+                className="text-blue-600 hover:text-blue-800 font-medium"
+              >
+                ← رجوع
+              </button>
+              <h2 className="text-2xl font-bold">معلومات عن النظام</h2>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">🏪</div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">دليل خدمات مدينة 15 مايو</h3>
+                <p className="text-gray-600">الإصدار 1.0.0</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold mb-2">عن التطبيق</h4>
+                  <p className="text-gray-600 text-sm">
+                    دليل شامل لجميع الخدمات والأماكن المهمة في مدينة 15 مايو، يتيح للمواطنين العثور على الخدمات بسهولة ومعرفة معلومات التواصل والمواقع.
+                  </p>
+                </div>
+
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold mb-2">الميزات</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• البحث السريع في الخدمات</li>
+                    <li>• التصفية حسب الفئات</li>
+                    <li>• إضافة الأماكن للمفضلة</li>
+                    <li>• عرض المواقع على الخريطة</li>
+                    <li>• إدارة الخدمات والفئات</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {currentView === 'add-service' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold mb-6 text-center">تقديم طلب إضافة خدمة جديدة للمراجعة</h2>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h3 className="text-lg font-semibold text-blue-800 mb-2">إرشادات تقديم الطلب:</h3>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>• املأ جميع البيانات المطلوبة بدقة وصحة</li>
+                <li>• سيتم مراجعة طلبك من قبل الإدارة قبل النشر</li>
+                <li>• تأكد من صحة رقم الهاتف وساعات العمل</li>
+                <li>• أضف وصفاً مفصلاً عن الخدمة ومميزاتها</li>
+                <li>📱 أضف رقم موبايلك لتلقي إشعار عند قبول الطلب</li>
+              </ul>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                const phone = formData.get('phone') as string;
+
+                if (!phone || phone.length !== 11 || !/^[0-9]{11}$/.test(phone)) {
+                  alert('يجب أن يكون رقم الهاتف 11 رقم بالضبط (أرقام فقط)');
+                  return;
+                }
+
+                const startTime = formData.get('startTime') as string;
+                const endTime = formData.get('endTime') as string;
+                const hours = `${startTime} - ${endTime}`;
+
+                const submitterMobile = formData.get('submitterMobile') as string;
+                const selectedCategory = formData.get('category') as string;
+                const customCategory = formData.get('customCategory') as string;
+
+                let finalCategory = selectedCategory;
+                let customCategoryData = null;
+
+                if (selectedCategory === 'other' && customCategory) {
+                  // إنشاء مفتاح فريد للفئة الجديدة
+                  const categoryKey = customCategory.toLowerCase().replace(/\s+/g, '_').replace(/[^\w_]/g, '');
+                  finalCategory = categoryKey;
+                  customCategoryData = {
+                    key: categoryKey,
+                    name: customCategory,
+                    icon: '🏪' // أيقونة افتراضية
+                  };
+                }
+
+                const newPlace = {
+                  name: formData.get('name') as string,
+                  category: finalCategory,
+                  address: formData.get('address') as string,
+                  phone: phone,
+                  hours: hours,
+                  description: formData.get('description') as string,
+                  image: uploadedImage || 'https://images.unsplash.com/photo-1555529902-de4e0750ea48?w=400',
+                  services: selectedServices,
+                  submitterMobile: submitterMobile && submitterMobile.length === 11 ? submitterMobile : null,
+                  customCategoryData: customCategoryData
+                };
+                handleSubmitServiceForReview(newPlace);
+                setShowCustomCategory(false);
+                setCustomCategoryName('');
+                setSelectedServices([]);
+                setCurrentService('');
+              }}>
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      اسم الخدمة *
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="مثال: مطعم الأسرة السعيدة"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      الفئة *
+                    </label>
+                    <select
+                      name="category"
+                      required
+                      onChange={(e) => {
+                        if (e.target.value === 'other') {
+                          setShowCustomCategory(true);
+                        } else {
+                          setShowCustomCategory(false);
+                          setCustomCategoryName('');
+                        }
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    >
+                      <option value="">اختر الفئة</option>
+                      {Object.entries(managedCategories).filter(([key]) => key !== 'all').map(([key, category]) => (
+                        <option key={key} value={key}>{category.name}</option>
+                      ))}
+                      <option value="other">أخرى (اكتب فئة جديدة)</option>
+                    </select>
+                    {showCustomCategory && (
+                      <div className="mt-3">
+                        <input
+                          type="text"
+                          name="customCategory"
+                          value={customCategoryName}
+                          onChange={(e) => setCustomCategoryName(e.target.value)}
+                          placeholder="اكتب اسم الفئة الجديدة"
+                          className="w-full px-3 py-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          required={showCustomCategory}
+                        />
+                        <p className="text-xs text-orange-600 mt-1">
+                          سيتم مراجعة الفئة الجديدة وإضافتها عند الموافقة على الطلب
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      العنوان *
+                    </label>
+                    <input
+                      type="text"
+                      name="address"
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="مثال: المجاورة الثالثة، مدينة 15 مايو"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      رقم هاتف الخدمة *
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      required
+                      pattern="[0-9]{11}"
+                      maxLength={11}
+                      inputMode="numeric"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="مثال: 01234567890"
+                      title="يجب أن يكون رقم الهاتف 11 رقم بالضبط"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      ساعات العمل *
+                    </label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">وقت الفتح</label>
+                        <input
+                          type="time"
+                          name="startTime"
+                          required
+                          defaultValue="09:00"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          placeholder="09:00"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">وقت الإغلاق</label>
+                        <input
+                          type="time"
+                          name="endTime"
+                          required
+                          defaultValue="22:00"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          placeholder="22:00"
+                        />
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      مثال: من 9:00 صباحاً إلى 10:00 مساءً
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      وصف الخدمة *
+                    </label>
+                    <textarea
+                      name="description"
+                      required
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="اكتب وصفاً مفصلاً عن الخدمة والمميزات التي تقدمها..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      الخدمات المتاحة
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={currentService}
+                        onChange={(e) => setCurrentService(e.target.value)}
+                        onKeyPress={handleServiceKeyPress}
+                        className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="اكتب اسم الخدمة واضغط إضافة"
+                      />
+                      <button
+                        type="button"
+                        onClick={addService}
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {selectedServices.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {selectedServices.map((service, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                          >
+                            {service}
+                            <button
+                              type="button"
+                              onClick={() => removeService(service)}
+                              className="text-blue-600 hover:text-blue-800 transition-colors"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <input
+                      type="hidden"
+                      name="services"
+                      value={selectedServices.join(', ')}
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      صورة الخدمة (اختياري)
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, false)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    />
+                    {uploadedImage && (
+                      <div className="mt-3">
+                        <p className="text-sm text-gray-600 mb-2">معاينة الصورة:</p>
+                        <img src={uploadedImage} alt="معاينة" className="w-32 h-32 object-cover rounded-lg border" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      رقم موبايلك (اختياري)
+                    </label>
+                    <input
+                      type="tel"
+                      name="submitterMobile"
+                      pattern="[0-9]{11}"
+                      maxLength={11}
+                      inputMode="numeric"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="مثال: 01234567890"
+                      title="لإرسال إشعار عند قبول الطلب"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      سنرسل لك رسالة نصية عند قبول ونشر طلبك
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-8 pt-6 border-t">
+                  <div className="flex gap-4">
+                    <button
+                      type="submit"
+                      className="flex-1 bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Plus className="w-5 h-5" />
+                      تقديم طلب إضافة الخدمة
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentView('search');
+                        setUploadedImage(null);
+                      }}
+                      className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      إلغاء
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
+        <div className="max-w-4xl mx-auto flex justify-around">
+          <button
+            onClick={() => setCurrentView('search')}
+            className={`flex flex-col items-center gap-1 ${
+              currentView === 'search' ? 'text-blue-500' : 'text-gray-500'
+            }`}
+          >
+            <Search className="w-6 h-6" />
+            <span className="text-xs">بحث وتصفح</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentView('add-service')}
+            className={`flex flex-col items-center gap-1 ${
+              currentView === 'add-service' ? 'text-green-500' : 'text-gray-500'
+            }`}
+          >
+            <Plus className="w-6 h-6" />
+            <span className="text-xs">إضافة خدمة</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentView('favorites')}
+            className={`flex flex-col items-center gap-1 ${
+              currentView === 'favorites' ? 'text-blue-500' : 'text-gray-500'
+            }`}
+          >
+            <Heart className="w-6 h-6" />
+            <span className="text-xs">المفضلات</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentView('map')}
+            className={`flex flex-col items-center gap-1 ${
+              currentView === 'map' ? 'text-blue-500' : 'text-gray-500'
+            }`}
+          >
+            <MapPin className="w-6 h-6" />
+            <span className="text-xs">خريطة الموقع</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentView('settings')}
+            className={`flex flex-col items-center gap-1 ${
+              currentView === 'settings' ? 'text-blue-500' : 'text-gray-500'
+            }`}
+          >
+            <Settings className="w-6 h-6" />
+            <span className="text-xs">الإعدادات</span>
+          </button>
+        </div>
+      </nav>
+
+      {showDetails && selectedPlace && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+              <h2 className="text-xl font-bold">{selectedPlace.name}</h2>
+              <button
+                onClick={() => setShowDetails(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-4">
+              <img
+                src={selectedPlace.image}
+                alt={selectedPlace.name}
+                className="w-full h-64 object-cover rounded-lg mb-4"
+              />
+
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold mb-2">الوصف</h3>
+                  <p className="text-gray-700">{selectedPlace.description}</p>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2">العنوان</h3>
+                  <div className="flex items-start gap-2">
+                    <MapPin className="w-5 h-5 text-gray-500 mt-0.5" />
+                    <p className="text-gray-700">{selectedPlace.address}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2">الهاتف</h3>
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-5 h-5 text-gray-500" />
+                    <a href={`tel:${selectedPlace.phone}`} className="text-blue-600 hover:underline">
+                      {selectedPlace.phone}
+                    </a>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2">ساعات العمل</h3>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-gray-500" />
+                    <p className="text-gray-700">{selectedPlace.hours}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2">الخدمات المتاحة</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedPlace.services.map((service: string, index: number) => (
+                      <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                        {service}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={() => handleDirection(selectedPlace.address)}
+                    className="flex-1 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2"
+                  >
+                    <Navigation className="w-5 h-5" />
+                    الاتجاهات
+                  </button>
+                  <a
+                    href={`tel:${selectedPlace.phone}`}
+                    className="flex-1 bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 flex items-center justify-center gap-2"
+                  >
+                    <Phone className="w-5 h-5" />
+                    اتصال
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* نموذج إضافة فئة جديدة */}
+      {showCategoryForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">إضافة فئة جديدة</h3>
+                <button
+                  onClick={() => setShowCategoryForm(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                const categoryData = {
+                  key: formData.get('key') as string,
+                  name: formData.get('name') as string,
+                  icon: formData.get('icon') as string
+                };
+                handleAddCategory(categoryData);
+              }}>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      مفتاح الفئة (بالإنجليزية)
+                    </label>
+                    <input
+                      type="text"
+                      name="key"
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="مثال: pharmacy"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      اسم الفئة
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="مثال: صيدليات"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      الأيقونة (إيموجي)
+                    </label>
+                    <input
+                      type="text"
+                      name="icon"
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="مثال: 💊"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 mt-6">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-purple-500 text-white py-2 px-4 rounded-md hover:bg-purple-600"
+                  >
+                    إضافة
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowCategoryForm(false)}
+                    className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400"
+                  >
+                    إلغاء
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* نموذج تعديل فئة */}
+      {editingCategory && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">تعديل فئة</h3>
+                <button
+                  onClick={() => setEditingCategory(null)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    اسم الفئة
+                  </label>
+                  <input
+                    type="text"
+                    value={editingCategory.name}
+                    onChange={(e) => setEditingCategory({...editingCategory, name: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    الأيقونة (إيموجي)
+                  </label>
+                  <input
+                    type="text"
+                    value={editingCategory.icon}
+                    onChange={(e) => setEditingCategory({...editingCategory, icon: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={handleSaveCategoryEdit}
+                  className="flex-1 bg-purple-500 text-white py-2 px-4 rounded-md hover:bg-purple-600"
+                >
+                  حفظ
+                </button>
+                <button
+                  onClick={() => setEditingCategory(null)}
+                  className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400"
+                >
+                  إلغاء
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* نموذج إضافة خدمة جديدة */}
+      {showAddForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+              <h3 className="text-xl font-bold">إضافة خدمة جديدة</h3>
+              <button
+                onClick={() => {
+                  setShowAddForm(false);
+                  setUploadedImage(null);
+                }}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target as HTMLFormElement);
+                const phone = formData.get('phone') as string;
+
+                if (!phone || phone.length !== 11 || !/^[0-9]{11}$/.test(phone)) {
+                  alert('يجب أن يكون رقم الهاتف 11 رقم بالضبط (أرقام فقط)');
+                  return;
+                }
+
+                const startTime = formData.get('startTime') as string;
+                const endTime = formData.get('endTime') as string;
+                const hours = `${startTime} - ${endTime}`;
+
+                const selectedCategory = formData.get('category') as string;
+                const adminCustomCategory = formData.get('adminCustomCategory') as string;
+
+                let finalCategory = selectedCategory;
+
+                // إذا تم اختيار فئة جديدة
+                if (selectedCategory === 'other' && adminCustomCategory) {
+                  const categoryKey = adminCustomCategory.toLowerCase().replace(/\s+/g, '_').replace(/[^\w_]/g, '');
+
+                  // إضافة الفئة الجديدة
+                  setManagedCategories(prev => ({
+                    ...prev,
+                    [categoryKey]: {
+                      name: adminCustomCategory,
+                      icon: '🏪',
+                      isVisible: true
+                    }
+                  }));
+
+                  finalCategory = categoryKey;
+                }
+
+                const newPlace = {
+                  name: formData.get('name') as string,
+                  category: finalCategory,
+                  address: formData.get('address') as string,
+                  phone: phone,
+                  hours: hours,
+                  description: formData.get('description') as string,
+                  image: uploadedImage || 'https://images.unsplash.com/photo-1555529902-de4e0750ea48?w=400',
+                  services: selectedServices
+                };
+                handleAddPlace(newPlace);
+                setShowEditCustomCategory(false);
+                setEditCustomCategoryName('');
+                setSelectedServices([]);
+                setCurrentService('');
+              }}>
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      اسم الخدمة
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      الفئة
+                    </label>
+                    <select
+                      name="category"
+                      required
+                      onChange={(e) => {
+                        if (e.target.value === 'other') {
+                          setShowEditCustomCategory(true);
+                        } else {
+                          setShowEditCustomCategory(false);
+                          setEditCustomCategoryName('');
+                        }
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    >
+                      <option value="">اختر الفئة</option>
+                      {Object.entries(managedCategories).filter(([key]) => key !== 'all').map(([key, category]) => (
+                        <option key={key} value={key}>{category.name}</option>
+                      ))}
+                      <option value="other">أخرى (إضافة فئة جديدة)</option>
+                    </select>
+                    {showEditCustomCategory && (
+                      <div className="mt-3">
+                        <input
+                          type="text"
+                          name="adminCustomCategory"
+                          value={editCustomCategoryName}
+                          onChange={(e) => setEditCustomCategoryName(e.target.value)}
+                          placeholder="اكتب اسم الفئة الجديدة"
+                          className="w-full px-3 py-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          required={showEditCustomCategory}
+                        />
+                        <p className="text-xs text-orange-600 mt-1">
+                          سيتم إضافة الفئة الجديدة فوراً عند الحفظ
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      العنوان
+                    </label>
+                    <input
+                      type="text"
+                      name="address"
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      رقم الهاتف
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      required
+                      pattern="[0-9]{11}"
+                      maxLength={11}
+                      inputMode="numeric"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="مثال: 01234567890"
+                      title="يجب أن يكون رقم الهاتف 11 رقم بالضبط"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      ساعات العمل
+                    </label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">وقت الفتح</label>
+                        <input
+                          type="time"
+                          name="startTime"
+                          required
+                          defaultValue="09:00"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          placeholder="09:00"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">وقت الإغلاق</label>
+                        <input
+                          type="time"
+                          name="endTime"
+                          required
+                          defaultValue="22:00"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          placeholder="22:00"
+                        />
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      مثال: من 9:00 صباحاً إلى 10:00 مساءً
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      الوصف
+                    </label>
+                    <textarea
+                      name="description"
+                      required
+                      rows={3}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      الخدمات المتاحة
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={currentService}
+                        onChange={(e) => setCurrentService(e.target.value)}
+                        onKeyPress={handleServiceKeyPress}
+                        className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="اكتب اسم الخدمة واضغط إضافة"
+                      />
+                      <button
+                        type="button"
+                        onClick={addService}
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {selectedServices.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {selectedServices.map((service, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                          >
+                            {service}
+                            <button
+                              type="button"
+                              onClick={() => removeService(service)}
+                              className="text-blue-600 hover:text-blue-800 transition-colors"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <input
+                      type="hidden"
+                      name="services"
+                      value={selectedServices.join(', ')}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      صورة الخدمة
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, false)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    />
+                    {uploadedImage && (
+                      <div className="mt-2">
+                        <img src={uploadedImage} alt="معاينة" className="w-32 h-32 object-cover rounded-lg" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex gap-3 mt-6">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                  >
+                    إضافة الخدمة
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddForm(false);
+                      setUploadedImage(null);
+                    }}
+                    className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400"
+                  >
+                    إلغاء
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* نموذج تعديل الخدمة */}
+      {editingPlace && (
+        <div className="modal">
+          <div className="modal-content">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                <div className="bg-blue-100 p-2 rounded-full">
+                  <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                مراجعة طلب الخدمة
+              </h3>
+
+              {/* أزرار التحكم المتقدمة */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowComparison(!showComparison)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
+                    showComparison ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                  }`}
+                  title="مقارنة التغييرات (Ctrl+D)"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                  </svg>
+                  مقارنة
+                </button>
+
+                <button
+                  onClick={() => setShowPreview(!showPreview)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
+                    showPreview ? 'bg-green-600 text-white' : 'bg-green-100 text-green-700 hover:bg-green-200'
+                  }`}
+                  title="معاينة النتيجة (Ctrl+P)"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                    <path d="M10 3C6 3 2.73 5.11 1.18 8.37a1 1 0 000 1.26C2.73 12.89 6 15 10 15s7.27-2.11 8.82-5.37a1 1 0 000-1.26C17.27 5.11 14 3 10 3z"/>
+                  </svg>
+                  معاينة
+                </button>
+              </div>
+              <div className="text-sm text-gray-500">
+                طلب مُقدم في: {new Date(editingPlace.submittedAt).toLocaleDateString('ar-EG')}
+              </div>
+            </div>
+
+            {/* شريط اختصارات لوحة المفاتيح */}
+            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-4 mb-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <kbd className="px-2 py-1 text-xs bg-white border border-gray-300 rounded shadow-sm">Ctrl+S</kbd>
+                  <span className="text-sm text-gray-600">حفظ سريع</span>
+                  <span className="text-gray-400">•</span>
+                  <kbd className="px-2 py-1 text-xs bg-white border border-gray-300 rounded shadow-sm">Ctrl+Enter</kbd>
+                  <span className="text-sm text-gray-600">موافقة</span>
+                  <span className="text-gray-400">•</span>
+                  <kbd className="px-2 py-1 text-xs bg-white border border-gray-300 rounded shadow-sm">ESC</kbd>
+                  <span className="text-sm text-gray-600">إلغاء</span>
+                </div>
+                <div className="text-xs text-indigo-600 font-medium">⌨️ اختصارات سريعة</div>
+              </div>
+            </div>
+
+            {/* ملخص سريع للطلب */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs text-blue-600 font-medium">الحالة</p>
+                    <p className="text-sm font-bold text-blue-800">قيد المراجعة</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs text-green-600 font-medium">الفئة</p>
+                    <p className="text-sm font-bold text-green-800">
+                      {editingPlace.customCategoryData?.name || managedCategories[editingPlace.category]?.name || 'غير محدد'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs text-purple-600 font-medium">المتقدم</p>
+                    <p className="text-sm font-bold text-purple-800">
+                      {editingPlace.applicantPhone ? `${editingPlace.applicantPhone.slice(0, 4)}****` : 'غير محدد'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* نظام المقارنة المتقدم */}
+            {showComparison && (
+              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-6 mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-bold text-yellow-800">مقارنة التغييرات</h4>
+                  <span className="text-xs bg-yellow-200 text-yellow-700 px-2 py-1 rounded-full">قبل/بعد</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                    <h5 className="font-semibold text-red-700 mb-3 flex items-center gap-2">
+                      <span>📥</span> البيانات الأصلية
+                    </h5>
+                    <div className="space-y-2 text-sm">
+                      <div><strong>الاسم:</strong> {originalData?.name || editingPlace.name}</div>
+                      <div><strong>الفئة:</strong> {originalData?.customCategoryData?.name || managedCategories[originalData?.category]?.name || 'غير محدد'}</div>
+                      <div><strong>العنوان:</strong> {originalData?.address || editingPlace.address}</div>
+                      <div><strong>الهاتف:</strong> {originalData?.phone || editingPlace.phone}</div>
+                    </div>
+                  </div>
+
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                    <h5 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
+                      <span>📤</span> البيانات المحدثة
+                    </h5>
+                    <div className="space-y-2 text-sm">
+                      <div className={editingPlace.name !== originalData?.name ? 'bg-green-200 p-1 rounded' : ''}>
+                        <strong>الاسم:</strong> {editingPlace.name}
+                      </div>
+                      <div className={editingPlace.category !== originalData?.category ? 'bg-green-200 p-1 rounded' : ''}>
+                        <strong>الفئة:</strong> {editingPlace.customCategoryData?.name || managedCategories[editingPlace.category]?.name}
+                      </div>
+                      <div className={editingPlace.address !== originalData?.address ? 'bg-green-200 p-1 rounded' : ''}>
+                        <strong>العنوان:</strong> {editingPlace.address}
+                      </div>
+                      <div className={editingPlace.phone !== originalData?.phone ? 'bg-green-200 p-1 rounded' : ''}>
+                        <strong>الهاتف:</strong> {editingPlace.phone}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* معاينة مباشرة */}
+            {showPreview && (
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-2xl p-6 mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                      <path d="M10 3C6 3 2.73 5.11 1.18 8.37a1 1 0 000 1.26C2.73 12.89 6 15 10 15s7.27-2.11 8.82-5.37a1 1 0 000-1.26C17.27 5.11 14 3 10 3z"/>
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-bold text-blue-800">معاينة كيف ستظهر للمستخدمين</h4>
+                  <span className="text-xs bg-blue-200 text-blue-700 px-2 py-1 rounded-full">Live Preview</span>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-lg p-4 border">
+                  <div className="flex items-start gap-4">
+                    <img
+                      src={editingPlace.image}
+                      alt={editingPlace.name}
+                      className="w-20 h-20 object-cover rounded-lg shadow-md"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-bold text-xl text-gray-800">{editingPlace.name}</h4>
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">
+                          {editingPlace.customCategoryData?.name || managedCategories[editingPlace.category]?.name}
+                        </span>
+                      </div>
+                      <div className="space-y-1 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"/>
+                          </svg>
+                          {editingPlace.address}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                          </svg>
+                          {editingPlace.phone}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 8V6a1 1 0 10-2 0v4.586L7.293 12.293a1 1 0 101.414 1.414L11 11.414V10z"/>
+                          </svg>
+                          {editingPlace.hours || 'غير محدد'}
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-700 mt-2">{editingPlace.description}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* نظام التحقق الذكي من البيانات */}
+            {(() => {
+              const validation = getDataValidation(editingPlace);
+              if (validation.issues.length > 0 || validation.suggestions.length > 0) {
+                return (
+                  <div className="bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-300 rounded-2xl p-6 mb-8">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
+                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                        </svg>
+                      </div>
+                      <h4 className="text-lg font-bold text-amber-800">تحليل ذكي للبيانات</h4>
+                      <span className="text-xs bg-amber-200 text-amber-700 px-2 py-1 rounded-full">AI Analysis</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {validation.issues.length > 0 && (
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                          <h5 className="font-semibold text-red-700 mb-3 flex items-center gap-2">
+                            <span>⚠️</span> مشاكل محتملة
+                          </h5>
+                          <ul className="space-y-1 text-sm text-red-600">
+                            {validation.issues.map((issue, index) => (
+                              <li key={index} className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+                                {issue}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {validation.suggestions.length > 0 && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                          <h5 className="font-semibold text-blue-700 mb-3 flex items-center gap-2">
+                            <span>💡</span> اقتراحات للتحسين
+                          </h5>
+                          <ul className="space-y-1 text-sm text-blue-600">
+                            {validation.suggestions.map((suggestion, index) => (
+                              <li key={index} className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                                {suggestion}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })()}
+
+            {/* قسم ملاحظات المراجعة */}
+            <div className="bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200 rounded-2xl p-6 mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-slate-500 rounded-full flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
+                  </svg>
+                </div>
+                <h4 className="text-lg font-bold text-slate-700">ملاحظات المراجعة</h4>
+                <span className="text-xs bg-slate-200 text-slate-700 px-2 py-1 rounded-full">اختياري</span>
+              </div>
+
+              <textarea
+                value={reviewNotes}
+                onChange={(e) => setReviewNotes(e.target.value)}
+                className="w-full p-4 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200 resize-none"
+                rows={3}
+                placeholder="اكتب أي ملاحظات أو تعليقات حول هذا الطلب... (سيتم حفظها في سجل المراجعة)"
+              />
+            </div>
+
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-gray-100 p-8 shadow-lg relative overflow-hidden">
+              {/* Background decoration */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-100/50 to-transparent rounded-bl-full"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-green-100/50 to-transparent rounded-tr-full"></div>
+              <div className="space-y-6">
+                {/* اسم الخدمة */}
+                <div className="group hover:bg-blue-50/30 p-4 rounded-xl transition-all duration-200 relative z-10">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                        <span>اسم الخدمة</span>
+                        {editingFields.name && <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">قيد التعديل</span>}
+                      </label>
+                      {editingFields.name ? (
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={editingPlace.name || ''}
+                            onChange={(e) => setEditingPlace({...editingPlace, name: e.target.value})}
+                            className="w-full p-4 border-2 border-blue-300 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200 text-lg font-medium shadow-sm"
+                            placeholder="أدخل اسم الخدمة"
+                            onBlur={() => setEditingFields({...editingFields, name: false})}
+                            autoFocus
+                          />
+                          <div className="absolute inset-y-0 left-3 flex items-center">
+                            <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">Enter</kbd>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border-2 border-transparent hover:border-gray-200 transition-all duration-200 hover:shadow-md">
+                          <span className="text-gray-800 font-semibold text-lg">{editingPlace.name}</span>
+                          <div className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            البيانات المدخلة من قِبل المتقدم
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setEditingFields({...editingFields, name: !editingFields.name})}
+                      className={`p-3 rounded-xl transition-all duration-200 ${
+                        editingFields.name
+                          ? 'bg-green-100 text-green-600 hover:bg-green-200'
+                          : 'bg-blue-100 text-blue-600 hover:bg-blue-200 group-hover:scale-110'
+                      }`}
+                      title={editingFields.name ? 'حفظ التعديل' : 'تعديل اسم الخدمة'}
+                    >
+                      {editingFields.name ? (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                        </svg>
+                      ) : (
+                        <Edit2 className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* الفئة */}
+                <div className="group hover:bg-green-50/30 p-4 rounded-xl transition-all duration-200 relative z-10">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">الفئة</label>
+                    {editingFields.category ? (
+                      <div>
+                        <select
+                          value={editingPlace.category || ''}
+                          onChange={(e) => {
+                            if (e.target.value === 'other') {
+                              setShowEditCustomCategory(true);
+                              setEditingPlace({...editingPlace, category: 'other'});
+                            } else {
+                              setShowEditCustomCategory(false);
+                              setEditCustomCategoryName('');
+                              setEditingPlace({...editingPlace, category: e.target.value});
+                            }
+                          }}
+                          className="w-full p-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                          onBlur={() => setEditingFields({...editingFields, category: false})}
+                        >
+                          <option value="">اختر الفئة</option>
+                          {Object.entries(managedCategories).map(([key, cat]) => (
+                            <option key={key} value={key}>
+                              {cat.icon} {cat.name}
+                            </option>
+                          ))}
+                          <option value="other">➕ أخرى (إضافة فئة جديدة)</option>
+                        </select>
+                        {showEditCustomCategory && (
+                          <div className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                            <input
+                              type="text"
+                              value={editCustomCategoryName}
+                              onChange={(e) => setEditCustomCategoryName(e.target.value)}
+                              placeholder="اكتب اسم الفئة الجديدة"
+                              className="w-full p-2 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                            />
+                            <p className="text-xs text-orange-700 mt-2 flex items-center gap-1">
+                              <span>💡</span>
+                              سيتم إضافة الفئة الجديدة عند حفظ التعديلات
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border hover:shadow-sm transition-all duration-200">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-800 font-medium">
+                            {editingPlace.customCategoryData ?
+                              `🏪 ${editingPlace.customCategoryData.name}` :
+                              `${managedCategories[editingPlace.category]?.icon || ''} ${managedCategories[editingPlace.category]?.name || editingPlace.category}`
+                            }
+                          </span>
+                          {editingPlace.customCategoryData && (
+                            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium">
+                              فئة جديدة
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                    <button
+                      onClick={() => setEditingFields({...editingFields, category: !editingFields.category})}
+                      className={`p-3 rounded-xl transition-all duration-200 ${editingFields.category ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-green-100 text-green-600 hover:bg-green-200 group-hover:scale-110'}`}
+                      title={editingFields.category ? 'حفظ التعديل' : 'تعديل الفئة'}
+                    >
+                      {editingFields.category ? (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                        </svg>
+                      ) : (
+                        <Edit2 className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* العنوان */}
+                <div className="group hover:bg-purple-50/30 p-4 rounded-xl transition-all duration-200 relative z-10">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">العنوان</label>
+                    {editingFields.address ? (
+                      <input
+                        type="text"
+                        value={editingPlace.address || ''}
+                        onChange={(e) => setEditingPlace({...editingPlace, address: e.target.value})}
+                        className="w-full p-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        placeholder="أدخل العنوان"
+                        onBlur={() => setEditingFields({...editingFields, address: false})}
+                        autoFocus
+                      />
+                    ) : (
+                      <div className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border hover:shadow-sm transition-all duration-200">
+                        <span className="text-gray-800 font-medium">{editingPlace.address}</span>
+                        <div className="text-xs text-gray-500 mt-1">📍 موقع الخدمة</div>
+                      </div>
+                    )}
+                  </div>
+                    <button
+                      onClick={() => setEditingFields({...editingFields, address: !editingFields.address})}
+                      className={`p-3 rounded-xl transition-all duration-200 ${editingFields.address ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-purple-100 text-purple-600 hover:bg-purple-200 group-hover:scale-110'}`}
+                      title={editingFields.address ? 'حفظ التعديل' : 'تعديل العنوان'}
+                    >
+                      {editingFields.address ? (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                        </svg>
+                      ) : (
+                        <Edit2 className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* رقم الهاتف */}
+                <div className="group hover:bg-orange-50/30 p-4 rounded-xl transition-all duration-200 relative z-10">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف</label>
+                    {editingFields.phone ? (
+                      <input
+                        type="tel"
+                        value={editingPlace.phone || ''}
+                        onChange={(e) => setEditingPlace({...editingPlace, phone: e.target.value})}
+                        className="w-full p-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        placeholder="مثال: 01234567890"
+                        onBlur={() => setEditingFields({...editingFields, phone: false})}
+                        autoFocus
+                      />
+                    ) : (
+                      <div className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border hover:shadow-sm transition-all duration-200">
+                        <span className="text-gray-800 font-medium">{editingPlace.phone}</span>
+                        <div className="text-xs text-gray-500 mt-1">📞 للتواصل مع الخدمة</div>
+                      </div>
+                    )}
+                  </div>
+                    <button
+                      onClick={() => setEditingFields({...editingFields, phone: !editingFields.phone})}
+                      className={`p-3 rounded-xl transition-all duration-200 ${editingFields.phone ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-orange-100 text-orange-600 hover:bg-orange-200 group-hover:scale-110'}`}
+                      title={editingFields.phone ? 'حفظ التعديل' : 'تعديل رقم الهاتف'}
+                    >
+                      {editingFields.phone ? (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                        </svg>
+                      ) : (
+                        <Edit2 className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* ساعات العمل */}
+                <div className="group hover:bg-indigo-50/30 p-4 rounded-xl transition-all duration-200 relative z-10">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 8V6a1 1 0 10-2 0v4.586L7.293 12.293a1 1 0 101.414 1.414L11 11.414V10z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">ساعات العمل</label>
+                    {editingFields.hours ? (
+                      <input
+                        type="text"
+                        value={editingPlace.hours || ''}
+                        onChange={(e) => setEditingPlace({...editingPlace, hours: e.target.value})}
+                        className="w-full p-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        placeholder="مثال: من 9 صباحاً إلى 10 مساءً"
+                        onBlur={() => setEditingFields({...editingFields, hours: false})}
+                        autoFocus
+                      />
+                    ) : (
+                      <div className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border hover:shadow-sm transition-all duration-200">
+                        <span className="text-gray-800 font-medium">{editingPlace.hours || 'غير محدد'}</span>
+                        <div className="text-xs text-gray-500 mt-1">⏰ أوقات الدوام</div>
+                      </div>
+                    )}
+                  </div>
+                    <button
+                      onClick={() => setEditingFields({...editingFields, hours: !editingFields.hours})}
+                      className={`p-3 rounded-xl transition-all duration-200 ${editingFields.hours ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200 group-hover:scale-110'}`}
+                      title={editingFields.hours ? 'حفظ التعديل' : 'تعديل ساعات العمل'}
+                    >
+                      {editingFields.hours ? (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                        </svg>
+                      ) : (
+                        <Edit2 className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* الوصف */}
+                <div className="group hover:bg-teal-50/30 p-4 rounded-xl transition-all duration-200 relative z-10">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 mt-1">
+                      <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4zM4 9a2 2 0 100 4h12a2 2 0 100-4H4zM4 15a2 2 0 100 4h6a2 2 0 100-4H4z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
+                    {editingFields.description ? (
+                      <textarea
+                        value={editingPlace.description || ''}
+                        onChange={(e) => setEditingPlace({...editingPlace, description: e.target.value})}
+                        className="w-full p-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 h-24 resize-none"
+                        placeholder="وصف مختصر للخدمة..."
+                        onBlur={() => setEditingFields({...editingFields, description: false})}
+                        autoFocus
+                      />
+                    ) : (
+                      <div className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border min-h-[80px] hover:shadow-sm transition-all duration-200">
+                        <span className="text-gray-800 font-medium">{editingPlace.description || 'لا يوجد وصف'}</span>
+                        <div className="text-xs text-gray-500 mt-2">📝 تفاصيل إضافية عن الخدمة</div>
+                      </div>
+                    )}
+                  </div>
+                    <button
+                      onClick={() => setEditingFields({...editingFields, description: !editingFields.description})}
+                      className={`mt-7 p-3 rounded-xl transition-all duration-200 ${editingFields.description ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-teal-100 text-teal-600 hover:bg-teal-200 group-hover:scale-110'}`}
+                      title={editingFields.description ? 'حفظ التعديل' : 'تعديل الوصف'}
+                    >
+                      {editingFields.description ? (
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                        </svg>
+                      ) : (
+                        <Edit2 className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* هاتف المتقدم */}
+                {editingPlace.applicantPhone && (
+                  <div className="group hover:bg-cyan-50/30 p-4 rounded-xl transition-all duration-200 relative z-10">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center">
+                          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                          <span>هاتف المتقدم</span>
+                          <span className="text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full">للتواصل المباشر</span>
+                        </label>
+                        <div className="p-3 bg-gradient-to-r from-cyan-50 to-cyan-100 rounded-lg border border-cyan-200 hover:shadow-sm transition-all duration-200">
+                          <span className="text-cyan-800 font-medium">{editingPlace.applicantPhone}</span>
+                          <div className="text-xs text-cyan-600 mt-1">📱 رقم مقدم الطلب</div>
+                        </div>
+                      </div>
+                      <div className="p-3 rounded-xl bg-cyan-100 text-cyan-600">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            {/* الأزرار */}
+            <div className="mt-8 pt-6 border-t-2 border-gradient-to-r from-blue-200 via-purple-200 to-blue-200 relative">
+              {/* Background decoration for buttons section */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-purple-50/30 to-green-50/30 rounded-2xl -z-10"></div>
+
+              <div className="text-center mb-8 relative z-10">
+                <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg mb-4">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
+                  ما هو قرارك بخصوص هذا الطلب؟
+                </div>
+                <p className="text-gray-600 font-medium">اختر أحد الخيارات التالية لمعالجة الطلب بعناية</p>
+                <div className="flex justify-center items-center gap-2 mt-3">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                </div>
+              </div>
+
+                {/* قبول الطلب */}
+                <div className="space-y-4 relative z-10">
+                  <div className="text-center mb-4">
+                    <h5 className="text-md font-bold text-green-700 mb-1 flex items-center justify-center gap-2">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                      </svg>
+                      خيارات القبول
+                    </h5>
+                    <p className="text-xs text-green-600">الموافقة على الطلب ونشر الخدمة</p>
+                  </div>
+                  <button
+                    data-action="quick-approve"
+                    onClick={() => {
+                      // قبول الطلب بدون تعديل
+                      let updatedPlace = {...editingPlace};
+
+                      if (editingPlace.customCategoryData) {
+                        setManagedCategories(prev => ({
+                          ...prev,
+                          [editingPlace.customCategoryData.key]: {
+                            name: editingPlace.customCategoryData.name,
+                            icon: editingPlace.customCategoryData.icon,
+                            isVisible: true
+                          }
+                        }));
+                      }
+
+                      updatedPlace.isPending = false;
+                      updatedPlace.isVisible = true;
+
+                      setManagedPlaces(prev => prev.map(p =>
+                        p.id === editingPlace.id ? updatedPlace : p
+                      ));
+
+                      if (editingPlace.applicantPhone) {
+                        sendSMSNotification(editingPlace.applicantPhone, editingPlace.name);
+                      }
+
+                      // حذف الإشعار المتعلق بهذا الطلب
+                      setNotifications(prev => prev.filter(n => n.serviceId !== editingPlace.id));
+
+                      setEditingPlace(null);
+                      setEditingFields({});
+                    }}
+                    className="w-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 text-white px-6 py-5 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] border-2 border-green-300 relative overflow-hidden group"
+                  >
+                    {/* Animated background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    <div className="relative z-10 bg-white bg-opacity-20 rounded-full p-3 shadow-lg">
+                      <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                      </svg>
+                    </div>
+                    <div className="text-right relative z-10">
+                      <div className="text-xl font-bold">✅ موافقة وقبول الطلب</div>
+                      <div className="text-sm opacity-90 mt-1">نشر الخدمة كما هي + إشعار SMS فوري</div>
+                      <div className="text-xs opacity-75 mt-1 flex items-center gap-1">
+                        <span>⚡</span>
+                        <span>إجراء سريع ومباشر</span>
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    data-action="save-with-edits"
+                    onClick={() => {
+                      // حفظ التعديلات
+                      let updatedPlace = {...editingPlace};
+
+                      // إذا تم اختيار فئة جديدة
+                      if (editingPlace.category === 'other' && editCustomCategoryName) {
+                        const categoryKey = editCustomCategoryName.toLowerCase().replace(/\s+/g, '_').replace(/[^\w_]/g, '');
+
+                        // إضافة الفئة الجديدة
+                        setManagedCategories(prev => ({
+                          ...prev,
+                          [categoryKey]: {
+                            name: editCustomCategoryName,
+                            icon: '🏪',
+                            isVisible: true
+                          }
+                        }));
+
+                        updatedPlace = {
+                          ...updatedPlace,
+                          category: categoryKey
+                        };
+                      }
+
+                      // قبول الطلب مع التعديلات
+                      updatedPlace.isPending = false;
+                      updatedPlace.isVisible = true;
+
+                      setManagedPlaces(prev => prev.map(p =>
+                        p.id === editingPlace.id ? updatedPlace : p
+                      ));
+
+                      // إرسال SMS للموافقة
+                      if (editingPlace.applicantPhone) {
+                        sendSMSNotification(editingPlace.applicantPhone, updatedPlace.name);
+                      }
+
+                      // حذف الإشعار المتعلق بهذا الطلب
+                      setNotifications(prev => prev.filter(n => n.serviceId !== editingPlace.id));
+
+                      setEditingPlace(null);
+                      setShowEditCustomCategory(false);
+                      setEditCustomCategoryName('');
+                      setEditingFields({});
+                      alert('تم قبول الطلب وحفظ التعديلات بنجاح!');
+                    }}
+                    className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 hover:from-blue-600 hover:via-blue-700 hover:to-indigo-700 text-white px-6 py-5 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] border-2 border-blue-300 relative overflow-hidden group"
+                  >
+                    {/* Animated background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-indigo-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    <div className="relative z-10 bg-white bg-opacity-20 rounded-full p-3 shadow-lg">
+                      <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z"/>
+                      </svg>
+                    </div>
+                    <div className="text-right relative z-10">
+                      <div className="text-xl font-bold">🔧 قبول مع التعديلات</div>
+                      <div className="text-sm opacity-90 mt-1">حفظ التعديلات ونشر الخدمة المحسّنة</div>
+                      <div className="text-xs opacity-75 mt-1 flex items-center gap-1">
+                        <span>⚙️</span>
+                        <span>تحسين وموافقة</span>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+
+                {/* رفض أو إلغاء */}
+                <div className="space-y-4 relative z-10 mt-8">
+                  <div className="text-center mb-4">
+                    <h5 className="text-md font-bold text-red-700 mb-1 flex items-center justify-center gap-2">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>
+                      </svg>
+                      خيارات الرفض والإلغاء
+                    </h5>
+                    <p className="text-xs text-red-600">رفض الطلب أو العودة للخلف</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setManagedPlaces(prev => prev.filter(p => p.id !== editingPlace.id));
+                      // حذف الإشعار المتعلق بهذا الطلب
+                      setNotifications(prev => prev.filter(n => n.serviceId !== editingPlace.id));
+                      setEditingPlace(null);
+                      setEditingFields({});
+                    }}
+                    className="w-full bg-gradient-to-r from-red-500 via-red-600 to-rose-600 hover:from-red-600 hover:via-red-700 hover:to-rose-700 text-white px-6 py-5 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] border-2 border-red-300 relative overflow-hidden group"
+                  >
+                    {/* Animated background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-400 via-rose-500 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    <div className="relative z-10 bg-white bg-opacity-20 rounded-full p-3 shadow-lg">
+                      <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>
+                      </svg>
+                    </div>
+                    <div className="text-right relative z-10">
+                      <div className="text-xl font-bold">❌ رفض الطلب</div>
+                      <div className="text-sm opacity-90 mt-1">حذف الطلب نهائياً من النظام</div>
+                      <div className="text-xs opacity-75 mt-1 flex items-center gap-1">
+                        <span>🗑️</span>
+                        <span>إجراء نهائي</span>
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setEditingPlace(null);
+                      setEditingFields({});
+                    }}
+                    className="w-full bg-gradient-to-r from-gray-400 via-gray-500 to-slate-500 hover:from-gray-500 hover:via-gray-600 hover:to-slate-600 text-white px-6 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.01] border-2 border-gray-300 relative overflow-hidden group"
+                  >
+                    {/* Animated background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-300 via-slate-400 to-gray-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    <div className="relative z-10 bg-white bg-opacity-20 rounded-full p-2 shadow-md">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z"/>
+                      </svg>
+                    </div>
+                    <div className="relative z-10">
+                      <div className="text-lg font-bold">↩️ إلغاء والعودة للخلف</div>
+                      <div className="text-sm opacity-75 mt-1">العودة بدون حفظ التغييرات</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* رسالة نجاح تقديم الطلب */}
+      {showSubmissionSuccess && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 animate-bounce">
+            <div className="bg-white text-green-500 rounded-full p-1">
+              <Save className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-semibold">تم تقديم طلبك بنجاح!</h3>
+              <p className="text-sm opacity-90">سيتم مراجعة الخدمة ونشرها قريباً</p>
+              <p className="text-xs opacity-75 mt-1">📱 سنرسل لك إشعار SMS عند الموافقة</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* زر فتح الشات */}
+      {!showChat && (
+        <button
+          onClick={() => setShowChat(true)}
+          className="fixed bottom-24 left-4 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition-colors z-40 animate-pulse"
+        >
+          <MessageCircle className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* نافذة الشات */}
+      {showChat &&
+        <div className={`fixed ${isChatMinimized ? 'bottom-4 left-4 w-80 h-16' : 'bottom-4 left-4 w-80 h-96'} bg-white rounded-lg shadow-2xl border z-50 flex flex-col transition-all duration-300`}>
+          {/* رأس الشات */}
+          <div className="bg-blue-500 text-white p-4 rounded-t-lg flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Bot className="w-5 h-5" />
+              <span className="font-semibold">المساعد الذكي</span>
+              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setIsChatMinimized(!isChatMinimized)}
+                className="p-1 hover:bg-blue-600 rounded"
+              >
+                {isChatMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
+              </button>
+              <button
+                onClick={() => setShowChat(false)}
+                className="p-1 hover:bg-blue-600 rounded"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {!isChatMinimized && (
+            <>
+              {/* منطقة الرسائل */}
+              <div ref={chatMessagesRef} className="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50">
+                {chatMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex items-start gap-2 ${message.isBot ? '' : 'flex-row-reverse'}`}
+                  >
+                    <div className={`p-2 rounded-full ${message.isBot ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600'}`}>
+                      {message.isBot ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
+                    </div>
+                    <div
+                      className={`max-w-64 p-3 rounded-lg text-sm ${
+                        message.isBot
+                          ? 'bg-white border text-gray-800'
+                          : 'bg-blue-500 text-white'
+                      }`}
+                      style={{ whiteSpace: 'pre-line' }}
+                    >
+                      {message.isBot ? renderMessageWithLinks(message.text) : message.text}
+                    </div>
+                  </div>
+                ))}
+
+                {isTyping && (
+                  <div className="flex items-start gap-2">
+                    <div className="p-2 rounded-full bg-blue-100 text-blue-600">
+                      <Bot className="w-4 h-4" />
+                    </div>
+                    <div className="bg-white border p-3 rounded-lg text-sm">
+                      <div className="flex gap-1">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* منطقة إدخال الرسائل */}
+              <div className="p-3 border-t bg-white rounded-b-lg">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    placeholder="اكتب رسالتك هنا..."
+                    className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    disabled={isTyping}
+                  />
+                  <button
+                    onClick={handleSendMessage}
+                    disabled={!chatInput.trim() || isTyping}
+                    className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Send className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="text-xs text-gray-500 mt-2 text-center">
+                  مدعوم بالذكاء الاصطناعي 🤖 • جرب: "أين أقرب مطعم؟"
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
