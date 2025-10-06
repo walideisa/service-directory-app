@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, ThumbsUp, Phone, Clock, Filter, Heart, Navigation, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2 } from 'lucide-react';
+import { PlaceForm } from './components/PlaceForm';
 import './App.css';
 
 const App = () => {
@@ -176,7 +177,7 @@ const App = () => {
 
   const handleEditPlace = (place: any) => {
     setEditingPlace({...place});
-    setEditUploadedImage(null);
+    setShowAddForm(true);
   };
 
   const handleSaveEdit = () => {
@@ -213,10 +214,27 @@ const App = () => {
     setEditCustomCategoryName('');
   };
 
-  const handleAddPlace = (newPlace: any) => {
-    const newId = Math.max(...managedPlaces.map(p => p.id)) + 1;
-    setManagedPlaces(prev => [...prev, { ...newPlace, id: newId, likes: 0, isVisible: true }]);
+  const handleFormSubmit = (formData: any) => {
+    if (editingPlace) {
+      // تحديث خدمة موجودة
+      setManagedPlaces(prev => prev.map(p =>
+        p.id === editingPlace.id ? { ...p, ...formData } : p
+      ));
+    } else {
+      // إضافة خدمة جديدة
+      const newId = Math.max(...managedPlaces.map(p => p.id)) + 1;
+      setManagedPlaces(prev => [...prev, { ...formData, id: newId, likes: 0, isVisible: true }]);
+    }
+
+    // إعادة تعيين النموذج
     setShowAddForm(false);
+    setEditingPlace(null);
+    setUploadedImage(null);
+  };
+
+  const handleFormClose = () => {
+    setShowAddForm(false);
+    setEditingPlace(null);
     setUploadedImage(null);
   };
 
@@ -1084,7 +1102,10 @@ ${markets.map(market => `• ${market.name}
                     <option value="pending">قيد المراجعة</option>
                   </select>
                   <button
-                    onClick={() => setShowAddForm(true)}
+                    onClick={() => {
+                      setEditingPlace(null);
+                      setShowAddForm(true);
+                    }}
                     className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600"
                   >
                     <Plus className="w-5 h-5" />
@@ -1904,8 +1925,19 @@ ${markets.map(market => `• ${market.name}
         </div>
       )}
 
-      {/* نموذج إضافة خدمة جديدة */}
-      {showAddForm && (
+      {/* نموذج إضافة/تعديل خدمة */}
+      <PlaceForm
+        isOpen={showAddForm}
+        onClose={handleFormClose}
+        onSubmit={handleFormSubmit}
+        editingPlace={editingPlace}
+        categories={managedCategories}
+        uploadedImage={uploadedImage}
+        setUploadedImage={setUploadedImage}
+      />
+
+      {/* Fallback - temp comment */}
+      {false && showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
@@ -2193,8 +2225,8 @@ ${markets.map(market => `• ${market.name}
         </div>
       )}
 
-      {/* نموذج تعديل خدمة */}
-      {editingPlace && (
+      {/* Removed - using unified PlaceForm */}
+      {false && editingPlace && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden">
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 flex justify-between items-center">
