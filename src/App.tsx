@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, ThumbsUp, Phone, Clock, Filter, Heart, Navigation, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2 } from 'lucide-react';
+import { Search, ThumbsUp, Phone, Clock, Filter, Heart, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2 } from 'lucide-react';
 import { PlaceForm } from './components/PlaceForm';
 import './App.css';
 
@@ -164,10 +164,6 @@ const App = () => {
     }));
   };
 
-  const handleDirection = (address: string) => {
-    const encodedAddress = encodeURIComponent(address);
-    window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
-  };
 
   const handleDeletePlace = (placeId: number) => {
     if (window.confirm('هل أنت متأكد من حذف هذه الخدمة؟')) {
@@ -735,12 +731,6 @@ ${markets.map(market => `• ${market.name}
           >
             <Phone className="w-4 h-4" />
           </a>
-          <button
-            onClick={() => handleDirection(place.address)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600"
-          >
-            <Navigation className="w-4 h-4" />
-          </button>
         </div>
       </div>
     </div>
@@ -821,37 +811,6 @@ ${markets.map(market => `• ${market.name}
           </div>
         )}
 
-        {currentView === 'map' && (
-          <div className="space-y-4">
-            <div className="text-center py-6">
-              <MapPin className="w-16 h-16 mx-auto text-blue-500 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">خريطة تفاعلية لمدينة 15 مايو</h3>
-              <p className="text-gray-500 mb-4">اختر أي مكان أو خدمة من القائمة أدناه لعرض موقعه التقريبي على خرائط جوجل</p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3">
-              {managedPlaces.filter(p => p.isVisible !== false).map(place => (
-                <div key={place.id} className="bg-white p-3 rounded-lg shadow-sm border">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="text-2xl">{categories[place.category]?.icon}</div>
-                      <div>
-                        <h4 className="font-semibold text-sm">{place.name}</h4>
-                        <p className="text-xs text-gray-500">{place.address}</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleDirection(place.address)}
-                      className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
-                    >
-                      عرض الموقع
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {currentView === 'settings' && settingsView === 'main' && (
           <div className="space-y-4">
@@ -1671,15 +1630,6 @@ ${markets.map(market => `• ${market.name}
             <span className="text-xs">المفضلات</span>
           </button>
 
-          <button
-            onClick={() => setCurrentView('map')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'map' ? 'text-blue-500' : 'text-gray-500'
-            }`}
-          >
-            <MapPin className="w-6 h-6" />
-            <span className="text-xs">خريطة الموقع</span>
-          </button>
 
           <button
             onClick={() => setCurrentView('settings')}
@@ -1757,13 +1707,6 @@ ${markets.map(market => `• ${market.name}
                 </div>
 
                 <div className="flex gap-3 pt-4">
-                  <button
-                    onClick={() => handleDirection(selectedPlace.address)}
-                    className="flex-1 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2"
-                  >
-                    <Navigation className="w-5 h-5" />
-                    الاتجاهات
-                  </button>
                   <a
                     href={`tel:${selectedPlace.phone}`}
                     className="flex-1 bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 flex items-center justify-center gap-2"
