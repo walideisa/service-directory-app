@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, ThumbsUp, Phone, Clock, Filter, Heart, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2, Calendar } from 'lucide-react';
+import { Search, MapPin, ThumbsUp, Phone, Clock, Filter, Heart, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2, Calendar, Minus } from 'lucide-react';
 import { PlaceForm } from './components/PlaceForm';
 import './App.css';
 
@@ -101,7 +101,52 @@ const App = () => {
         consultationFee: '200',
         availableDays: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'],
         startTime: '09:00',
-        endTime: '17:00'
+        endTime: '17:00',
+        maxConcurrentBookings: '1'
+      }
+    },
+    {
+      id: 8,
+      name: 'صالون روز للسيدات',
+      category: 'mall',
+      likes: 89,
+      address: 'المجاورة الأولى، مدينة 15 مايو',
+      phone: '01098765432',
+      hours: '10:00 ص - 8:00 م',
+      image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
+      services: ['قص وتصفيف', 'صبغة', 'عناية بالشعر', 'مكياج'],
+      description: 'صالون متخصص في تجميل السيدات مع إمكانية حجز المواعيد مسبقاً',
+      isVisible: true,
+      type: 'حجورات',
+      appointmentSettings: {
+        sessionDuration: '60',
+        consultationFee: '150',
+        availableDays: ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'],
+        startTime: '10:00',
+        endTime: '20:00',
+        maxConcurrentBookings: '3'
+      }
+    },
+    {
+      id: 9,
+      name: 'كيدز لاند - منطقة ألعاب الأطفال',
+      category: 'mall',
+      likes: 178,
+      address: 'المجاورة الثالثة، مدينة 15 مايو',
+      phone: '01123456789',
+      hours: '2:00 م - 10:00 م',
+      image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400',
+      services: ['ألعاب تفاعلية', 'حفلات أطفال', 'ورش تعليمية', 'مراقبة مؤهلة'],
+      description: 'منطقة ألعاب آمنة للأطفال مع إمكانية حجز جلسات لعب أو تنظيم حفلات',
+      isVisible: true,
+      type: 'حجورات',
+      appointmentSettings: {
+        sessionDuration: '90',
+        consultationFee: '80',
+        availableDays: ['الخميس', 'الجمعة', 'السبت', 'الأحد'],
+        startTime: '14:00',
+        endTime: '22:00',
+        maxConcurrentBookings: '10'
       }
     }
   ];
@@ -150,7 +195,8 @@ const App = () => {
     consultationFee: '',
     availableDays: [] as string[],
     startTime: '09:00',
-    endTime: '17:00'
+    endTime: '17:00',
+    maxConcurrentBookings: '1' // number of bookings allowed at the same time
   });
   const [showEditCustomCategory, setShowEditCustomCategory] = useState(false);
   const [editCustomCategoryName, setEditCustomCategoryName] = useState('');
@@ -176,6 +222,8 @@ const App = () => {
     patientAge: '',
     appointmentReason: ''
   });
+  const [selectedAppointments, setSelectedAppointments] = useState<Array<{date: string, timeSlot: string}>>([]);
+  const [showMultipleBookings, setShowMultipleBookings] = useState(false);
   const [isChatMinimized, setIsChatMinimized] = useState(false);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
 
@@ -357,16 +405,46 @@ const App = () => {
     return dates.slice(0, 7); // Show next 7 available dates
   };
 
+  // Multiple appointments functions
+  const addAppointmentToList = () => {
+    if (!selectedDate || !selectedTimeSlot) {
+      alert('يرجى اختيار التاريخ والوقت أولاً');
+      return;
+    }
+
+    // Check if this appointment already exists
+    const exists = selectedAppointments.some(
+      app => app.date === selectedDate && app.timeSlot === selectedTimeSlot
+    );
+
+    if (exists) {
+      alert('هذا الموعد مضاف بالفعل');
+      return;
+    }
+
+    setSelectedAppointments(prev => [...prev, { date: selectedDate, timeSlot: selectedTimeSlot }]);
+    setSelectedDate('');
+    setSelectedTimeSlot('');
+  };
+
+  const removeAppointmentFromList = (index: number) => {
+    setSelectedAppointments(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleAppointmentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedDate || !selectedTimeSlot) {
-      alert('يرجى اختيار التاريخ والوقت');
+    // Check if using multiple bookings or single booking
+    const appointmentsToBook = showMultipleBookings ? selectedAppointments :
+      (selectedDate && selectedTimeSlot ? [{ date: selectedDate, timeSlot: selectedTimeSlot }] : []);
+
+    if (appointmentsToBook.length === 0) {
+      alert('يرجى اختيار موعد واحد على الأقل');
       return;
     }
 
     if (!appointmentForm.patientName || !appointmentForm.patientPhone) {
-      alert('يرجى إدخال اسم المريض ورقم الهاتف');
+      alert('يرجى إدخال الاسم ورقم الهاتف');
       return;
     }
 
@@ -375,17 +453,30 @@ const App = () => {
       return;
     }
 
-    // Here you would typically save the appointment to a database
-    alert(`تم حجز الموعد بنجاح!
-التاريخ: ${selectedDate}
-الوقت: ${selectedTimeSlot}
-المريض: ${appointmentForm.patientName}
-سيتم التواصل معك على رقم: ${appointmentForm.patientPhone}`);
+    // Create appointment summary
+    const appointmentsList = appointmentsToBook.map(app =>
+      `📅 ${new Date(app.date).toLocaleDateString('ar-EG')} - ⏰ ${app.timeSlot}`
+    ).join('\n');
+
+    const totalCost = appointmentsToBook.length * parseInt(selectedPlace?.appointmentSettings?.consultationFee || '0');
+
+    // Here you would typically save the appointments to a database
+    alert(`تم حجز ${appointmentsToBook.length} موعد بنجاح!
+
+${appointmentsList}
+
+👤 الاسم: ${appointmentForm.patientName}
+📞 الهاتف: ${appointmentForm.patientPhone}
+💰 إجمالي التكلفة: ${totalCost} جنيه
+
+سيتم التواصل معك لتأكيد المواعيد`);
 
     // Reset form
     setShowAppointmentBooking(false);
+    setShowMultipleBookings(false);
     setSelectedDate('');
     setSelectedTimeSlot('');
+    setSelectedAppointments([]);
     setAppointmentForm({
       patientName: '',
       patientPhone: '',
@@ -1514,7 +1605,8 @@ ${markets.map(market => `• ${market.name}
                   consultationFee: '',
                   availableDays: [],
                   startTime: '09:00',
-                  endTime: '17:00'
+                  endTime: '17:00',
+                  maxConcurrentBookings: '1'
                 });
               }}>
                 <div className="space-y-6">
@@ -1779,13 +1871,13 @@ ${markets.map(market => `• ${market.name}
                   {selectedServiceType === 'حجورات' && (
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        إعدادات المواعيد
+                        إعدادات حجز المواعيد
                       </label>
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-blue-800 mb-2">
-                              مدة الجلسة (بالدقائق)
+                              مدة الموعد (بالدقائق)
                             </label>
                             <select
                               value={appointmentSettings.sessionDuration}
@@ -1796,11 +1888,13 @@ ${markets.map(market => `• ${market.name}
                               <option value="30">30 دقيقة</option>
                               <option value="45">45 دقيقة</option>
                               <option value="60">60 دقيقة</option>
+                              <option value="90">90 دقيقة</option>
+                              <option value="120">120 دقيقة</option>
                             </select>
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-blue-800 mb-2">
-                              سعر الكشف (جنيه)
+                              سعر الخدمة (جنيه)
                             </label>
                             <input
                               type="text"
@@ -1809,6 +1903,25 @@ ${markets.map(market => `• ${market.name}
                               className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               placeholder="مثال: 200"
                             />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-blue-800 mb-2">
+                              عدد المواعيد المتاحة
+                            </label>
+                            <select
+                              value={appointmentSettings.maxConcurrentBookings}
+                              onChange={(e) => setAppointmentSettings({...appointmentSettings, maxConcurrentBookings: e.target.value})}
+                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="1">موعد واحد</option>
+                              <option value="2">موعدان</option>
+                              <option value="3">3 مواعيد</option>
+                              <option value="4">4 مواعيد</option>
+                              <option value="5">5 مواعيد</option>
+                              <option value="10">10 مواعيد</option>
+                              <option value="15">15 موعد</option>
+                              <option value="20">20 موعد</option>
+                            </select>
                           </div>
                         </div>
 
@@ -2038,8 +2151,9 @@ ${markets.map(market => `• ${market.name}
                     <h3 className="font-semibold mb-2">حجز موعد</h3>
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <div className="mb-4">
-                        <p className="text-sm text-gray-600">رسوم الكشف: {selectedPlace.appointmentSettings.consultationFee} جنيه</p>
-                        <p className="text-sm text-gray-600">مدة الجلسة: {selectedPlace.appointmentSettings.sessionDuration} دقيقة</p>
+                        <p className="text-sm text-gray-600">سعر الخدمة: {selectedPlace.appointmentSettings.consultationFee} جنيه</p>
+                        <p className="text-sm text-gray-600">مدة الموعد: {selectedPlace.appointmentSettings.sessionDuration} دقيقة</p>
+                        <p className="text-sm text-gray-600">عدد المواعيد المتاحة: {selectedPlace.appointmentSettings.maxConcurrentBookings} في نفس الوقت</p>
                       </div>
 
                       {!showAppointmentBooking ? (
@@ -2052,6 +2166,33 @@ ${markets.map(market => `• ${market.name}
                         </button>
                       ) : (
                         <div className="space-y-4">
+                          {/* Multiple bookings toggle */}
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-gray-700">نوع الحجز</span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => setShowMultipleBookings(false)}
+                                className={`px-3 py-1 text-xs rounded-full ${
+                                  !showMultipleBookings
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                }`}
+                              >
+                                موعد واحد
+                              </button>
+                              <button
+                                onClick={() => setShowMultipleBookings(true)}
+                                className={`px-3 py-1 text-xs rounded-full ${
+                                  showMultipleBookings
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                }`}
+                              >
+                                مواعيد متعددة
+                              </button>
+                            </div>
+                          </div>
+
                           {/* Date selection */}
                           <div>
                             <label className="block text-sm font-medium text-gray-600 mb-2">اختر التاريخ</label>
@@ -2098,13 +2239,51 @@ ${markets.map(market => `• ${market.name}
                             </div>
                           )}
 
+                          {/* Add to list button for multiple bookings */}
+                          {showMultipleBookings && selectedDate && selectedTimeSlot && (
+                            <div className="text-center">
+                              <button
+                                onClick={addAppointmentToList}
+                                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center justify-center gap-2 mx-auto"
+                              >
+                                <Plus className="w-4 h-4" />
+                                إضافة إلى القائمة
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Selected appointments list */}
+                          {showMultipleBookings && selectedAppointments.length > 0 && (
+                            <div>
+                              <h4 className="font-medium text-gray-800 mb-2">المواعيد المحددة ({selectedAppointments.length})</h4>
+                              <div className="space-y-2 max-h-32 overflow-y-auto">
+                                {selectedAppointments.map((appointment, index) => (
+                                  <div key={index} className="flex items-center justify-between bg-blue-50 p-2 rounded-lg">
+                                    <span className="text-sm">
+                                      📅 {new Date(appointment.date).toLocaleDateString('ar-EG')} - ⏰ {appointment.timeSlot}
+                                    </span>
+                                    <button
+                                      onClick={() => removeAppointmentFromList(index)}
+                                      className="text-red-500 hover:text-red-700"
+                                    >
+                                      <Minus className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                              <p className="text-xs text-gray-500 mt-2">
+                                💰 إجمالي التكلفة: {selectedAppointments.length * parseInt(selectedPlace.appointmentSettings.consultationFee)} جنيه
+                              </p>
+                            </div>
+                          )}
+
                           {/* Patient information form */}
-                          {selectedDate && selectedTimeSlot && (
+                          {((showMultipleBookings && selectedAppointments.length > 0) || (!showMultipleBookings && selectedDate && selectedTimeSlot)) && (
                             <div className="space-y-3">
-                              <h4 className="font-medium text-gray-800">بيانات المريض</h4>
+                              <h4 className="font-medium text-gray-800">بيانات الحجز</h4>
                               <input
                                 type="text"
-                                placeholder="اسم المريض"
+                                placeholder="الاسم الكامل"
                                 value={appointmentForm.patientName}
                                 onChange={(e) => setAppointmentForm({...appointmentForm, patientName: e.target.value})}
                                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -2113,18 +2292,25 @@ ${markets.map(market => `• ${market.name}
                                 type="tel"
                                 placeholder="رقم الهاتف"
                                 value={appointmentForm.patientPhone}
-                                onChange={(e) => setAppointmentForm({...appointmentForm, patientPhone: e.target.value})}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 11);
+                                  setAppointmentForm({...appointmentForm, patientPhone: value});
+                                }}
+                                pattern="[0-9]{11}"
+                                maxLength={11}
+                                inputMode="numeric"
+                                title="يجب أن يكون رقم الهاتف 11 رقم بالضبط"
                                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               />
                               <input
                                 type="text"
-                                placeholder="العمر"
+                                placeholder="العمر (اختياري)"
                                 value={appointmentForm.patientAge}
                                 onChange={(e) => setAppointmentForm({...appointmentForm, patientAge: e.target.value})}
                                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               />
                               <textarea
-                                placeholder="سبب الزيارة (اختياري)"
+                                placeholder="تفاصيل إضافية (اختياري)"
                                 value={appointmentForm.appointmentReason}
                                 onChange={(e) => setAppointmentForm({...appointmentForm, appointmentReason: e.target.value})}
                                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -2137,13 +2323,18 @@ ${markets.map(market => `• ${market.name}
                                   disabled={!appointmentForm.patientName || !appointmentForm.patientPhone}
                                   className="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
                                 >
-                                  تأكيد الحجز
+                                  {showMultipleBookings
+                                    ? `تأكيد حجز ${selectedAppointments.length} مواعيد`
+                                    : 'تأكيد الحجز'
+                                  }
                                 </button>
                                 <button
                                   onClick={() => {
                                     setShowAppointmentBooking(false);
+                                    setShowMultipleBookings(false);
                                     setSelectedDate('');
                                     setSelectedTimeSlot('');
+                                    setSelectedAppointments([]);
                                     setAppointmentForm({
                                       patientName: '',
                                       patientPhone: '',

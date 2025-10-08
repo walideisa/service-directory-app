@@ -81,6 +81,16 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
   const [currentProduct, setCurrentProduct] = useState({ name: '', price: '', description: '' });
   const [selectedProducts, setSelectedProducts] = useState<Array<{name: string, price: string, description: string}>>([]);
 
+  // Appointment settings (for حجورات type)
+  const [appointmentSettings, setAppointmentSettings] = useState({
+    sessionDuration: '30',
+    consultationFee: '',
+    availableDays: [] as string[],
+    startTime: '09:00',
+    endTime: '17:00',
+    maxConcurrentBookings: '1'
+  });
+
   // Services functions
   const addService = () => {
     if (currentService.trim() && !selectedServices.includes(currentService.trim())) {
@@ -110,6 +120,16 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
 
   const removeProduct = (index: number) => {
     setSelectedProducts(selectedProducts.filter((_, i) => i !== index));
+  };
+
+  // Appointment functions
+  const toggleAvailableDay = (day: string) => {
+    setAppointmentSettings(prev => ({
+      ...prev,
+      availableDays: prev.availableDays.includes(day)
+        ? prev.availableDays.filter(d => d !== day)
+        : [...prev.availableDays, day]
+    }));
   };
 
   // Reset form when modal opens/closes
@@ -149,6 +169,14 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
         setSelectedServices([]);
         setSelectedProducts([]);
         setCurrentProduct({ name: '', price: '', description: '' });
+        setAppointmentSettings({
+          sessionDuration: '30',
+          consultationFee: '',
+          availableDays: [],
+          startTime: '09:00',
+          endTime: '17:00',
+          maxConcurrentBookings: '1'
+        });
       }
       setShowCustomCategory(false);
       setCustomCategoryName('');
@@ -244,6 +272,11 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
     // Add products if type is طلبات
     if (formData.type === 'طلبات') {
       finalFormData.products = selectedProducts;
+    }
+
+    // Add appointment settings if type is حجورات
+    if (formData.type === 'حجورات') {
+      finalFormData.appointmentSettings = appointmentSettings;
     }
 
     // Handle custom category
@@ -555,6 +588,111 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
                       ))}
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* إعدادات المواعيد - للحجورات فقط */}
+            {formData.type === 'حجورات' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-2">
+                  إعدادات حجز المواعيد
+                </label>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-blue-800 mb-2">
+                        مدة الموعد (بالدقائق)
+                      </label>
+                      <select
+                        value={appointmentSettings.sessionDuration}
+                        onChange={(e) => setAppointmentSettings({...appointmentSettings, sessionDuration: e.target.value})}
+                        className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="15">15 دقيقة</option>
+                        <option value="30">30 دقيقة</option>
+                        <option value="45">45 دقيقة</option>
+                        <option value="60">60 دقيقة</option>
+                        <option value="90">90 دقيقة</option>
+                        <option value="120">120 دقيقة</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-blue-800 mb-2">
+                        سعر الخدمة (جنيه)
+                      </label>
+                      <input
+                        type="text"
+                        value={appointmentSettings.consultationFee}
+                        onChange={(e) => setAppointmentSettings({...appointmentSettings, consultationFee: e.target.value})}
+                        className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="مثال: 200"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-blue-800 mb-2">
+                        عدد المواعيد المتاحة
+                      </label>
+                      <select
+                        value={appointmentSettings.maxConcurrentBookings}
+                        onChange={(e) => setAppointmentSettings({...appointmentSettings, maxConcurrentBookings: e.target.value})}
+                        className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="1">موعد واحد</option>
+                        <option value="2">موعدان</option>
+                        <option value="3">3 مواعيد</option>
+                        <option value="4">4 مواعيد</option>
+                        <option value="5">5 مواعيد</option>
+                        <option value="10">10 مواعيد</option>
+                        <option value="15">15 موعد</option>
+                        <option value="20">20 موعد</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-blue-800 mb-2">
+                      الأيام المتاحة للحجز
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      {['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'].map((day) => (
+                        <label key={day} className="flex items-center space-x-2 space-x-reverse">
+                          <input
+                            type="checkbox"
+                            checked={appointmentSettings.availableDays.includes(day)}
+                            onChange={() => toggleAvailableDay(day)}
+                            className="rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-blue-800">{day}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-blue-800 mb-2">
+                        بداية العمل
+                      </label>
+                      <input
+                        type="time"
+                        value={appointmentSettings.startTime}
+                        onChange={(e) => setAppointmentSettings({...appointmentSettings, startTime: e.target.value})}
+                        className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-blue-800 mb-2">
+                        نهاية العمل
+                      </label>
+                      <input
+                        type="time"
+                        value={appointmentSettings.endTime}
+                        onChange={(e) => setAppointmentSettings({...appointmentSettings, endTime: e.target.value})}
+                        className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
