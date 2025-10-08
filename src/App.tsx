@@ -175,6 +175,46 @@ const App = () => {
   const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [settingsView, setSettingsView] = useState('main');
+
+  // Shopping cart and orders state (for طلبات services)
+  const [cart, setCart] = useState<Array<{
+    productId: string,
+    productName: string,
+    sizeIndex: number,
+    sizeName: string,
+    price: number,
+    quantity: number,
+    category: string
+  }>>([]);
+  const [showCart, setShowCart] = useState(false);
+  const [selectedProductCategory, setSelectedProductCategory] = useState('all');
+  const [orderForm, setOrderForm] = useState({
+    customerName: '',
+    customerPhone: '',
+    customerAddress: '',
+    notes: ''
+  });
+
+  // Market management state
+  const [showMarketManagement, setShowMarketManagement] = useState(false);
+  const [marketManagementTab, setMarketManagementTab] = useState('products'); // products, orders
+  const [receivedOrders, setReceivedOrders] = useState<Array<{
+    id: string,
+    customerName: string,
+    customerPhone: string,
+    customerAddress: string,
+    notes: string,
+    items: Array<{
+      productName: string,
+      sizeName: string,
+      price: number,
+      quantity: number
+    }>,
+    total: number,
+    status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered',
+    timestamp: Date,
+    businessName: string
+  }>>([]);
   const [serviceFilterCategory, setServiceFilterCategory] = useState('all');
   const [serviceFilterStatus, setServiceFilterStatus] = useState('all');
   const [serviceSearchTerm, setServiceSearchTerm] = useState('');
@@ -186,8 +226,153 @@ const App = () => {
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategoryName, setCustomCategoryName] = useState('');
   const [selectedServiceType, setSelectedServiceType] = useState('حجورات');
-  const [currentProduct, setCurrentProduct] = useState({ name: '', price: '', description: '' });
-  const [selectedProducts, setSelectedProducts] = useState<Array<{name: string, price: string, description: string}>>([]);
+  // Product categories management (global with business association)
+  const [allProductCategories, setAllProductCategories] = useState<Array<{id: string, name: string, icon?: string, businessId?: string}>>([
+    { id: '1', name: 'مشروبات', icon: '🥤' },
+    { id: '2', name: 'أطعمة', icon: '🍽️' },
+    { id: '3', name: 'حلويات', icon: '🍰' },
+    { id: '4', name: 'ألعاب', icon: '🎮' },
+    { id: '5', name: 'إكسسوارات', icon: '🎯' },
+    { id: '6', name: 'ملابس', icon: '👕' },
+    { id: '7', name: 'أحذية', icon: '👟' },
+    { id: '8', name: 'أخرى', icon: '📦' }
+  ]);
+
+  // Get categories for current business
+  const productCategories = selectedPlace
+    ? allProductCategories.filter(cat => !cat.businessId || cat.businessId === selectedPlace.name)
+    : allProductCategories;
+  const [newCategoryName, setNewCategoryName] = useState('');
+
+  // Product management with enhanced structure
+  const [currentProduct, setCurrentProduct] = useState({
+    name: '',
+    price: '',
+    description: '',
+    category: '',
+    sizes: [{ name: '', price: '' }],
+    image: ''
+  });
+  // All products with business association
+  const [allProducts, setAllProducts] = useState<Array<{
+    id?: string,
+    name: string,
+    price: string,
+    description: string,
+    category: string,
+    sizes: Array<{name: string, price: string}>,
+    image?: string,
+    businessId: string
+  }>>([
+    // FOX GAME Products
+    {
+      id: 'fg1',
+      name: 'PlayStation 5',
+      price: '15000',
+      description: 'أحدث إصدار من بلايستيشن مع ألعاب مجانية',
+      category: 'ألعاب',
+      sizes: [
+        { name: 'جهاز فقط', price: '15000' },
+        { name: 'جهاز + يد إضافية', price: '16500' },
+        { name: 'جهاز + 3 ألعاب', price: '17000' }
+      ],
+      image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=300',
+      businessId: 'FOX GAME'
+    },
+    {
+      id: 'fg2',
+      name: 'يد PlayStation',
+      price: '1200',
+      description: 'يد تحكم أصلية للبلايستيشن مع ضمان',
+      category: 'إكسسوارات',
+      sizes: [
+        { name: 'أبيض', price: '1200' },
+        { name: 'أسود', price: '1200' },
+        { name: 'أزرق', price: '1300' }
+      ],
+      image: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=300',
+      businessId: 'FOX GAME'
+    },
+    {
+      id: 'fg3',
+      name: 'FIFA 2024',
+      price: '800',
+      description: 'أحدث إصدار من لعبة فيفا الشهيرة',
+      category: 'ألعاب',
+      sizes: [
+        { name: 'PS5', price: '800' },
+        { name: 'PS4', price: '600' },
+        { name: 'PC', price: '750' }
+      ],
+      image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=300',
+      businessId: 'FOX GAME'
+    },
+    // Salla Market Products
+    {
+      id: 'sm1',
+      name: 'تيشيرت قطني',
+      price: '150',
+      description: 'تيشيرت قطني عالي الجودة بألوان متنوعة',
+      category: 'ملابس',
+      sizes: [
+        { name: 'صغير', price: '150' },
+        { name: 'متوسط', price: '150' },
+        { name: 'كبير', price: '170' },
+        { name: 'كبير جداً', price: '190' }
+      ],
+      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300',
+      businessId: 'Salla market'
+    },
+    {
+      id: 'sm2',
+      name: 'جينز رجالي',
+      price: '300',
+      description: 'بنطلون جينز رجالي عالي الجودة',
+      category: 'ملابس',
+      sizes: [
+        { name: '30', price: '300' },
+        { name: '32', price: '300' },
+        { name: '34', price: '320' },
+        { name: '36', price: '340' }
+      ],
+      image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=300',
+      businessId: 'Salla market'
+    },
+    {
+      id: 'sm3',
+      name: 'حقيبة يد نسائية',
+      price: '250',
+      description: 'حقيبة أنيقة للاستخدام اليومي',
+      category: 'إكسسوارات',
+      sizes: [
+        { name: 'صغيرة', price: '250' },
+        { name: 'متوسطة', price: '280' },
+        { name: 'كبيرة', price: '320' }
+      ],
+      image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300',
+      businessId: 'Salla market'
+    },
+    {
+      id: 'sm4',
+      name: 'حذاء رياضي',
+      price: '400',
+      description: 'حذاء رياضي مريح للجري والأنشطة اليومية',
+      category: 'أحذية',
+      sizes: [
+        { name: '38', price: '400' },
+        { name: '40', price: '400' },
+        { name: '42', price: '420' },
+        { name: '44', price: '440' }
+      ],
+      image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300',
+      businessId: 'Salla market'
+    }
+  ]);
+
+  // Get products for current business
+  const selectedProducts = selectedPlace
+    ? allProducts.filter(product => product.businessId === selectedPlace.name)
+    : [];
 
   // Appointments management (for حجورات type)
   const [appointmentSettings, setAppointmentSettings] = useState({
@@ -270,7 +455,7 @@ const App = () => {
 
   const handleSaveEdit = () => {
     if (!editingPlace.phone || editingPlace.phone.length !== 11 || !/^[0-9]{11}$/.test(editingPlace.phone)) {
-      alert('يجب أن يكون رقم الهاتف 11 رقم بالضبط (أرقام فقط)');
+      alert('يجب أن يكون رقم الهاتف صحيح (أرقام فقط)');
       return;
     }
 
@@ -337,15 +522,221 @@ const App = () => {
     setSelectedServices(selectedServices.filter(service => service !== serviceToRemove));
   };
 
-  const addProduct = () => {
-    if (currentProduct.name.trim() && currentProduct.price.trim()) {
-      setSelectedProducts([...selectedProducts, { ...currentProduct }]);
-      setCurrentProduct({ name: '', price: '', description: '' });
+  // Product category functions
+  const addProductCategory = () => {
+    if (newCategoryName.trim() && selectedPlace) {
+      const newCategory = {
+        id: Date.now().toString(),
+        name: newCategoryName.trim(),
+        icon: '📦',
+        businessId: selectedPlace.name
+      };
+      setAllProductCategories([...allProductCategories, newCategory]);
+      setNewCategoryName('');
     }
   };
 
-  const removeProduct = (index: number) => {
-    setSelectedProducts(selectedProducts.filter((_, i) => i !== index));
+  const removeProductCategory = (categoryId: string) => {
+    setAllProductCategories(allProductCategories.filter(cat => cat.id !== categoryId));
+    // Remove products from deleted category
+    setAllProducts(allProducts.filter(product => product.category !== categoryId));
+  };
+
+  // Product management functions
+  const addSizeToCurrentProduct = () => {
+    setCurrentProduct({
+      ...currentProduct,
+      sizes: [...currentProduct.sizes, { name: '', price: '' }]
+    });
+  };
+
+  const removeSizeFromCurrentProduct = (index: number) => {
+    const newSizes = currentProduct.sizes.filter((_, i) => i !== index);
+    setCurrentProduct({
+      ...currentProduct,
+      sizes: newSizes.length > 0 ? newSizes : [{ name: '', price: '' }]
+    });
+  };
+
+  const updateProductSize = (index: number, field: 'name' | 'price', value: string) => {
+    const newSizes = [...currentProduct.sizes];
+    newSizes[index][field] = value;
+    setCurrentProduct({
+      ...currentProduct,
+      sizes: newSizes
+    });
+  };
+
+  const addProduct = () => {
+    if (currentProduct.name.trim() && currentProduct.category && selectedPlace &&
+        currentProduct.sizes.some(size => size.name.trim() && size.price.trim())) {
+      const newProduct = {
+        ...currentProduct,
+        id: Date.now().toString(),
+        businessId: selectedPlace.name,
+        sizes: currentProduct.sizes.filter(size => size.name.trim() && size.price.trim())
+      };
+      setAllProducts([...allProducts, newProduct]);
+      setCurrentProduct({
+        name: '',
+        price: '',
+        description: '',
+        category: '',
+        sizes: [{ name: '', price: '' }],
+        image: ''
+      });
+    }
+  };
+
+  const removeProduct = (productId: string) => {
+    setAllProducts(allProducts.filter(product => product.id !== productId));
+  };
+
+  // Shopping cart functions (for طلبات services)
+  const addToCart = (productId: string, productName: string, sizeIndex: number, sizeName: string, price: number, category: string) => {
+    const existingItem = cart.find(item =>
+      item.productId === productId && item.sizeIndex === sizeIndex
+    );
+
+    if (existingItem) {
+      setCart(cart.map(item =>
+        item.productId === productId && item.sizeIndex === sizeIndex
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
+    } else {
+      setCart([...cart, {
+        productId,
+        productName,
+        sizeIndex,
+        sizeName,
+        price,
+        quantity: 1,
+        category
+      }]);
+    }
+  };
+
+  const removeFromCart = (productId: string, sizeIndex: number) => {
+    setCart(cart.filter(item => !(item.productId === productId && item.sizeIndex === sizeIndex)));
+  };
+
+  const updateCartQuantity = (productId: string, sizeIndex: number, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(productId, sizeIndex);
+    } else {
+      setCart(cart.map(item =>
+        item.productId === productId && item.sizeIndex === sizeIndex
+          ? { ...item, quantity }
+          : item
+      ));
+    }
+  };
+
+  const getTotalPrice = () => {
+    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const submitOrder = () => {
+    if (!orderForm.customerName || !orderForm.customerPhone) {
+      alert('يرجى ملء البيانات المطلوبة');
+      return;
+    }
+
+    if (cart.length === 0) {
+      alert('السلة فارغة');
+      return;
+    }
+
+    // Create order summary
+    const orderSummary = cart.map(item =>
+      `${item.productName} (${item.sizeName}) - ${item.quantity} × ${item.price} جنيه = ${item.quantity * item.price} جنيه`
+    ).join('\n');
+
+    const orderMessage = `
+طلب جديد من ${selectedPlace.name}
+👤 العميل: ${orderForm.customerName}
+📱 الهاتف: ${orderForm.customerPhone}
+📍 العنوان: ${orderForm.customerAddress || 'غير محدد'}
+📝 ملاحظات: ${orderForm.notes || 'لا توجد'}
+
+🛍️ المنتجات:
+${orderSummary}
+
+💰 الإجمالي: ${getTotalPrice()} جنيه
+    `;
+
+    // Save order to receivedOrders
+    const newOrder = {
+      id: Date.now().toString(),
+      customerName: orderForm.customerName,
+      customerPhone: orderForm.customerPhone,
+      customerAddress: orderForm.customerAddress || '',
+      notes: orderForm.notes || '',
+      items: cart.map(item => ({
+        productName: item.productName,
+        sizeName: item.sizeName,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      total: getTotalPrice(),
+      status: 'pending' as const,
+      timestamp: new Date(),
+      businessName: selectedPlace.name
+    };
+
+    setReceivedOrders(prev => [newOrder, ...prev]);
+
+    alert(`تم إرسال الطلب بنجاح!\n\n${orderMessage}`);
+
+    // Clear cart and form
+    clearCart();
+    setOrderForm({
+      customerName: '',
+      customerPhone: '',
+      customerAddress: '',
+      notes: ''
+    });
+    setShowCart(false);
+  };
+
+  // Order management functions
+  const updateOrderStatus = (orderId: string, newStatus: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered') => {
+    setReceivedOrders(prev =>
+      prev.map(order =>
+        order.id === orderId ? { ...order, status: newStatus } : order
+      )
+    );
+  };
+
+  const deleteOrder = (orderId: string) => {
+    setReceivedOrders(prev => prev.filter(order => order.id !== orderId));
+  };
+
+  const getOrderStatusText = (status: string) => {
+    const statusMap = {
+      pending: 'في الانتظار',
+      confirmed: 'مؤكد',
+      preparing: 'قيد التحضير',
+      ready: 'جاهز',
+      delivered: 'تم التسليم'
+    };
+    return statusMap[status as keyof typeof statusMap] || status;
+  };
+
+  const getOrderStatusColor = (status: string) => {
+    const colorMap = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      confirmed: 'bg-blue-100 text-blue-800',
+      preparing: 'bg-orange-100 text-orange-800',
+      ready: 'bg-green-100 text-green-800',
+      delivered: 'bg-gray-100 text-gray-800'
+    };
+    return colorMap[status as keyof typeof colorMap] || 'bg-gray-100 text-gray-800';
   };
 
   // Appointments functions
@@ -449,7 +840,7 @@ const App = () => {
     }
 
     if (appointmentForm.patientPhone.length !== 11) {
-      alert('يجب أن يكون رقم الهاتف 11 رقم');
+      alert('يجب أن يكون رقم الهاتف صحيح');
       return;
     }
 
@@ -964,6 +1355,19 @@ ${markets.map(market => `• ${market.name}
           >
             عرض التفاصيل
           </button>
+          {place.type === 'طلبات' && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPlace(place);
+                setShowMarketManagement(true);
+              }}
+              className="bg-orange-500 text-white px-4 py-2 rounded-md text-sm hover:bg-orange-600 flex items-center justify-center"
+              title="إدارة المتجر"
+            >
+              🛍️
+            </button>
+          )}
           <a
             href={`tel:${place.phone.replace(/[\s-]/g, '')}`}
             onClick={(e) => e.stopPropagation()}
@@ -999,6 +1403,135 @@ ${markets.map(market => `• ${market.name}
       <div className="max-w-4xl mx-auto p-4 pb-20">
         {currentView === 'search' && (
           <>
+            {/* Trending Services Section */}
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="text-2xl">🔥</div>
+                <h2 className="text-xl font-bold text-gray-800">تريند الآن</h2>
+                <div className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">جديد</div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <div className="flex gap-4 pb-2">
+                  {managedPlaces
+                    .filter(place => place.isVisible !== false)
+                    .sort((a, b) => {
+                      // Sort by popularity (favorites count) and recent activity
+                      const aPopularity = favorites.filter(fav => fav === a.id).length;
+                      const bPopularity = favorites.filter(fav => fav === b.id).length;
+                      return bPopularity - aPopularity;
+                    })
+                    .slice(0, 5) // Show only top 5 trending
+                    .map(place => (
+                      <div
+                        key={place.id}
+                        onClick={() => {
+                          setSelectedPlace(place);
+                          setShowPlaceDetails(true);
+                        }}
+                        className="flex-shrink-0 w-64 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
+                      >
+                        <div className="flex items-center gap-3 mb-2">
+                          <img
+                            src={place.image}
+                            alt={place.name}
+                            className="w-12 h-12 rounded-full object-cover border-2 border-white"
+                          />
+                          <div className="flex-1">
+                            <h3 className="font-bold text-lg truncate">{place.name}</h3>
+                            <p className="text-sm opacity-90 truncate">{categories[place.category]?.name}</p>
+                          </div>
+                          <div className="text-xl">🔥</div>
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="opacity-90">⭐ {(Math.random() * 2 + 3).toFixed(1)}</span>
+                          <span className="bg-white/20 px-2 py-1 rounded-full">
+                            {favorites.filter(fav => fav === place.id).length || Math.floor(Math.random() * 50) + 10} متابع
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Top Brands Section */}
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="text-2xl">⭐</div>
+                <h2 className="text-xl font-bold text-gray-800">أكبر البراندات</h2>
+                <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs">الأكثر طلباً</div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <div className="flex gap-4 pb-2">
+                  {allProducts
+                    .filter(product => product.businessId) // Only products with business
+                    .sort((a, b) => {
+                      // Sort by popularity and price
+                      const aPopularity = Math.random() * 100; // In real app, this would be order count
+                      const bPopularity = Math.random() * 100;
+                      return bPopularity - aPopularity;
+                    })
+                    .slice(0, 6) // Show only top 6 popular products
+                    .map((product, index) => (
+                      <div
+                        key={product.id || index}
+                        className="flex-shrink-0 w-56 bg-white rounded-xl shadow-md hover:shadow-lg transition-all transform hover:scale-105 cursor-pointer border"
+                      >
+                        <div className="relative">
+                          {product.image && (
+                            <img
+                              src={product.image}
+                              alt={product.name}
+                              className="w-full h-32 object-cover rounded-t-xl"
+                            />
+                          )}
+                          <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                            #{index + 1}
+                          </div>
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-bold text-lg mb-1 truncate">{product.name}</h3>
+                          <p className="text-sm text-gray-500 mb-2 truncate">{product.businessId}</p>
+                          {product.description && (
+                            <p className="text-xs text-gray-600 mb-2 line-clamp-2">{product.description}</p>
+                          )}
+                          <div className="space-y-1">
+                            {product.sizes.slice(0, 2).map((size, sizeIndex) => (
+                              <div key={sizeIndex} className="flex justify-between items-center text-sm">
+                                <span className="text-gray-700">{size.name}</span>
+                                <span className="text-green-600 font-bold">{size.price} ج</span>
+                              </div>
+                            ))}
+                            {product.sizes.length > 2 && (
+                              <div className="text-xs text-gray-500">+{product.sizes.length - 2} أحجام أخرى</div>
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between mt-3 pt-2 border-t">
+                            <div className="flex items-center gap-1">
+                              <span className="text-yellow-500">⭐</span>
+                              <span className="text-sm font-medium">{(Math.random() * 2 + 3).toFixed(1)}</span>
+                            </div>
+                            <span className="text-xs text-gray-500">
+                              {Math.floor(Math.random() * 100) + 20}+ طلب
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {allProducts.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <div className="text-4xl mb-2">📦</div>
+                  <p>لا توجد منتجات متاحة حتى الآن</p>
+                  <p className="text-sm">انتظر حتى يقوم أصحاب المتاجر بإضافة منتجاتهم</p>
+                </div>
+              )}
+            </div>
+
             <div className="mb-6 overflow-x-auto">
               <div className="flex gap-2 pb-2">
                 {Object.entries(categories).filter(([key, category]) =>
@@ -1051,6 +1584,62 @@ ${markets.map(market => `• ${market.name}
           </div>
         )}
 
+        {currentView === 'my-stores' && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold mb-4">🛍️ متاجري</h2>
+            {(() => {
+              const myStores = managedPlaces.filter(place => place.type === 'طلبات');
+              return myStores.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">🛍️</div>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">لا توجد متاجر حتى الآن</h3>
+                  <p className="text-gray-500 mb-4">أضف متجرك الأول من خلال "إضافة خدمة" واختر نوع "طلبات"</p>
+                  <button
+                    onClick={() => setCurrentView('add-service')}
+                    className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors"
+                  >
+                    إضافة متجر جديد
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {myStores.map(store => (
+                    <div key={store.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                      <img
+                        src={store.image}
+                        alt={store.name}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="p-4">
+                        <h3 className="font-bold text-lg mb-2">{store.name}</h3>
+                        <p className="text-sm text-gray-600 mb-2">{store.description}</p>
+                        <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
+                          <MapPin className="w-4 h-4" />
+                          <span>{store.address}</span>
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                          <span>📦 {allProducts.filter(product => product.businessId === store.name).length} منتج</span>
+                          <span>📋 {receivedOrders.filter(order => order.businessName === store.name).length} طلب</span>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            setSelectedPlace(store);
+                            setShowMarketManagement(true);
+                          }}
+                          className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
+                        >
+                          🛍️ إدارة المتجر
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+          </div>
+        )}
 
         {currentView === 'settings' && settingsView === 'main' && (
           <div className="space-y-4">
@@ -1087,6 +1676,24 @@ ${markets.map(market => `• ${market.name}
                     <h3 className="font-semibold text-lg">إدارة قاعدة بيانات الخدمات</h3>
                     <p className="text-sm text-gray-500">
                       إضافة وتعديل وحذف ومراجعة جميع الخدمات والأماكن (إجمالي {managedPlaces.length} خدمة مسجلة)
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-6 h-6 text-gray-400" />
+              </button>
+
+              <button
+                onClick={() => setShowMarketManagement(true)}
+                className="w-full bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-orange-100 p-3 rounded-lg">
+                    <div className="w-6 h-6 text-orange-600">🛍️</div>
+                  </div>
+                  <div className="text-right">
+                    <h3 className="font-semibold text-lg">إدارة الماركت</h3>
+                    <p className="text-sm text-gray-500">
+                      إدارة المنتجات والتصنيفات والطلبات (إجمالي {receivedOrders.length} طلب)
                     </p>
                   </div>
                 </div>
@@ -1549,7 +2156,7 @@ ${markets.map(market => `• ${market.name}
                 const phone = formData.get('phone') as string;
 
                 if (!phone || phone.length !== 11 || !/^[0-9]{11}$/.test(phone)) {
-                  alert('يجب أن يكون رقم الهاتف 11 رقم بالضبط (أرقام فقط)');
+                  alert('يجب أن يكون رقم الهاتف صحيح (أرقام فقط)');
                   return;
                 }
 
@@ -1706,7 +2313,7 @@ ${markets.map(market => `• ${market.name}
                       inputMode="numeric"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       placeholder="مثال: 01234567890"
-                      title="يجب أن يكون رقم الهاتف 11 رقم بالضبط"
+                      title="يجب أن يكون رقم الهاتف صحيح"
                     />
                   </div>
 
@@ -1805,64 +2412,22 @@ ${markets.map(market => `• ${market.name}
                     />
                   </div>
 
-                  {/* قسم المنتجات - يظهر فقط عند اختيار "طلبات" */}
+                  {/* معلومات خدمات الطلبات */}
                   {selectedServiceType === 'طلبات' && (
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        المنتجات المتاحة
-                      </label>
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                          <input
-                            type="text"
-                            value={currentProduct.name}
-                            onChange={(e) => setCurrentProduct({...currentProduct, name: e.target.value})}
-                            className="px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                            placeholder="اسم المنتج"
-                          />
-                          <input
-                            type="text"
-                            value={currentProduct.price}
-                            onChange={(e) => setCurrentProduct({...currentProduct, price: e.target.value})}
-                            className="px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                            placeholder="السعر (جنيه)"
-                          />
-                          <input
-                            type="text"
-                            value={currentProduct.description}
-                            onChange={(e) => setCurrentProduct({...currentProduct, description: e.target.value})}
-                            className="px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                            placeholder="وصف المنتج (اختياري)"
-                          />
+                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
+                        <div className="mb-3">
+                          <div className="text-4xl mb-2">🛍️</div>
+                          <h3 className="text-lg font-semibold text-orange-800">خدمة طلبات</h3>
                         </div>
-                        <button
-                          type="button"
-                          onClick={addProduct}
-                          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
-                        >
-                          <Plus className="w-4 h-4 inline ml-2" />
-                          إضافة منتج
-                        </button>
-                        {selectedProducts.length > 0 && (
-                          <div className="space-y-2 max-h-40 overflow-y-auto">
-                            {selectedProducts.map((product, index) => (
-                              <div key={index} className="bg-white p-3 rounded-md border border-green-300 flex justify-between items-start">
-                                <div>
-                                  <h4 className="font-medium text-green-800">{product.name}</h4>
-                                  <p className="text-green-600 font-bold">{product.price} جنيه</p>
-                                  {product.description && <p className="text-sm text-gray-600">{product.description}</p>}
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => removeProduct(index)}
-                                  className="text-red-500 hover:text-red-700"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        <p className="text-sm text-gray-600 mb-4">
+                          بعد إضافة الخدمة، يمكنك إدارة المنتجات والتصنيفات والطلبات من صفحة "إدارة الماركت" في الإعدادات
+                        </p>
+                        <div className="flex items-center justify-center gap-2 text-sm text-orange-700">
+                          <span>المنتجات المضافة حالياً: {selectedProducts.length}</span>
+                          <span>•</span>
+                          <span>التصنيفات: {productCategories.length}</span>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -2069,6 +2634,15 @@ ${markets.map(market => `• ${market.name}
             <span className="text-xs">المفضلات</span>
           </button>
 
+          <button
+            onClick={() => setCurrentView('my-stores')}
+            className={`flex flex-col items-center gap-1 ${
+              currentView === 'my-stores' ? 'text-orange-500' : 'text-gray-500'
+            }`}
+          >
+            <div className="text-xl">🛍️</div>
+            <span className="text-xs">متاجري</span>
+          </button>
 
           <button
             onClick={() => setCurrentView('settings')}
@@ -2087,12 +2661,26 @@ ${markets.map(market => `• ${market.name}
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
               <h2 className="text-xl font-bold">{selectedPlace.name}</h2>
-              <button
-                onClick={() => setShowDetails(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="w-6 h-6" />
-              </button>
+              <div className="flex items-center gap-2">
+                {selectedPlace.type === 'طلبات' && (
+                  <button
+                    onClick={() => {
+                      setShowDetails(false);
+                      setShowMarketManagement(true);
+                    }}
+                    className="bg-orange-500 text-white px-3 py-2 rounded-lg hover:bg-orange-600 flex items-center gap-2"
+                    title="إدارة المتجر"
+                  >
+                    🛍️ إدارة المتجر
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowDetails(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
             </div>
 
             <div className="p-4">
@@ -2144,6 +2732,229 @@ ${markets.map(market => `• ${market.name}
                     ))}
                   </div>
                 </div>
+
+                {/* Products display for طلبات services */}
+                {selectedPlace.type === 'طلبات' && selectedPlace.products && selectedPlace.products.length > 0 && (
+                  <div className="mb-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-semibold">🛍️ المنتجات المتاحة</h3>
+                      {cart.length > 0 && (
+                        <button
+                          onClick={() => setShowCart(!showCart)}
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center gap-2"
+                        >
+                          🛒 السلة ({cart.length})
+                          <span className="bg-green-600 text-white px-2 py-1 rounded-full text-xs">
+                            {getTotalPrice()} جنيه
+                          </span>
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Product categories filter */}
+                    {productCategories.length > 0 && (
+                      <div className="flex gap-2 mb-4 overflow-x-auto">
+                        <button
+                          onClick={() => setSelectedProductCategory('all')}
+                          className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
+                            selectedProductCategory === 'all'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          الكل
+                        </button>
+                        {productCategories.map((category) => (
+                          <button
+                            key={category.id}
+                            onClick={() => setSelectedProductCategory(category.id)}
+                            className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
+                              selectedProductCategory === category.id
+                                ? 'bg-blue-500 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                          >
+                            {category.icon} {category.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Products grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+                      {selectedPlace.products
+                        .filter((product: any) =>
+                          selectedProductCategory === 'all' || product.category === selectedProductCategory
+                        )
+                        .map((product: any, productIndex: number) => {
+                          const category = productCategories.find(cat => cat.id === product.category);
+                          return (
+                            <div key={productIndex} className="bg-gray-50 p-4 rounded-lg border">
+                              <div className="flex items-start justify-between mb-2">
+                                <div>
+                                  <h4 className="font-medium text-gray-800">{product.name}</h4>
+                                  {category && (
+                                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mt-1 inline-block">
+                                      {category.icon} {category.name}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {product.description && (
+                                <p className="text-sm text-gray-600 mb-3">{product.description}</p>
+                              )}
+
+                              {/* Product sizes and prices */}
+                              <div className="space-y-2">
+                                {product.sizes.map((size: any, sizeIndex: number) => (
+                                  <div key={sizeIndex} className="flex items-center justify-between bg-white p-2 rounded border">
+                                    <div>
+                                      <span className="font-medium text-sm">{size.name}</span>
+                                      <span className="text-green-600 font-bold ml-2">{size.price} جنيه</span>
+                                    </div>
+                                    <button
+                                      onClick={() => addToCart(
+                                        product.id || `${productIndex}`,
+                                        product.name,
+                                        sizeIndex,
+                                        size.name,
+                                        parseFloat(size.price),
+                                        product.category
+                                      )}
+                                      className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                                    >
+                                      إضافة للسلة
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+
+                    {/* Shopping Cart Modal */}
+                    {showCart && (
+                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
+                          <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">🛒 السلة</h3>
+                            <button
+                              onClick={() => setShowCart(false)}
+                              className="text-gray-500 hover:text-gray-700"
+                            >
+                              <X className="w-5 h-5" />
+                            </button>
+                          </div>
+
+                          <div className="p-4">
+                            {cart.length === 0 ? (
+                              <p className="text-gray-500 text-center">السلة فارغة</p>
+                            ) : (
+                              <>
+                                {/* Cart items */}
+                                <div className="space-y-3 mb-4">
+                                  {cart.map((item, index) => (
+                                    <div key={index} className="bg-gray-50 p-3 rounded border">
+                                      <div className="flex justify-between items-start mb-2">
+                                        <div>
+                                          <h4 className="font-medium text-sm">{item.productName}</h4>
+                                          <p className="text-xs text-gray-600">{item.sizeName}</p>
+                                          <p className="text-sm text-green-600 font-bold">{item.price} جنيه</p>
+                                        </div>
+                                        <button
+                                          onClick={() => removeFromCart(item.productId, item.sizeIndex)}
+                                          className="text-red-500 hover:text-red-700"
+                                        >
+                                          <X className="w-4 h-4" />
+                                        </button>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <button
+                                          onClick={() => updateCartQuantity(item.productId, item.sizeIndex, item.quantity - 1)}
+                                          className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs"
+                                        >
+                                          -
+                                        </button>
+                                        <span className="text-sm font-medium">{item.quantity}</span>
+                                        <button
+                                          onClick={() => updateCartQuantity(item.productId, item.sizeIndex, item.quantity + 1)}
+                                          className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs"
+                                        >
+                                          +
+                                        </button>
+                                        <span className="text-sm text-gray-600 ml-auto">
+                                          = {item.quantity * item.price} جنيه
+                                        </span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* Total */}
+                                <div className="border-t pt-3 mb-4">
+                                  <div className="flex justify-between items-center text-lg font-bold">
+                                    <span>الإجمالي:</span>
+                                    <span className="text-green-600">{getTotalPrice()} جنيه</span>
+                                  </div>
+                                </div>
+
+                                {/* Order form */}
+                                <div className="space-y-3 mb-4">
+                                  <input
+                                    type="text"
+                                    value={orderForm.customerName}
+                                    onChange={(e) => setOrderForm({...orderForm, customerName: e.target.value})}
+                                    placeholder="اسم العميل *"
+                                    className="w-full px-3 py-2 border rounded"
+                                  />
+                                  <input
+                                    type="tel"
+                                    value={orderForm.customerPhone}
+                                    onChange={(e) => setOrderForm({...orderForm, customerPhone: e.target.value})}
+                                    placeholder="رقم الهاتف *"
+                                    className="w-full px-3 py-2 border rounded"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={orderForm.customerAddress}
+                                    onChange={(e) => setOrderForm({...orderForm, customerAddress: e.target.value})}
+                                    placeholder="العنوان (اختياري)"
+                                    className="w-full px-3 py-2 border rounded"
+                                  />
+                                  <textarea
+                                    value={orderForm.notes}
+                                    onChange={(e) => setOrderForm({...orderForm, notes: e.target.value})}
+                                    placeholder="ملاحظات (اختياري)"
+                                    rows={2}
+                                    className="w-full px-3 py-2 border rounded"
+                                  />
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={clearCart}
+                                    className="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600"
+                                  >
+                                    إفراغ السلة
+                                  </button>
+                                  <button
+                                    onClick={submitOrder}
+                                    className="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600"
+                                  >
+                                    إرسال الطلب
+                                  </button>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Appointment booking for حجورات services */}
                 {selectedPlace.type === 'حجورات' && selectedPlace.appointmentSettings && (
@@ -2299,7 +3110,7 @@ ${markets.map(market => `• ${market.name}
                                 pattern="[0-9]{11}"
                                 maxLength={11}
                                 inputMode="numeric"
-                                title="يجب أن يكون رقم الهاتف 11 رقم بالضبط"
+                                title="يجب أن يكون رقم الهاتف صحيح"
                                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               />
                               <input
@@ -2552,7 +3363,7 @@ ${markets.map(market => `• ${market.name}
                 const phone = formData.get('phone') as string;
 
                 if (!phone || phone.length !== 11 || !/^[0-9]{11}$/.test(phone)) {
-                  alert('يجب أن يكون رقم الهاتف 11 رقم بالضبط (أرقام فقط)');
+                  alert('يجب أن يكون رقم الهاتف صحيح (أرقام فقط)');
                   return;
                 }
 
@@ -2677,7 +3488,7 @@ ${markets.map(market => `• ${market.name}
                       inputMode="numeric"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       placeholder="مثال: 01234567890"
-                      title="يجب أن يكون رقم الهاتف 11 رقم بالضبط"
+                      title="يجب أن يكون رقم الهاتف صحيح"
                     />
                   </div>
 
@@ -2990,7 +3801,7 @@ ${markets.map(market => `• ${market.name}
                     inputMode="numeric"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder="مثال: 01234567890"
-                    title="يجب أن يكون رقم الهاتف 11 رقم بالضبط (أرقام فقط)"
+                    title="يجب أن يكون رقم الهاتف صحيح (أرقام فقط)"
                   />
                 </div>
 
@@ -3234,6 +4045,335 @@ ${markets.map(market => `• ${market.name}
           )}
         </div>
       }
+
+      {/* Market Management Modal */}
+      {showMarketManagement && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+              <h2 className="text-xl font-bold">🛍️ إدارة متجر {selectedPlace?.name}</h2>
+              <button
+                onClick={() => setShowMarketManagement(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Tabs */}
+            <div className="border-b">
+              <div className="flex">
+                <button
+                  onClick={() => setMarketManagementTab('products')}
+                  className={`px-4 py-3 text-sm font-medium border-b-2 ${
+                    marketManagementTab === 'products'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  📦 المنتجات والتصنيفات
+                </button>
+                <button
+                  onClick={() => setMarketManagementTab('orders')}
+                  className={`px-4 py-3 text-sm font-medium border-b-2 ${
+                    marketManagementTab === 'orders'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  📋 الطلبات ({receivedOrders.filter(order => order.businessName === selectedPlace?.name).length})
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              {/* Products Tab */}
+              {marketManagementTab === 'products' && (
+                <div className="space-y-6">
+
+                  {/* إدارة التصنيفات */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-blue-800 mb-3">📂 إدارة تصنيفات المنتجات</h3>
+
+                    {/* إضافة تصنيف جديد */}
+                    <div className="flex gap-2 mb-4">
+                      <input
+                        type="text"
+                        value={newCategoryName}
+                        onChange={(e) => setNewCategoryName(e.target.value)}
+                        className="flex-1 px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="اسم التصنيف الجديد"
+                      />
+                      <button
+                        type="button"
+                        onClick={addProductCategory}
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                      >
+                        <Plus className="w-4 h-4 inline ml-1" />
+                        إضافة
+                      </button>
+                    </div>
+
+                    {/* عرض التصنيفات الموجودة */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      {productCategories.map((category) => (
+                        <div key={category.id} className="bg-white p-3 rounded-md border border-blue-300 flex items-center justify-between">
+                          <span className="text-sm">{category.icon} {category.name}</span>
+                          {category.id !== '1' && category.id !== '2' && category.id !== '3' && category.id !== '4' && (
+                            <button
+                              type="button"
+                              onClick={() => removeProductCategory(category.id)}
+                              className="text-red-500 hover:text-red-700 text-xs"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* إضافة منتج جديد */}
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-green-800 mb-3">🛍️ إضافة منتج جديد</h3>
+
+                    <div className="space-y-4">
+                      {/* اسم المنتج والتصنيف */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <input
+                          type="text"
+                          value={currentProduct.name}
+                          onChange={(e) => setCurrentProduct({...currentProduct, name: e.target.value})}
+                          className="px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="اسم المنتج"
+                        />
+                        <select
+                          value={currentProduct.category}
+                          onChange={(e) => setCurrentProduct({...currentProduct, category: e.target.value})}
+                          className="px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        >
+                          <option value="">اختر التصنيف</option>
+                          {productCategories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                              {category.icon} {category.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* وصف المنتج */}
+                      <textarea
+                        value={currentProduct.description}
+                        onChange={(e) => setCurrentProduct({...currentProduct, description: e.target.value})}
+                        className="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                        placeholder="وصف المنتج (اختياري)"
+                        rows={2}
+                      />
+
+                      {/* الأحجام والأسعار */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">الأحجام المتاحة والأسعار</label>
+                        {currentProduct.sizes.map((size, index) => (
+                          <div key={index} className="flex gap-2 mb-2">
+                            <input
+                              type="text"
+                              value={size.name}
+                              onChange={(e) => updateProductSize(index, 'name', e.target.value)}
+                              className="flex-1 px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                              placeholder="الحجم (مثل: صغير، وسط، كبير)"
+                            />
+                            <input
+                              type="number"
+                              value={size.price}
+                              onChange={(e) => updateProductSize(index, 'price', e.target.value)}
+                              className="w-24 px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                              placeholder="السعر"
+                            />
+                            {currentProduct.sizes.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removeSizeFromCurrentProduct(index)}
+                                className="text-red-500 hover:text-red-700 px-2"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={addSizeToCurrentProduct}
+                          className="text-blue-500 hover:text-blue-700 text-sm"
+                        >
+                          + إضافة حجم آخر
+                        </button>
+                      </div>
+
+                      {/* زر إضافة المنتج */}
+                      <button
+                        type="button"
+                        onClick={addProduct}
+                        className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+                      >
+                        <Plus className="w-4 h-4 inline ml-2" />
+                        إضافة منتج
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* عرض المنتجات المضافة */}
+                  {selectedProducts.length > 0 && (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">📋 المنتجات المضافة</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-64 overflow-y-auto">
+                        {selectedProducts.map((product, index) => {
+                          const category = productCategories.find(cat => cat.id === product.category);
+                          return (
+                            <div key={index} className="bg-white p-4 rounded-md border border-gray-300">
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <h4 className="font-medium text-gray-800">{product.name}</h4>
+                                    {category && (
+                                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                                        {category.icon} {category.name}
+                                      </span>
+                                    )}
+                                  </div>
+                                  {product.description && (
+                                    <p className="text-sm text-gray-600 mb-2">{product.description}</p>
+                                  )}
+                                  <div className="space-y-1">
+                                    {product.sizes.map((size, sizeIndex) => (
+                                      <div key={sizeIndex} className="text-sm text-gray-700">
+                                        <span className="font-medium">{size.name}:</span>
+                                        <span className="text-green-600 font-bold ml-2">{size.price} جنيه</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => removeProduct(product.id || '')}
+                                  className="text-red-500 hover:text-red-700 ml-3"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Orders Tab */}
+              {marketManagementTab === 'orders' && (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">📋 الطلبات الواردة</h3>
+                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                      إجمالي {receivedOrders.filter(order => order.businessName === selectedPlace?.name).length} طلب
+                    </span>
+                  </div>
+
+                  {receivedOrders.filter(order => order.businessName === selectedPlace?.name).length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <div className="text-4xl mb-2">📭</div>
+                      <p>لا توجد طلبات لهذا المتجر حتى الآن</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 max-h-96 overflow-y-auto">
+                      {receivedOrders.filter(order => order.businessName === selectedPlace?.name).map((order) => (
+                        <div key={order.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h4 className="font-semibold text-lg">طلب #{order.id.slice(-6)}</h4>
+                              <p className="text-sm text-gray-600">
+                                {order.timestamp.toLocaleDateString('ar-EG')} - {order.timestamp.toLocaleTimeString('ar-EG')}
+                              </p>
+                              <p className="text-sm text-gray-600">من: {order.businessName}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-1 rounded-full text-xs ${getOrderStatusColor(order.status)}`}>
+                                {getOrderStatusText(order.status)}
+                              </span>
+                              <button
+                                onClick={() => deleteOrder(order.id)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                              <h5 className="font-medium mb-1">معلومات العميل</h5>
+                              <p className="text-sm">👤 {order.customerName}</p>
+                              <p className="text-sm">📱 {order.customerPhone}</p>
+                              {order.customerAddress && <p className="text-sm">📍 {order.customerAddress}</p>}
+                              {order.notes && <p className="text-sm">📝 {order.notes}</p>}
+                            </div>
+                            <div>
+                              <h5 className="font-medium mb-1">تفاصيل الطلب</h5>
+                              {order.items.map((item, index) => (
+                                <div key={index} className="text-sm text-gray-700">
+                                  {item.productName} ({item.sizeName}) - {item.quantity} × {item.price} جنيه
+                                </div>
+                              ))}
+                              <p className="text-sm font-bold text-green-600 mt-2">
+                                الإجمالي: {order.total} جنيه
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            {order.status !== 'delivered' && (
+                              <>
+                                <button
+                                  onClick={() => updateOrderStatus(order.id, 'confirmed')}
+                                  className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                                  disabled={order.status === 'confirmed'}
+                                >
+                                  تأكيد
+                                </button>
+                                <button
+                                  onClick={() => updateOrderStatus(order.id, 'preparing')}
+                                  className="bg-orange-500 text-white px-3 py-1 rounded text-sm hover:bg-orange-600"
+                                  disabled={order.status === 'preparing' || order.status === 'pending'}
+                                >
+                                  قيد التحضير
+                                </button>
+                                <button
+                                  onClick={() => updateOrderStatus(order.id, 'ready')}
+                                  className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600"
+                                  disabled={order.status === 'ready' || order.status === 'pending' || order.status === 'confirmed'}
+                                >
+                                  جاهز
+                                </button>
+                                <button
+                                  onClick={() => updateOrderStatus(order.id, 'delivered')}
+                                  className="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600"
+                                  disabled={order.status === 'pending' || order.status === 'confirmed' || order.status === 'preparing'}
+                                >
+                                  تم التسليم
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

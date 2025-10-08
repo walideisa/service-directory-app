@@ -260,7 +260,7 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
     }
 
     if (!formData.phone || formData.phone.length !== 11 || !/^[0-9]{11}$/.test(formData.phone)) {
-      alert('يجب أن يكون رقم الهاتف 11 رقم بالضبط (أرقام فقط)');
+      alert('يجب أن يكون رقم الهاتف صحيح (أرقام فقط)');
       return;
     }
 
@@ -423,7 +423,7 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
             {/* رقم الهاتف */}
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-2">
-                رقم الهاتف * (11 رقم)
+                رقم الهاتف *
               </label>
               <input
                 type="tel"
