@@ -33,6 +33,8 @@ interface PlaceFormData {
     name: string;
     icon: string;
   };
+  type?: string;
+  products?: Array<{name: string, price: string, description: string}>;
 }
 
 interface PlaceFormProps {
@@ -63,7 +65,8 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
     description: '',
     services: [],
     image: '',
-    customCategory: undefined
+    customCategory: undefined,
+    type: 'حجورات'
   });
 
   const [showCustomCategory, setShowCustomCategory] = useState(false);
@@ -73,6 +76,10 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
   // Services management
   const [currentService, setCurrentService] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+
+  // Products management (for طلبات type)
+  const [currentProduct, setCurrentProduct] = useState({ name: '', price: '', description: '' });
+  const [selectedProducts, setSelectedProducts] = useState<Array<{name: string, price: string, description: string}>>([]);
 
   // Services functions
   const addService = () => {
@@ -93,6 +100,18 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
     }
   };
 
+  // Products functions
+  const addProduct = () => {
+    if (currentProduct.name.trim() && currentProduct.price.trim()) {
+      setSelectedProducts([...selectedProducts, { ...currentProduct }]);
+      setCurrentProduct({ name: '', price: '', description: '' });
+    }
+  };
+
+  const removeProduct = (index: number) => {
+    setSelectedProducts(selectedProducts.filter((_, i) => i !== index));
+  };
+
   // Reset form when modal opens/closes
   useEffect(() => {
     if (isOpen) {
@@ -107,7 +126,8 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
           description: editingPlace.description,
           services: editingPlace.services,
           image: editingPlace.image,
-          customCategory: editingPlace.customCategoryData
+          customCategory: editingPlace.customCategoryData,
+          type: editingPlace.type || 'حجورات'
         });
         setUploadedImage(editingPlace.image);
         setSelectedServices(editingPlace.services);
@@ -122,10 +142,13 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
           description: '',
           services: [],
           image: '',
-          customCategory: undefined
+          customCategory: undefined,
+          type: 'حجورات'
         });
         setUploadedImage(null);
         setSelectedServices([]);
+        setSelectedProducts([]);
+        setCurrentProduct({ name: '', price: '', description: '' });
       }
       setShowCustomCategory(false);
       setCustomCategoryName('');
@@ -217,6 +240,11 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
 
     // Use selectedServices instead of formData.services
     finalFormData.services = selectedServices;
+
+    // Add products if type is طلبات
+    if (formData.type === 'طلبات') {
+      finalFormData.products = selectedProducts;
+    }
 
     // Handle custom category
     if (formData.category === 'other' && customCategoryName) {
@@ -328,6 +356,22 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
                 </div>
               </div>
             )}
+
+            {/* النوع */}
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-2">
+                النوع *
+              </label>
+              <select
+                value={formData.type || 'حجورات'}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              >
+                <option value="حجورات">حجورات</option>
+                <option value="طلبات">طلبات</option>
+              </select>
+            </div>
 
             {/* العنوان */}
             <div>
@@ -452,6 +496,68 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
                 </div>
               )}
             </div>
+
+            {/* المنتجات - للمحلات فقط */}
+            {formData.type === 'طلبات' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-2">
+                  المنتجات المتاحة
+                </label>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input
+                      type="text"
+                      value={currentProduct.name}
+                      onChange={(e) => setCurrentProduct({...currentProduct, name: e.target.value})}
+                      className="px-3 py-2 border border-green-300 rounded-md"
+                      placeholder="اسم المنتج"
+                    />
+                    <input
+                      type="text"
+                      value={currentProduct.price}
+                      onChange={(e) => setCurrentProduct({...currentProduct, price: e.target.value})}
+                      className="px-3 py-2 border border-green-300 rounded-md"
+                      placeholder="السعر (جنيه)"
+                    />
+                    <input
+                      type="text"
+                      value={currentProduct.description}
+                      onChange={(e) => setCurrentProduct({...currentProduct, description: e.target.value})}
+                      className="px-3 py-2 border border-green-300 rounded-md"
+                      placeholder="وصف المنتج (اختياري)"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addProduct}
+                    className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+                  >
+                    <Plus className="w-4 h-4 inline ml-2" />
+                    إضافة منتج
+                  </button>
+                  {selectedProducts.length > 0 && (
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {selectedProducts.map((product, index) => (
+                        <div key={index} className="bg-white p-3 rounded-md border border-green-300 flex justify-between items-start">
+                          <div>
+                            <h4 className="font-medium text-green-800">{product.name}</h4>
+                            <p className="text-green-600 font-bold">{product.price} جنيه</p>
+                            {product.description && <p className="text-sm text-gray-600">{product.description}</p>}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeProduct(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* الصورة */}
             <div>

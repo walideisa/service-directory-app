@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, ThumbsUp, Phone, Clock, Filter, Heart, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2 } from 'lucide-react';
+import { Search, MapPin, ThumbsUp, Phone, Clock, Filter, Heart, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2 } from 'lucide-react';
 import { PlaceForm } from './components/PlaceForm';
 import './App.css';
 
@@ -119,6 +119,9 @@ const App = () => {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategoryName, setCustomCategoryName] = useState('');
+  const [selectedServiceType, setSelectedServiceType] = useState('حجورات');
+  const [currentProduct, setCurrentProduct] = useState({ name: '', price: '', description: '' });
+  const [selectedProducts, setSelectedProducts] = useState<Array<{name: string, price: string, description: string}>>([]);
   const [showEditCustomCategory, setShowEditCustomCategory] = useState(false);
   const [editCustomCategoryName, setEditCustomCategoryName] = useState('');
   const [showChat, setShowChat] = useState(false);
@@ -243,6 +246,17 @@ const App = () => {
 
   const removeService = (serviceToRemove: string) => {
     setSelectedServices(selectedServices.filter(service => service !== serviceToRemove));
+  };
+
+  const addProduct = () => {
+    if (currentProduct.name.trim() && currentProduct.price.trim()) {
+      setSelectedProducts([...selectedProducts, { ...currentProduct }]);
+      setCurrentProduct({ name: '', price: '', description: '' });
+    }
+  };
+
+  const removeProduct = (index: number) => {
+    setSelectedProducts(selectedProducts.filter((_, i) => i !== index));
   };
 
   const handleServiceKeyPress = (e: React.KeyboardEvent) => {
@@ -1335,6 +1349,8 @@ ${markets.map(market => `• ${market.name}
                   };
                 }
 
+                const serviceType = formData.get('type') as string || 'حجورات';
+
                 const newPlace = {
                   name: formData.get('name') as string,
                   category: finalCategory,
@@ -1345,13 +1361,18 @@ ${markets.map(market => `• ${market.name}
                   image: uploadedImage || 'https://images.unsplash.com/photo-1555529902-de4e0750ea48?w=400',
                   services: selectedServices,
                   submitterMobile: submitterMobile && submitterMobile.length === 11 ? submitterMobile : null,
-                  customCategoryData: customCategoryData
+                  customCategoryData: customCategoryData,
+                  type: serviceType,
+                  products: serviceType === 'طلبات' ? selectedProducts : undefined
                 };
                 handleSubmitServiceForReview(newPlace);
                 setShowCustomCategory(false);
                 setCustomCategoryName('');
                 setSelectedServices([]);
                 setCurrentService('');
+                setSelectedProducts([]);
+                setCurrentProduct({ name: '', price: '', description: '' });
+                setSelectedServiceType('حجورات');
               }}>
                 <div className="space-y-6">
                   <div>
@@ -1406,6 +1427,22 @@ ${markets.map(market => `• ${market.name}
                         </p>
                       </div>
                     )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      النوع *
+                    </label>
+                    <select
+                      name="type"
+                      required
+                      value={selectedServiceType}
+                      onChange={(e) => setSelectedServiceType(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    >
+                      <option value="حجورات">حجورات</option>
+                      <option value="طلبات">طلبات</option>
+                    </select>
                   </div>
 
                   <div>
@@ -1532,6 +1569,68 @@ ${markets.map(market => `• ${market.name}
                       value={selectedServices.join(', ')}
                     />
                   </div>
+
+                  {/* قسم المنتجات - يظهر فقط عند اختيار "طلبات" */}
+                  {selectedServiceType === 'طلبات' && (
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        المنتجات المتاحة
+                      </label>
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <input
+                            type="text"
+                            value={currentProduct.name}
+                            onChange={(e) => setCurrentProduct({...currentProduct, name: e.target.value})}
+                            className="px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                            placeholder="اسم المنتج"
+                          />
+                          <input
+                            type="text"
+                            value={currentProduct.price}
+                            onChange={(e) => setCurrentProduct({...currentProduct, price: e.target.value})}
+                            className="px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                            placeholder="السعر (جنيه)"
+                          />
+                          <input
+                            type="text"
+                            value={currentProduct.description}
+                            onChange={(e) => setCurrentProduct({...currentProduct, description: e.target.value})}
+                            className="px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                            placeholder="وصف المنتج (اختياري)"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={addProduct}
+                          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+                        >
+                          <Plus className="w-4 h-4 inline ml-2" />
+                          إضافة منتج
+                        </button>
+                        {selectedProducts.length > 0 && (
+                          <div className="space-y-2 max-h-40 overflow-y-auto">
+                            {selectedProducts.map((product, index) => (
+                              <div key={index} className="bg-white p-3 rounded-md border border-green-300 flex justify-between items-start">
+                                <div>
+                                  <h4 className="font-medium text-green-800">{product.name}</h4>
+                                  <p className="text-green-600 font-bold">{product.price} جنيه</p>
+                                  {product.description && <p className="text-sm text-gray-600">{product.description}</p>}
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => removeProduct(index)}
+                                  className="text-red-500 hover:text-red-700"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
