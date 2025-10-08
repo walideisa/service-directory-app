@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, ThumbsUp, Phone, Clock, Filter, Heart, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2 } from 'lucide-react';
+import { Search, MapPin, ThumbsUp, Phone, Clock, Filter, Heart, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2, Calendar } from 'lucide-react';
 import { PlaceForm } from './components/PlaceForm';
 import './App.css';
 
@@ -82,6 +82,27 @@ const App = () => {
       services: ['حسابات جارية', 'قروض', 'صراف آلي', 'تحويلات'],
       description: 'فرع البنك الرئيسي لخدمة سكان مدينة 15 مايو',
       isVisible: true
+    },
+    {
+      id: 7,
+      name: 'عيادة د. أحمد محمود - طب الأطفال',
+      category: 'hospital',
+      likes: 156,
+      address: 'المجاورة الثانية، مدينة 15 مايو',
+      phone: '01234567890',
+      hours: '9:00 ص - 5:00 م',
+      image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400',
+      services: ['فحص الأطفال', 'التطعيمات', 'متابعة النمو', 'استشارات طبية'],
+      description: 'عيادة متخصصة في طب الأطفال مع خدمة حجز المواعيد الإلكترونية',
+      isVisible: true,
+      type: 'حجورات',
+      appointmentSettings: {
+        sessionDuration: '30',
+        consultationFee: '200',
+        availableDays: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'],
+        startTime: '09:00',
+        endTime: '17:00'
+      }
     }
   ];
 
@@ -122,6 +143,15 @@ const App = () => {
   const [selectedServiceType, setSelectedServiceType] = useState('حجورات');
   const [currentProduct, setCurrentProduct] = useState({ name: '', price: '', description: '' });
   const [selectedProducts, setSelectedProducts] = useState<Array<{name: string, price: string, description: string}>>([]);
+
+  // Appointments management (for حجورات type)
+  const [appointmentSettings, setAppointmentSettings] = useState({
+    sessionDuration: '30', // minutes
+    consultationFee: '',
+    availableDays: [] as string[],
+    startTime: '09:00',
+    endTime: '17:00'
+  });
   const [showEditCustomCategory, setShowEditCustomCategory] = useState(false);
   const [editCustomCategoryName, setEditCustomCategoryName] = useState('');
   const [showChat, setShowChat] = useState(false);
@@ -135,6 +165,17 @@ const App = () => {
   ]);
   const [chatInput, setChatInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+
+  // Appointment booking states
+  const [showAppointmentBooking, setShowAppointmentBooking] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
+  const [appointmentForm, setAppointmentForm] = useState({
+    patientName: '',
+    patientPhone: '',
+    patientAge: '',
+    appointmentReason: ''
+  });
   const [isChatMinimized, setIsChatMinimized] = useState(false);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
 
@@ -257,6 +298,100 @@ const App = () => {
 
   const removeProduct = (index: number) => {
     setSelectedProducts(selectedProducts.filter((_, i) => i !== index));
+  };
+
+  // Appointments functions
+  const toggleAvailableDay = (day: string) => {
+    setAppointmentSettings(prev => ({
+      ...prev,
+      availableDays: prev.availableDays.includes(day)
+        ? prev.availableDays.filter(d => d !== day)
+        : [...prev.availableDays, day]
+    }));
+  };
+
+  const generateTimeSlots = (appointmentSettings: any) => {
+    if (!appointmentSettings) return [];
+
+    const { startTime, endTime, sessionDuration } = appointmentSettings;
+    const slots = [];
+    const start = new Date(`2024-01-01 ${startTime}`);
+    const end = new Date(`2024-01-01 ${endTime}`);
+    const durationMs = parseInt(sessionDuration) * 60 * 1000;
+
+    let current = new Date(start);
+    while (current < end) {
+      const timeString = current.toLocaleTimeString('ar-EG', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      slots.push(timeString);
+      current = new Date(current.getTime() + durationMs);
+    }
+
+    return slots;
+  };
+
+  const getNextAvailableDates = (appointmentSettings: any) => {
+    if (!appointmentSettings || !appointmentSettings.availableDays.length) return [];
+
+    const dates = [];
+    const today = new Date();
+    const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+    for (let i = 1; i <= 14; i++) { // Next 14 days
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      const dayName = dayNames[date.getDay()];
+
+      if (appointmentSettings.availableDays.includes(dayName)) {
+        dates.push({
+          date: date.toISOString().split('T')[0],
+          dayName: dayName,
+          displayDate: date.toLocaleDateString('ar-EG')
+        });
+      }
+    }
+
+    return dates.slice(0, 7); // Show next 7 available dates
+  };
+
+  const handleAppointmentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedDate || !selectedTimeSlot) {
+      alert('يرجى اختيار التاريخ والوقت');
+      return;
+    }
+
+    if (!appointmentForm.patientName || !appointmentForm.patientPhone) {
+      alert('يرجى إدخال اسم المريض ورقم الهاتف');
+      return;
+    }
+
+    if (appointmentForm.patientPhone.length !== 11) {
+      alert('يجب أن يكون رقم الهاتف 11 رقم');
+      return;
+    }
+
+    // Here you would typically save the appointment to a database
+    alert(`تم حجز الموعد بنجاح!
+التاريخ: ${selectedDate}
+الوقت: ${selectedTimeSlot}
+المريض: ${appointmentForm.patientName}
+سيتم التواصل معك على رقم: ${appointmentForm.patientPhone}`);
+
+    // Reset form
+    setShowAppointmentBooking(false);
+    setSelectedDate('');
+    setSelectedTimeSlot('');
+    setAppointmentForm({
+      patientName: '',
+      patientPhone: '',
+      patientAge: '',
+      appointmentReason: ''
+    });
   };
 
   const handleServiceKeyPress = (e: React.KeyboardEvent) => {
@@ -1363,7 +1498,8 @@ ${markets.map(market => `• ${market.name}
                   submitterMobile: submitterMobile && submitterMobile.length === 11 ? submitterMobile : null,
                   customCategoryData: customCategoryData,
                   type: serviceType,
-                  products: serviceType === 'طلبات' ? selectedProducts : undefined
+                  products: serviceType === 'طلبات' ? selectedProducts : undefined,
+                  appointmentSettings: serviceType === 'حجورات' ? appointmentSettings : undefined
                 };
                 handleSubmitServiceForReview(newPlace);
                 setShowCustomCategory(false);
@@ -1373,6 +1509,13 @@ ${markets.map(market => `• ${market.name}
                 setSelectedProducts([]);
                 setCurrentProduct({ name: '', price: '', description: '' });
                 setSelectedServiceType('حجورات');
+                setAppointmentSettings({
+                  sessionDuration: '30',
+                  consultationFee: '',
+                  availableDays: [],
+                  startTime: '09:00',
+                  endTime: '17:00'
+                });
               }}>
                 <div className="space-y-6">
                   <div>
@@ -1632,6 +1775,90 @@ ${markets.map(market => `• ${market.name}
                     </div>
                   )}
 
+                  {/* قسم إعدادات المواعيد - يظهر فقط عند اختيار "حجورات" */}
+                  {selectedServiceType === 'حجورات' && (
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        إعدادات المواعيد
+                      </label>
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-blue-800 mb-2">
+                              مدة الجلسة (بالدقائق)
+                            </label>
+                            <select
+                              value={appointmentSettings.sessionDuration}
+                              onChange={(e) => setAppointmentSettings({...appointmentSettings, sessionDuration: e.target.value})}
+                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="15">15 دقيقة</option>
+                              <option value="30">30 دقيقة</option>
+                              <option value="45">45 دقيقة</option>
+                              <option value="60">60 دقيقة</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-blue-800 mb-2">
+                              سعر الكشف (جنيه)
+                            </label>
+                            <input
+                              type="text"
+                              value={appointmentSettings.consultationFee}
+                              onChange={(e) => setAppointmentSettings({...appointmentSettings, consultationFee: e.target.value})}
+                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="مثال: 200"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-blue-800 mb-2">
+                            الأيام المتاحة للحجز
+                          </label>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                            {['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'].map((day) => (
+                              <label key={day} className="flex items-center space-x-2 space-x-reverse">
+                                <input
+                                  type="checkbox"
+                                  checked={appointmentSettings.availableDays.includes(day)}
+                                  onChange={() => toggleAvailableDay(day)}
+                                  className="rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className="text-sm text-blue-800">{day}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-blue-800 mb-2">
+                              بداية العمل
+                            </label>
+                            <input
+                              type="time"
+                              value={appointmentSettings.startTime}
+                              onChange={(e) => setAppointmentSettings({...appointmentSettings, startTime: e.target.value})}
+                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-blue-800 mb-2">
+                              نهاية العمل
+                            </label>
+                            <input
+                              type="time"
+                              value={appointmentSettings.endTime}
+                              onChange={(e) => setAppointmentSettings({...appointmentSettings, endTime: e.target.value})}
+                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       صورة الخدمة (اختياري)
@@ -1804,6 +2031,138 @@ ${markets.map(market => `• ${market.name}
                     ))}
                   </div>
                 </div>
+
+                {/* Appointment booking for حجورات services */}
+                {selectedPlace.type === 'حجورات' && selectedPlace.appointmentSettings && (
+                  <div className="mb-4">
+                    <h3 className="font-semibold mb-2">حجز موعد</h3>
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="mb-4">
+                        <p className="text-sm text-gray-600">رسوم الكشف: {selectedPlace.appointmentSettings.consultationFee} جنيه</p>
+                        <p className="text-sm text-gray-600">مدة الجلسة: {selectedPlace.appointmentSettings.sessionDuration} دقيقة</p>
+                      </div>
+
+                      {!showAppointmentBooking ? (
+                        <button
+                          onClick={() => setShowAppointmentBooking(true)}
+                          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2"
+                        >
+                          <Calendar className="w-5 h-5" />
+                          احجز موعد
+                        </button>
+                      ) : (
+                        <div className="space-y-4">
+                          {/* Date selection */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-600 mb-2">اختر التاريخ</label>
+                            <div className="grid grid-cols-2 gap-2">
+                              {getNextAvailableDates(selectedPlace.appointmentSettings).map((date) => (
+                                <button
+                                  key={date}
+                                  onClick={() => setSelectedDate(date)}
+                                  className={`p-2 text-sm rounded-lg border ${
+                                    selectedDate === date
+                                      ? 'bg-blue-500 text-white border-blue-500'
+                                      : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'
+                                  }`}
+                                >
+                                  {new Date(date).toLocaleDateString('ar-EG', {
+                                    weekday: 'short',
+                                    month: 'short',
+                                    day: 'numeric'
+                                  })}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Time slot selection */}
+                          {selectedDate && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-600 mb-2">اختر الوقت</label>
+                              <div className="grid grid-cols-3 gap-2">
+                                {generateTimeSlots(selectedPlace.appointmentSettings).map((timeSlot) => (
+                                  <button
+                                    key={timeSlot}
+                                    onClick={() => setSelectedTimeSlot(timeSlot)}
+                                    className={`p-2 text-sm rounded-lg border ${
+                                      selectedTimeSlot === timeSlot
+                                        ? 'bg-blue-500 text-white border-blue-500'
+                                        : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'
+                                    }`}
+                                  >
+                                    {timeSlot}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Patient information form */}
+                          {selectedDate && selectedTimeSlot && (
+                            <div className="space-y-3">
+                              <h4 className="font-medium text-gray-800">بيانات المريض</h4>
+                              <input
+                                type="text"
+                                placeholder="اسم المريض"
+                                value={appointmentForm.patientName}
+                                onChange={(e) => setAppointmentForm({...appointmentForm, patientName: e.target.value})}
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                              <input
+                                type="tel"
+                                placeholder="رقم الهاتف"
+                                value={appointmentForm.patientPhone}
+                                onChange={(e) => setAppointmentForm({...appointmentForm, patientPhone: e.target.value})}
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                              <input
+                                type="text"
+                                placeholder="العمر"
+                                value={appointmentForm.patientAge}
+                                onChange={(e) => setAppointmentForm({...appointmentForm, patientAge: e.target.value})}
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              />
+                              <textarea
+                                placeholder="سبب الزيارة (اختياري)"
+                                value={appointmentForm.appointmentReason}
+                                onChange={(e) => setAppointmentForm({...appointmentForm, appointmentReason: e.target.value})}
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                rows={3}
+                              />
+
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={handleAppointmentSubmit}
+                                  disabled={!appointmentForm.patientName || !appointmentForm.patientPhone}
+                                  className="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                >
+                                  تأكيد الحجز
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setShowAppointmentBooking(false);
+                                    setSelectedDate('');
+                                    setSelectedTimeSlot('');
+                                    setAppointmentForm({
+                                      patientName: '',
+                                      patientPhone: '',
+                                      patientAge: '',
+                                      appointmentReason: ''
+                                    });
+                                  }}
+                                  className="px-4 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                                >
+                                  إلغاء
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex gap-3 pt-4">
                   <a
