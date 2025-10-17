@@ -332,6 +332,12 @@ const App = () => {
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategoryName, setCustomCategoryName] = useState('');
   const [selectedServiceType, setSelectedServiceType] = useState('حجورات');
+
+  // Product selection states for each product
+  const [productSelections, setProductSelections] = useState<{[key: string]: {
+    selectedSize: number,
+    quantity: number
+  }}>({});
   // Product categories management (global with business association)
   const [allProductCategories, setAllProductCategories] = useState<Array<{id: string, name: string, icon?: string, businessId?: string}>>([
     { id: '1', name: 'مشروبات', icon: '🥤' },
@@ -341,7 +347,17 @@ const App = () => {
     { id: '5', name: 'إكسسوارات', icon: '🎯' },
     { id: '6', name: 'ملابس', icon: '👕' },
     { id: '7', name: 'أحذية', icon: '👟' },
-    { id: '8', name: 'أخرى', icon: '📦' }
+    { id: '8', name: 'وجبات رئيسية', icon: '🍔' },
+    { id: '9', name: 'مقبلات', icon: '🍟' },
+    { id: '10', name: 'بيتزا', icon: '🍕' },
+    { id: '11', name: 'إلكترونيات', icon: '📱' },
+    { id: '12', name: 'منظفات', icon: '🧽' },
+    { id: '13', name: 'ملابس نسائية', icon: '👗' },
+    { id: '14', name: 'ألعاب أطفال', icon: '🧸' },
+    { id: '15', name: 'فواكه', icon: '🍎' },
+    { id: '16', name: 'خضروات', icon: '🥕' },
+    { id: '17', name: 'أسماك', icon: '🐟' },
+    { id: '18', name: 'أخرى', icon: '📦' }
   ]);
 
   // Get categories for current business
@@ -472,6 +488,208 @@ const App = () => {
       ],
       image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300',
       businessId: 'Salla market'
+    },
+    // مطعم باك باك Products
+    {
+      id: 'bb1',
+      name: 'بيج تاستي',
+      price: '45',
+      description: 'برجر بيج تاستي الشهير مع البطاطس والمشروب',
+      category: 'وجبات رئيسية',
+      sizes: [
+        { name: 'ميديوم', price: '45' },
+        { name: 'لارج', price: '55' },
+        { name: 'إكسترا لارج', price: '65' }
+      ],
+      image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300',
+      businessId: 'مطعم باك باك'
+    },
+    {
+      id: 'bb2',
+      name: 'تشيكن ناجتس',
+      price: '30',
+      description: 'قطع دجاج مقرمشة مع الصوص المفضل',
+      category: 'مقبلات',
+      sizes: [
+        { name: '6 قطع', price: '30' },
+        { name: '9 قطع', price: '40' },
+        { name: '12 قطعة', price: '50' }
+      ],
+      image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=300',
+      businessId: 'مطعم باك باك'
+    },
+    {
+      id: 'bb3',
+      name: 'بيتزا مارجريتا',
+      price: '60',
+      description: 'بيتزا كلاسيكية بالجبن والطماطم والريحان',
+      category: 'بيتزا',
+      sizes: [
+        { name: 'صغيرة', price: '60' },
+        { name: 'متوسطة', price: '80' },
+        { name: 'كبيرة', price: '100' },
+        { name: 'فاميلي', price: '130' }
+      ],
+      image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300',
+      businessId: 'مطعم باك باك'
+    },
+    {
+      id: 'bb4',
+      name: 'شيك شوكولاتة',
+      price: '25',
+      description: 'ميلك شيك بالشوكولاتة الفاخرة مع الكريمة',
+      category: 'مشروبات',
+      sizes: [
+        { name: 'صغير', price: '25' },
+        { name: 'متوسط', price: '30' },
+        { name: 'كبير', price: '35' }
+      ],
+      image: 'https://images.unsplash.com/photo-1541591182726-e138b7e49a3b?w=300',
+      businessId: 'مطعم باك باك'
+    },
+    // كارفور مول C3 Products
+    {
+      id: 'c3-1',
+      name: 'سماعات بلوتوث',
+      price: '250',
+      description: 'سماعات لاسلكية عالية الجودة مع إلغاء الضوضاء',
+      category: 'إلكترونيات',
+      sizes: [
+        { name: 'أسود', price: '250' },
+        { name: 'أبيض', price: '270' },
+        { name: 'أزرق', price: '280' }
+      ],
+      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300',
+      businessId: 'كارفور مول C3'
+    },
+    {
+      id: 'c3-2',
+      name: 'ساعة ذكية',
+      price: '800',
+      description: 'ساعة ذكية متقدمة مع مراقبة الصحة واللياقة',
+      category: 'إلكترونيات',
+      sizes: [
+        { name: '38 مم', price: '800' },
+        { name: '42 مم', price: '900' },
+        { name: '45 مم', price: '1000' }
+      ],
+      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300',
+      businessId: 'كارفور مول C3'
+    },
+    {
+      id: 'c3-3',
+      name: 'بودرة غسيل',
+      price: '35',
+      description: 'مسحوق غسيل عالي الفعالية للملابس البيضاء والملونة',
+      category: 'منظفات',
+      sizes: [
+        { name: '1 كيلو', price: '35' },
+        { name: '2.5 كيلو', price: '75' },
+        { name: '5 كيلو', price: '140' }
+      ],
+      image: 'https://images.unsplash.com/photo-1556909114-477eedc9f975?w=300',
+      businessId: 'كارفور مول C3'
+    },
+    {
+      id: 'c3-4',
+      name: 'شوكولاتة سنيكرز',
+      price: '8',
+      description: 'شوكولاتة سنيكرز الأصلية بالفول السوداني والكراميل',
+      category: 'حلويات',
+      sizes: [
+        { name: 'حبة واحدة', price: '8' },
+        { name: '3 حبات', price: '20' },
+        { name: '6 حبات', price: '35' }
+      ],
+      image: 'https://images.unsplash.com/photo-1511381939415-e44015466834?w=300',
+      businessId: 'كارفور مول C3'
+    },
+    // ميجا مول مدينة 15 مايو Products
+    {
+      id: 'mm1',
+      name: 'فستان صيفي',
+      price: '180',
+      description: 'فستان أنيق ومريح للصيف بألوان زاهية',
+      category: 'ملابس نسائية',
+      sizes: [
+        { name: 'S', price: '180' },
+        { name: 'M', price: '180' },
+        { name: 'L', price: '200' },
+        { name: 'XL', price: '220' }
+      ],
+      image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=300',
+      businessId: 'ميجا مول مدينة 15 مايو'
+    },
+    {
+      id: 'mm2',
+      name: 'حقيبة ظهر',
+      price: '120',
+      description: 'حقيبة ظهر عملية للدراسة والسفر',
+      category: 'إكسسوارات',
+      sizes: [
+        { name: 'صغيرة', price: '120' },
+        { name: 'متوسطة', price: '150' },
+        { name: 'كبيرة', price: '180' }
+      ],
+      image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300',
+      businessId: 'ميجا مول مدينة 15 مايو'
+    },
+    {
+      id: 'mm3',
+      name: 'لعبة ليغو',
+      price: '200',
+      description: 'مجموعة ليغو تعليمية ممتعة للأطفال',
+      category: 'ألعاب أطفال',
+      sizes: [
+        { name: '100 قطعة', price: '200' },
+        { name: '250 قطعة', price: '350' },
+        { name: '500 قطعة', price: '600' }
+      ],
+      image: 'https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=300',
+      businessId: 'ميجا مول مدينة 15 مايو'
+    },
+    // سوق 15 مايو الجديد Products
+    {
+      id: 'sm15-1',
+      name: 'تفاح أحمر',
+      price: '15',
+      description: 'تفاح أحمر طازج عالي الجودة مستورد',
+      category: 'فواكه',
+      sizes: [
+        { name: 'كيلو', price: '15' },
+        { name: '2 كيلو', price: '28' },
+        { name: '5 كيلو', price: '65' }
+      ],
+      image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=300',
+      businessId: 'سوق 15 مايو الجديد'
+    },
+    {
+      id: 'sm15-2',
+      name: 'طماطم طازجة',
+      price: '8',
+      description: 'طماطم طازجة محلية من أجود الأنواع',
+      category: 'خضروات',
+      sizes: [
+        { name: 'كيلو', price: '8' },
+        { name: '3 كيلو', price: '22' },
+        { name: '5 كيلو', price: '35' }
+      ],
+      image: 'https://images.unsplash.com/photo-1546470427-e2e2c057659b?w=300',
+      businessId: 'سوق 15 مايو الجديد'
+    },
+    {
+      id: 'sm15-3',
+      name: 'سمك بلطي',
+      price: '45',
+      description: 'سمك بلطي طازج من أفضل المزارع السمكية',
+      category: 'أسماك',
+      sizes: [
+        { name: 'كيلو', price: '45' },
+        { name: '2 كيلو', price: '85' },
+        { name: '3 كيلو', price: '125' }
+      ],
+      image: 'https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=300',
+      businessId: 'سوق 15 مايو الجديد'
     }
   ]);
 
@@ -696,6 +914,50 @@ const App = () => {
 
   const removeProduct = (productId: string) => {
     setAllProducts(allProducts.filter(product => product.id !== productId));
+  };
+
+  // Cart Functions
+  const updateProductSelection = (productId: string, field: 'selectedSize' | 'quantity', value: number) => {
+    setProductSelections(prev => ({
+      ...prev,
+      [productId]: {
+        selectedSize: field === 'selectedSize' ? value : (prev[productId]?.selectedSize || 0),
+        quantity: field === 'quantity' ? value : (prev[productId]?.quantity || 1)
+      }
+    }));
+  };
+
+  const addProductToCart = (product: any) => {
+    const selection = productSelections[product.id!] || { selectedSize: 0, quantity: 1 };
+    const selectedSize = product.sizes?.[selection.selectedSize];
+
+    const cartItem = {
+      productId: product.id!,
+      productName: product.name,
+      sizeIndex: selection.selectedSize,
+      sizeName: selectedSize?.name || 'عادي',
+      price: parseFloat(selectedSize?.price || product.price),
+      quantity: selection.quantity,
+      category: product.category
+    };
+
+    const existingItemIndex = cart.findIndex(item =>
+      item.productId === cartItem.productId && item.sizeIndex === cartItem.sizeIndex
+    );
+
+    if (existingItemIndex >= 0) {
+      const updatedCart = [...cart];
+      updatedCart[existingItemIndex].quantity += cartItem.quantity;
+      setCart(updatedCart);
+    } else {
+      setCart([...cart, cartItem]);
+    }
+
+    // Reset selections
+    setProductSelections(prev => ({
+      ...prev,
+      [product.id!]: { selectedSize: 0, quantity: 1 }
+    }));
   };
 
   // Shopping cart functions (for طلبات services)
@@ -1393,7 +1655,7 @@ ${markets.map(market => `• ${market.name}
       onClick={() => {
         console.log('Card clicked - place:', place.name);
         setSelectedPlace(place);
-        setShowDetails(true);
+        setCurrentView('service-details');
         console.log('showDetails set to true');
       }}
     >
@@ -1573,7 +1835,7 @@ ${markets.map(market => `• ${market.name}
                         key={place.id}
                         onClick={() => {
                           setSelectedPlace(place);
-                          setShowDetails(true);
+                          setCurrentView('service-details');
                         }}
                         className="flex-shrink-0 w-64 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
                       >
@@ -2698,6 +2960,399 @@ ${markets.map(market => `• ${market.name}
           </div>
         )}
 
+        {/* Service Details View */}
+        {currentView === 'service-details' && selectedPlace && (
+          <div className="space-y-6">
+            {/* Back Button */}
+            <button
+              onClick={() => setCurrentView('search')}
+              className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-4"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              العودة للبحث
+            </button>
+
+            {/* Service Info Card */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className="flex items-start gap-4 mb-6">
+                <img
+                  src={selectedPlace.image}
+                  alt={selectedPlace.name}
+                  className="w-20 h-20 rounded-lg object-cover"
+                />
+                <div className="flex-1">
+                  <h1 className="text-2xl font-bold text-gray-800 mb-2">{selectedPlace.name}</h1>
+                  <p className="text-gray-600 mb-3">{selectedPlace.description}</p>
+
+                  {/* Rating */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex text-yellow-400">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <svg key={star} className="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <span className="text-gray-600 text-sm">(4.8 - {selectedPlace.likes} تقييم)</span>
+                  </div>
+
+                  {/* Contact Info */}
+                  <div className="flex flex-col gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-4 h-4" />
+                      {selectedPlace.phone}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      {selectedPlace.address}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      {selectedPlace.hours}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Service Offers Section */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">العروض الحالية</h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Special Offers */}
+                <div className="relative bg-gradient-to-r from-red-500 to-pink-500 rounded-lg p-6 text-white overflow-hidden">
+                  <div className="absolute top-0 right-0 bg-yellow-400 text-red-600 px-3 py-1 rounded-bl-lg font-bold text-sm">
+                    عرض خاص
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">خصم 25% على جميع المنتجات</h3>
+                  <p className="text-sm opacity-90 mb-3">
+                    عرض محدود - صالح حتى نهاية الشهر
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">الكود: SAVE25</span>
+                    <button className="bg-white text-red-500 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors">
+                      استخدم العرض
+                    </button>
+                  </div>
+                </div>
+
+                {/* Buy 2 Get 1 Free */}
+                <div className="relative bg-gradient-to-r from-green-500 to-blue-500 rounded-lg p-6 text-white overflow-hidden">
+                  <div className="absolute top-0 right-0 bg-orange-400 text-green-700 px-3 py-1 rounded-bl-lg font-bold text-sm">
+                    عرض مميز
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">اشتري 2 واحصل على الثالث مجاناً</h3>
+                  <p className="text-sm opacity-90 mb-3">
+                    ينطبق على مجموعة مختارة من المنتجات
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">الكود: BUY2GET1</span>
+                    <button className="bg-white text-green-500 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors">
+                      استخدم العرض
+                    </button>
+                  </div>
+                </div>
+
+                {/* Free Delivery */}
+                <div className="relative bg-gradient-to-r from-purple-500 to-indigo-500 rounded-lg p-6 text-white overflow-hidden">
+                  <div className="absolute top-0 right-0 bg-green-400 text-purple-700 px-3 py-1 rounded-bl-lg font-bold text-sm">
+                    توصيل مجاني
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">توصيل مجاني للطلبات +500 ج.م</h3>
+                  <p className="text-sm opacity-90 mb-3">
+                    توصيل سريع خلال 24 ساعة
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">لا يحتاج كود</span>
+                    <button className="bg-white text-purple-500 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors">
+                      تسوق الآن
+                    </button>
+                  </div>
+                </div>
+
+                {/* Happy Hour */}
+                <div className="relative bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg p-6 text-white overflow-hidden">
+                  <div className="absolute top-0 right-0 bg-red-400 text-yellow-700 px-3 py-1 rounded-bl-lg font-bold text-sm">
+                    Happy Hour
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">خصم 40% من 6-8 مساءً</h3>
+                  <p className="text-sm opacity-90 mb-3">
+                    عرض يومي - فقط في ساعات المساء
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">تلقائي أثناء الوقت المحدد</span>
+                    <button className="bg-white text-orange-500 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors">
+                      تسوق الآن
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Terms and Conditions */}
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-2">شروط وأحكام العروض:</h4>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• لا يمكن دمج العروض مع بعضها البعض</li>
+                  <li>• العروض سارية حسب التواريخ المحددة</li>
+                  <li>• قد تختلف الشروط حسب نوع المنتج</li>
+                  <li>• للمزيد من التفاصيل اتصل بخدمة العملاء</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Product Categories Tabs */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">تصنيفات المنتجات</h2>
+
+              {/* Tab Navigation */}
+              <div className="flex overflow-x-auto gap-2 mb-6 border-b">
+                {productCategories.map((category) => (
+                  <button
+                    key={category.id}
+                    className="whitespace-nowrap px-4 py-2 text-sm font-medium border-b-2 border-blue-500 text-blue-600 transition-colors flex items-center gap-2"
+                  >
+                    {category.icon && <span>{category.icon}</span>}
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Products Content */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {selectedProducts.map((product) => {
+                  const selection = productSelections[product.id!] || { selectedSize: 0, quantity: 1 };
+                  const selectedSize = product.sizes?.[selection.selectedSize];
+                  const currentPrice = selectedSize?.price || product.price;
+
+                  return (
+                    <div key={product.id} className="border rounded-lg p-4 hover:shadow-lg transition-shadow bg-white">
+                      {/* Product Image */}
+                      {product.image && (
+                        <div className="relative mb-3">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-40 object-cover rounded-md"
+                          />
+                          <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                            جديد
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Product Info */}
+                      <div className="mb-3">
+                        <h3 className="font-bold text-gray-800 mb-1 text-lg">{product.name}</h3>
+                        <p className="text-gray-600 text-sm mb-2">{product.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-blue-600 font-bold text-xl">{currentPrice} ج.م</span>
+                          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">{product.category}</span>
+                        </div>
+                      </div>
+
+                      {/* Size Selection */}
+                      {product.sizes && product.sizes.length > 0 && (
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">اختر الحجم:</label>
+                          <select
+                            value={selection.selectedSize}
+                            onChange={(e) => updateProductSelection(product.id!, 'selectedSize', parseInt(e.target.value))}
+                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            {product.sizes.map((size, index) => (
+                              <option key={index} value={index}>
+                                {size.name} - {size.price} ج.م
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      {/* Quantity Selection */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">الكمية:</label>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => updateProductSelection(product.id!, 'quantity', Math.max(1, selection.quantity - 1))}
+                            className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-md text-lg font-bold"
+                          >
+                            -
+                          </button>
+                          <span className="w-12 text-center font-semibold text-lg">{selection.quantity}</span>
+                          <button
+                            onClick={() => updateProductSelection(product.id!, 'quantity', selection.quantity + 1)}
+                            className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded-md text-lg font-bold"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Total Price */}
+                      <div className="mb-4 p-3 bg-gray-50 rounded-md">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">الإجمالي:</span>
+                          <span className="font-bold text-green-600 text-lg">
+                            {(parseFloat(currentPrice) * selection.quantity).toFixed(0)} ج.م
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Add to Cart Button */}
+                      <button
+                        onClick={() => addProductToCart(product)}
+                        className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3 rounded-md font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                      >
+                        🛒 أضف للسلة
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {selectedProducts.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <div className="text-4xl mb-2">📦</div>
+                  <p>لا توجد منتجات متاحة حالياً</p>
+                </div>
+              )}
+            </div>
+
+            {/* Products Cards Section */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">جميع المنتجات</h2>
+                <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
+                  {selectedProducts.length} منتج
+                </span>
+              </div>
+
+              {/* Products Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {selectedProducts.map((product) => {
+                  const selection = productSelections[product.id!] || { selectedSize: 0, quantity: 1 };
+                  const selectedSize = product.sizes?.[selection.selectedSize];
+                  const currentPrice = selectedSize?.price || product.price;
+
+                  return (
+                    <div key={product.id} className="group border rounded-xl p-4 hover:shadow-xl transition-all duration-300 bg-white hover:border-blue-300">
+                      {/* Product Image */}
+                      {product.image && (
+                        <div className="relative mb-4 overflow-hidden rounded-lg">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                          <div className="absolute top-3 right-3">
+                            <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
+                              جديد
+                            </span>
+                          </div>
+                          <div className="absolute top-3 left-3">
+                            <button className="bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-colors">
+                              ❤️
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Product Info */}
+                      <div className="mb-4">
+                        <h3 className="font-bold text-gray-900 mb-2 text-lg line-clamp-2">{product.name}</h3>
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
+
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex flex-col">
+                            <span className="text-2xl font-bold text-blue-600">{currentPrice} ج.م</span>
+                            {selectedSize && selectedSize.price !== product.price && (
+                              <span className="text-sm text-gray-500 line-through">{product.price} ج.م</span>
+                            )}
+                          </div>
+                          <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
+                            {product.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Size Selection */}
+                      {product.sizes && product.sizes.length > 0 && (
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">اختر الحجم:</label>
+                          <select
+                            value={selection.selectedSize}
+                            onChange={(e) => updateProductSelection(product.id!, 'selectedSize', parseInt(e.target.value))}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                          >
+                            {product.sizes.map((size, index) => (
+                              <option key={index} value={index}>
+                                {size.name} - {size.price} ج.م
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      {/* Quantity Selection */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">الكمية:</label>
+                        <div className="flex items-center justify-center bg-gray-50 rounded-lg p-2">
+                          <button
+                            onClick={() => updateProductSelection(product.id!, 'quantity', Math.max(1, selection.quantity - 1))}
+                            className="w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 rounded-md text-lg font-bold border shadow-sm transition-colors"
+                          >
+                            -
+                          </button>
+                          <span className="w-16 text-center font-bold text-lg">{selection.quantity}</span>
+                          <button
+                            onClick={() => updateProductSelection(product.id!, 'quantity', selection.quantity + 1)}
+                            className="w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 rounded-md text-lg font-bold border shadow-sm transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Total Price */}
+                      <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-700 font-medium">الإجمالي:</span>
+                          <span className="font-bold text-green-600 text-lg">
+                            {(parseFloat(currentPrice) * selection.quantity).toFixed(0)} ج.م
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Add to Cart Button */}
+                      <button
+                        onClick={() => addProductToCart(product)}
+                        className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 5M7 13l-1.5-5m0 0h13M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z" />
+                        </svg>
+                        أضف للسلة
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* No Products Message */}
+              {selectedProducts.length === 0 && (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">🛒</div>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">لا توجد منتجات متاحة</h3>
+                  <p className="text-gray-500">سيتم إضافة المنتجات قريباً</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Service Owner Dashboard */}
         {currentView === 'owner-dashboard' && userType === 'service-owner' && (
           <div className="space-y-6">
@@ -2941,7 +3596,7 @@ ${markets.map(market => `• ${market.name}
                       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
                       onClick={() => {
                         setSelectedPlace(place);
-                        setShowDetails(true);
+                        setCurrentView('service-details');
                       }}
                     >
                       <img src={place.image} alt={place.name} className="w-full h-32 object-cover" />
@@ -2997,7 +3652,7 @@ ${markets.map(market => `• ${market.name}
                       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
                       onClick={() => {
                         setSelectedPlace(place);
-                        setShowDetails(true);
+                        setCurrentView('service-details');
                       }}
                     >
                       <img src={place.image} alt={place.name} className="w-full h-32 object-cover" />
@@ -3209,6 +3864,7 @@ ${markets.map(market => `• ${market.name}
         </div>
       </nav>
 
+      <>
       {(() => {
         console.log('Checking modal conditions:', { showDetails, selectedPlace: selectedPlace?.name });
         return showDetails && selectedPlace;
@@ -4932,6 +5588,7 @@ ${markets.map(market => `• ${market.name}
           </div>
         </div>
       )}
+      </>
     </div>
   );
 };
