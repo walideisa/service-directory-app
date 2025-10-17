@@ -18,5 +18,6 @@
     "strict": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.backup", "src/**/*.bak", "src/**/*.original", "src/**/*.working", "src/App_full.tsx"]
 }

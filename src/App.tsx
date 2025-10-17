@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, ThumbsUp, Phone, Clock, Filter, Heart, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2, Calendar, Minus } from 'lucide-react';
+import { Search, MapPin, ThumbsUp, Phone, Clock, Filter, Heart, Settings, Plus, Edit2, Trash2, Save, X, Upload, Eye, EyeOff, ChevronRight, List, Folder, Info, MessageCircle, Send, Bot, User, Minimize2, Maximize2, Calendar, Minus, ArrowRight } from 'lucide-react';
 import { PlaceForm } from './components/PlaceForm';
 import './App.css';
 
@@ -151,6 +151,70 @@ const App = () => {
     }
   ];
 
+  // Mock Users Database
+  const mockUsers = [
+    {
+      id: 1,
+      username: 'customer1',
+      password: '123456',
+      type: 'customer',
+      name: 'أحمد محمد',
+      email: 'customer@example.com',
+      phone: '01234567890'
+    },
+    {
+      id: 2,
+      username: 'owner1',
+      password: '123456',
+      type: 'service-owner',
+      name: 'محمد أحمد',
+      email: 'owner@example.com',
+      phone: '01234567891',
+      businessName: 'مطعم باك باك'
+    },
+    {
+      id: 3,
+      username: 'admin',
+      password: 'admin123',
+      type: 'admin',
+      name: 'مدير النظام',
+      email: 'admin@example.com',
+      phone: '01234567892'
+    }
+  ];
+
+  // Authentication and User Management
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [userType, setUserType] = useState<'customer' | 'service-owner' | 'admin' | null>(null);
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [loginCredentials, setLoginCredentials] = useState({ username: '', password: '' });
+
+  // Authentication Functions
+  const handleLogin = () => {
+    const user = mockUsers.find(
+      u => u.username === loginCredentials.username && u.password === loginCredentials.password
+    );
+
+    if (user) {
+      setCurrentUser(user);
+      setUserType(user.type as 'customer' | 'service-owner' | 'admin');
+      setIsLoggedIn(true);
+      setShowLoginForm(false);
+      setCurrentView(user.type === 'customer' ? 'search' : user.type === 'service-owner' ? 'owner-dashboard' : 'admin-dashboard');
+      setLoginCredentials({ username: '', password: '' });
+    } else {
+      alert('اسم المستخدم أو كلمة المرور غير صحيحة');
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setUserType(null);
+    setIsLoggedIn(false);
+    setCurrentView('search');
+  };
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -159,7 +223,9 @@ const App = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [currentView, setCurrentView] = useState('search');
   const [sortBy, setSortBy] = useState('name');
-  const [managedPlaces, setManagedPlaces] = useState(places);
+  const [selectedMainCategory, setSelectedMainCategory] = useState<string | null>(null);
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('all');
+  const [managedPlaces, setManagedPlaces] = useState(places as any[]);
   const [editingPlace, setEditingPlace] = useState<any>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -172,6 +238,46 @@ const App = () => {
     hospital: { name: 'مستشفيات', icon: '🏥', isVisible: true },
     bank: { name: 'بنوك', icon: '🏦', isVisible: true }
   });
+
+  // Subcategories for each main category
+  const subCategories = {
+    restaurant: [
+      { id: 'all', name: 'الكل', icon: '🍽️' },
+      { id: 'fast-food', name: 'وجبات سريعة', icon: '🍔' },
+      { id: 'pizza', name: 'بيتزا', icon: '🍕' },
+      { id: 'oriental', name: 'مأكولات شرقية', icon: '🥙' },
+      { id: 'sweets', name: 'حلويات', icon: '🍰' },
+      { id: 'beverages', name: 'مشروبات', icon: '🥤' },
+      { id: 'seafood', name: 'مأكولات بحرية', icon: '🦐' }
+    ],
+    market: [
+      { id: 'all', name: 'الكل', icon: '🛒' },
+      { id: 'grocery', name: 'بقالة', icon: '🥫' },
+      { id: 'vegetables', name: 'خضروات وفواكه', icon: '🥕' },
+      { id: 'meat', name: 'لحوم ودواجن', icon: '🥩' },
+      { id: 'dairy', name: 'ألبان', icon: '🥛' },
+      { id: 'bakery', name: 'مخبوزات', icon: '🍞' },
+      { id: 'cleaning', name: 'منظفات', icon: '🧽' }
+    ],
+    mall: [
+      { id: 'all', name: 'الكل', icon: '🛍️' },
+      { id: 'fashion', name: 'ملابس وأزياء', icon: '👗' },
+      { id: 'electronics', name: 'إلكترونيات', icon: '📱' },
+      { id: 'home', name: 'مستلزمات منزلية', icon: '🏠' },
+      { id: 'beauty', name: 'تجميل وعطور', icon: '💄' },
+      { id: 'books', name: 'كتب ومكتبة', icon: '📚' },
+      { id: 'toys', name: 'ألعاب أطفال', icon: '🧸' }
+    ],
+    hospital: [
+      { id: 'all', name: 'الكل', icon: '🏥' },
+      { id: 'clinic', name: 'عيادات', icon: '👩‍⚕️' },
+      { id: 'dentist', name: 'أسنان', icon: '🦷' },
+      { id: 'lab', name: 'معامل تحليل', icon: '🔬' },
+      { id: 'pharmacy', name: 'صيدليات', icon: '💊' },
+      { id: 'optics', name: 'نظارات', icon: '👓' }
+    ]
+  };
+
   const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [settingsView, setSettingsView] = useState('main');
@@ -1282,7 +1388,15 @@ ${markets.map(market => `• ${market.name}
   };
 
   const PlaceCard = ({ place }: { place: any }) => (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <div
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={() => {
+        console.log('Card clicked - place:', place.name);
+        setSelectedPlace(place);
+        setShowDetails(true);
+        console.log('showDetails set to true');
+      }}
+    >
       <div className="relative">
         <img
           src={place.image}
@@ -1290,7 +1404,10 @@ ${markets.map(market => `• ${market.name}
           className="w-full h-48 object-cover"
         />
         <button
-          onClick={() => toggleFavorite(place.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleFavorite(place.id);
+          }}
           className="absolute top-2 right-2 p-2 rounded-full bg-white shadow-md hover:bg-red-50"
         >
           <Heart
@@ -1313,7 +1430,10 @@ ${markets.map(market => `• ${market.name}
 
         <div className="flex items-center mb-2">
           <button
-            onClick={() => toggleLike(place.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleLike(place.id);
+            }}
             className="flex items-center gap-1 hover:bg-gray-100 p-1 rounded"
           >
             <ThumbsUp
@@ -1346,15 +1466,9 @@ ${markets.map(market => `• ${market.name}
         </div>
 
         <div className="flex gap-2">
-          <button
-            onClick={() => {
-              setSelectedPlace(place);
-              setShowDetails(true);
-            }}
-            className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600"
-          >
-            عرض التفاصيل
-          </button>
+          <div className="flex-1 bg-gray-100 text-gray-600 px-4 py-2 rounded-md text-sm text-center">
+            اضغط على الكارد لعرض التفاصيل
+          </div>
           {place.type === 'طلبات' && (
             <button
               onClick={(e) => {
@@ -1384,8 +1498,40 @@ ${markets.map(market => `• ${market.name}
     <div className="min-h-screen bg-gray-50" dir="rtl">
       <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 shadow-lg">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl font-bold mb-2">دليل خدمات مدينة 15 مايو الشامل</h1>
-          <p className="text-blue-100 text-sm mb-4">اكتشف جميع الخدمات والأماكن المهمة في مدينتك بسهولة</p>
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h1 className="text-2xl font-bold mb-2">دليل خدمات مدينة 15 مايو الشامل</h1>
+              <p className="text-blue-100 text-sm">اكتشف جميع الخدمات والأماكن المهمة في مدينتك بسهولة</p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {isLoggedIn ? (
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <div className="text-sm font-medium">{currentUser?.name}</div>
+                    <div className="text-xs text-blue-200">
+                      {userType === 'customer' && 'عميل'}
+                      {userType === 'service-owner' && 'مقدم خدمة'}
+                      {userType === 'admin' && 'مدير النظام'}
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm transition-colors"
+                  >
+                    تسجيل خروج
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowLoginForm(true)}
+                  className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg text-sm transition-colors"
+                >
+                  تسجيل دخول
+                </button>
+              )}
+            </div>
+          </div>
 
           <div className="relative mb-4">
             <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -1427,7 +1573,7 @@ ${markets.map(market => `• ${market.name}
                         key={place.id}
                         onClick={() => {
                           setSelectedPlace(place);
-                          setShowPlaceDetails(true);
+                          setShowDetails(true);
                         }}
                         className="flex-shrink-0 w-64 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all transform hover:scale-105"
                       >
@@ -1539,7 +1685,15 @@ ${markets.map(market => `• ${market.name}
                 ).map(([key, category]) => (
                   <button
                     key={key}
-                    onClick={() => setSelectedCategory(key)}
+                    onClick={() => {
+                      if (key === 'all') {
+                        setSelectedCategory(key);
+                      } else {
+                        setSelectedMainCategory(key);
+                        setSelectedSubCategory('all');
+                        setCurrentView('category-view');
+                      }
+                    }}
                     className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
                       selectedCategory === key
                         ? 'bg-blue-500 text-white'
@@ -1584,62 +1738,6 @@ ${markets.map(market => `• ${market.name}
           </div>
         )}
 
-        {currentView === 'my-stores' && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold mb-4">🛍️ متاجري</h2>
-            {(() => {
-              const myStores = managedPlaces.filter(place => place.type === 'طلبات');
-              return myStores.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">🛍️</div>
-                  <h3 className="text-xl font-semibold text-gray-700 mb-2">لا توجد متاجر حتى الآن</h3>
-                  <p className="text-gray-500 mb-4">أضف متجرك الأول من خلال "إضافة خدمة" واختر نوع "طلبات"</p>
-                  <button
-                    onClick={() => setCurrentView('add-service')}
-                    className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors"
-                  >
-                    إضافة متجر جديد
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {myStores.map(store => (
-                    <div key={store.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                      <img
-                        src={store.image}
-                        alt={store.name}
-                        className="w-full h-48 object-cover"
-                      />
-                      <div className="p-4">
-                        <h3 className="font-bold text-lg mb-2">{store.name}</h3>
-                        <p className="text-sm text-gray-600 mb-2">{store.description}</p>
-                        <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
-                          <MapPin className="w-4 h-4" />
-                          <span>{store.address}</span>
-                        </div>
-
-                        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                          <span>📦 {allProducts.filter(product => product.businessId === store.name).length} منتج</span>
-                          <span>📋 {receivedOrders.filter(order => order.businessName === store.name).length} طلب</span>
-                        </div>
-
-                        <button
-                          onClick={() => {
-                            setSelectedPlace(store);
-                            setShowMarketManagement(true);
-                          }}
-                          className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
-                        >
-                          🛍️ إدارة المتجر
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
-          </div>
-        )}
 
         {currentView === 'settings' && settingsView === 'main' && (
           <div className="space-y-4">
@@ -2204,8 +2302,7 @@ ${markets.map(market => `• ${market.name}
                 setCustomCategoryName('');
                 setSelectedServices([]);
                 setCurrentService('');
-                setSelectedProducts([]);
-                setCurrentProduct({ name: '', price: '', description: '' });
+                setCurrentProduct({ name: '', price: '', description: '', category: '', sizes: [{ name: '', price: '' }], image: '' });
                 setSelectedServiceType('حجورات');
                 setAppointmentSettings({
                   sessionDuration: '30',
@@ -2600,64 +2697,525 @@ ${markets.map(market => `• ${market.name}
             </div>
           </div>
         )}
+
+        {/* Service Owner Dashboard */}
+        {currentView === 'owner-dashboard' && userType === 'service-owner' && (
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">لوحة تحكم مقدم الخدمة</h2>
+              <p className="text-gray-600">مرحباً {currentUser?.name} - إدارة أعمالك</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">إجمالي الخدمات</h3>
+                    <p className="text-2xl font-bold">{managedPlaces.filter(p => p.owner === currentUser?.name).length}</p>
+                  </div>
+                  <div className="text-4xl opacity-80">🏪</div>
+                </div>
+              </div>
+
+              <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">الطلبات الجديدة</h3>
+                    <p className="text-2xl font-bold">{receivedOrders.filter(order => order.businessName === currentUser?.businessName).length}</p>
+                  </div>
+                  <div className="text-4xl opacity-80">📋</div>
+                </div>
+              </div>
+
+              <div className="bg-orange-500 text-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">المنتجات</h3>
+                    <p className="text-2xl font-bold">{allProducts.filter(p => p.businessId === currentUser?.businessName).length}</p>
+                  </div>
+                  <div className="text-4xl opacity-80">📦</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h3 className="text-xl font-bold mb-4">خدماتي</h3>
+                <div className="space-y-4">
+                  {managedPlaces.filter(place => place.owner === currentUser?.name).map(place => (
+                    <div key={place.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <img src={place.image} alt={place.name} className="w-12 h-12 rounded-lg object-cover" />
+                        <div>
+                          <h4 className="font-medium">{place.name}</h4>
+                          <p className="text-sm text-gray-500">{place.category}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setSelectedPlace(place);
+                          setShowMarketManagement(true);
+                        }}
+                        className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600"
+                      >
+                        إدارة
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h3 className="text-xl font-bold mb-4">الطلبات الأخيرة</h3>
+                <div className="space-y-4">
+                  {receivedOrders.filter(order => order.businessName === currentUser?.businessName).slice(0, 5).map(order => (
+                    <div key={order.id} className="p-3 border rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="font-medium">{order.customerName}</span>
+                        <span className="text-sm text-gray-500">{order.timestamp.toLocaleDateString('ar-EG')}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">إجمالي: {order.total} جنيه</p>
+                      <div className="flex gap-2">
+                        <button className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600">
+                          قبول
+                        </button>
+                        <button className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">
+                          رفض
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Admin Dashboard */}
+        {currentView === 'admin-dashboard' && userType === 'admin' && (
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">لوحة تحكم الإدارة</h2>
+              <p className="text-gray-600">مرحباً {currentUser?.name} - إدارة شاملة للنظام</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="bg-purple-500 text-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">إجمالي الخدمات</h3>
+                    <p className="text-2xl font-bold">{managedPlaces.length}</p>
+                  </div>
+                  <div className="text-4xl opacity-80">🏪</div>
+                </div>
+              </div>
+
+              <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">الطلبات المعلقة</h3>
+                    <p className="text-2xl font-bold">{managedPlaces.filter(p => p.isPending).length}</p>
+                  </div>
+                  <div className="text-4xl opacity-80">⏳</div>
+                </div>
+              </div>
+
+              <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">إجمالي الطلبات</h3>
+                    <p className="text-2xl font-bold">{receivedOrders.length}</p>
+                  </div>
+                  <div className="text-4xl opacity-80">📋</div>
+                </div>
+              </div>
+
+              <div className="bg-orange-500 text-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold">المستخدمين</h3>
+                    <p className="text-2xl font-bold">3</p>
+                  </div>
+                  <div className="text-4xl opacity-80">👥</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h3 className="text-xl font-bold mb-4">طلبات المراجعة</h3>
+                <div className="space-y-4">
+                  {managedPlaces.filter(place => place.isPending).map(place => (
+                    <div key={place.id} className="p-4 border rounded-lg">
+                      <div className="flex items-center gap-3 mb-3">
+                        <img src={place.image} alt={place.name} className="w-16 h-16 rounded-lg object-cover" />
+                        <div className="flex-1">
+                          <h4 className="font-medium">{place.name}</h4>
+                          <p className="text-sm text-gray-500">{place.category}</p>
+                          <p className="text-xs text-gray-400">مقدم من: {place.submitterName}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setManagedPlaces(prev =>
+                              prev.map(p => p.id === place.id ? {...p, isPending: false, isVisible: true} : p)
+                            );
+                          }}
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-600"
+                        >
+                          ✅ موافقة
+                        </button>
+                        <button
+                          onClick={() => {
+                            setManagedPlaces(prev => prev.filter(p => p.id !== place.id));
+                          }}
+                          className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600"
+                        >
+                          ❌ رفض
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {managedPlaces.filter(place => place.isPending).length === 0 && (
+                    <p className="text-gray-500 text-center py-4">لا توجد طلبات للمراجعة</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <h3 className="text-xl font-bold mb-4">إحصائيات سريعة</h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span>مولات</span>
+                    <span className="font-bold">{managedPlaces.filter(p => p.category === 'mall').length}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span>مطاعم</span>
+                    <span className="font-bold">{managedPlaces.filter(p => p.category === 'restaurant').length}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span>أسواق</span>
+                    <span className="font-bold">{managedPlaces.filter(p => p.category === 'market').length}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span>خدمات طبية</span>
+                    <span className="font-bold">{managedPlaces.filter(p => p.category === 'medical').length}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Category View */}
+        {currentView === 'category-view' && (
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => setCurrentView('search')}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <ArrowRight className="w-6 h-6" />
+              </button>
+              <h2 className="text-2xl font-bold">
+                {selectedMainCategory === 'restaurant' && 'المطاعم'}
+                {selectedMainCategory === 'market' && 'المتاجر والأسواق'}
+                {selectedMainCategory === 'mall' && 'المولات ومراكز التسوق'}
+                {selectedMainCategory === 'hospital' && 'الخدمات الطبية'}
+              </h2>
+            </div>
+
+            {/* Featured Places Section */}
+            <div className="mb-8">
+              <h3 className="text-xl font-bold mb-4 text-gray-800">الأفضل والأكثر تقييماً</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {managedPlaces
+                  .filter(place => place.category === selectedMainCategory)
+                  .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+                  .slice(0, 6)
+                  .map(place => (
+                    <div
+                      key={place.id}
+                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                      onClick={() => {
+                        setSelectedPlace(place);
+                        setShowDetails(true);
+                      }}
+                    >
+                      <img src={place.image} alt={place.name} className="w-full h-32 object-cover" />
+                      <div className="p-4">
+                        <h4 className="font-bold text-gray-800">{place.name}</h4>
+                        <p className="text-gray-600 text-sm">{place.description}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-yellow-500">⭐</span>
+                          <span className="text-sm font-medium">{place.rating || 4.5}</span>
+                          <span className="text-green-600 text-sm">✅ مفتوح</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+
+            {/* Subcategory Tabs */}
+            <div className="mb-6">
+              <div className="flex flex-wrap gap-2 mb-4">
+                {subCategories[selectedMainCategory]?.map(subCat => (
+                  <button
+                    key={subCat.id}
+                    onClick={() => setSelectedSubCategory(subCat.id)}
+                    className={`px-4 py-2 rounded-full flex items-center gap-2 transition-colors ${
+                      selectedSubCategory === subCat.id
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    <span>{subCat.icon}</span>
+                    <span>{subCat.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* All Places in Category */}
+            <div>
+              <h3 className="text-xl font-bold mb-4 text-gray-800">جميع الخدمات</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {managedPlaces
+                  .filter(place => {
+                    if (place.category !== selectedMainCategory) return false;
+                    if (selectedSubCategory === 'all') return true;
+                    // Add subcategory filtering logic here if needed
+                    return true;
+                  })
+                  .map(place => (
+                    <div
+                      key={place.id}
+                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                      onClick={() => {
+                        setSelectedPlace(place);
+                        setShowDetails(true);
+                      }}
+                    >
+                      <img src={place.image} alt={place.name} className="w-full h-32 object-cover" />
+                      <div className="p-4">
+                        <h4 className="font-bold text-gray-800">{place.name}</h4>
+                        <p className="text-gray-600 text-sm">{place.description}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-yellow-500">⭐</span>
+                          <span className="text-sm font-medium">{place.rating || 4.5}</span>
+                          <span className="text-green-600 text-sm">✅ مفتوح</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Login Modal */}
+      {showLoginForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold">تسجيل الدخول</h2>
+              <button
+                onClick={() => setShowLoginForm(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  اسم المستخدم
+                </label>
+                <input
+                  type="text"
+                  value={loginCredentials.username}
+                  onChange={(e) => setLoginCredentials({...loginCredentials, username: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="أدخل اسم المستخدم"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  كلمة المرور
+                </label>
+                <input
+                  type="password"
+                  value={loginCredentials.password}
+                  onChange={(e) => setLoginCredentials({...loginCredentials, password: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="أدخل كلمة المرور"
+                />
+              </div>
+
+              <div className="bg-gray-50 p-3 rounded-lg text-sm">
+                <p className="font-medium mb-2">بيانات تجريبية:</p>
+                <div className="space-y-1 text-gray-600">
+                  <p><strong>عميل:</strong> customer1 / 123456</p>
+                  <p><strong>مقدم خدمة:</strong> owner1 / 123456</p>
+                  <p><strong>مدير:</strong> admin / admin123</p>
+                </div>
+              </div>
+
+              <button
+                onClick={handleLogin}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                تسجيل الدخول
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
         <div className="max-w-4xl mx-auto flex justify-around">
-          <button
-            onClick={() => setCurrentView('search')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'search' ? 'text-blue-500' : 'text-gray-500'
-            }`}
-          >
-            <Search className="w-6 h-6" />
-            <span className="text-xs">بحث وتصفح</span>
-          </button>
+          {/* Customer Navigation */}
+          {(!isLoggedIn || userType === 'customer') && (
+            <>
+              <button
+                onClick={() => setCurrentView('search')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'search' ? 'text-blue-500' : 'text-gray-500'
+                }`}
+              >
+                <Search className="w-6 h-6" />
+                <span className="text-xs">بحث وتصفح</span>
+              </button>
 
-          <button
-            onClick={() => setCurrentView('add-service')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'add-service' ? 'text-green-500' : 'text-gray-500'
-            }`}
-          >
-            <Plus className="w-6 h-6" />
-            <span className="text-xs">إضافة خدمة</span>
-          </button>
+              <button
+                onClick={() => setCurrentView('add-service')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'add-service' ? 'text-green-500' : 'text-gray-500'
+                }`}
+              >
+                <Plus className="w-6 h-6" />
+                <span className="text-xs">إضافة خدمة</span>
+              </button>
 
-          <button
-            onClick={() => setCurrentView('favorites')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'favorites' ? 'text-blue-500' : 'text-gray-500'
-            }`}
-          >
-            <Heart className="w-6 h-6" />
-            <span className="text-xs">المفضلات</span>
-          </button>
+              <button
+                onClick={() => setCurrentView('favorites')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'favorites' ? 'text-blue-500' : 'text-gray-500'
+                }`}
+              >
+                <Heart className="w-6 h-6" />
+                <span className="text-xs">المفضلات</span>
+              </button>
 
-          <button
-            onClick={() => setCurrentView('my-stores')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'my-stores' ? 'text-orange-500' : 'text-gray-500'
-            }`}
-          >
-            <div className="text-xl">🛍️</div>
-            <span className="text-xs">متاجري</span>
-          </button>
+              <button
+                onClick={() => setCurrentView('settings')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'settings' ? 'text-blue-500' : 'text-gray-500'
+                }`}
+              >
+                <Settings className="w-6 h-6" />
+                <span className="text-xs">الإعدادات</span>
+              </button>
+            </>
+          )}
 
-          <button
-            onClick={() => setCurrentView('settings')}
-            className={`flex flex-col items-center gap-1 ${
-              currentView === 'settings' ? 'text-blue-500' : 'text-gray-500'
-            }`}
-          >
-            <Settings className="w-6 h-6" />
-            <span className="text-xs">الإعدادات</span>
-          </button>
+          {/* Service Owner Navigation */}
+          {isLoggedIn && userType === 'service-owner' && (
+            <>
+              <button
+                onClick={() => setCurrentView('owner-dashboard')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'owner-dashboard' ? 'text-blue-500' : 'text-gray-500'
+                }`}
+              >
+                <div className="text-xl">🏪</div>
+                <span className="text-xs">لوحة التحكم</span>
+              </button>
+
+              <button
+                onClick={() => setCurrentView('search')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'search' ? 'text-blue-500' : 'text-gray-500'
+                }`}
+              >
+                <Search className="w-6 h-6" />
+                <span className="text-xs">تصفح الخدمات</span>
+              </button>
+
+              <button
+                onClick={() => setCurrentView('add-service')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'add-service' ? 'text-green-500' : 'text-gray-500'
+                }`}
+              >
+                <Plus className="w-6 h-6" />
+                <span className="text-xs">إضافة خدمة</span>
+              </button>
+
+              <button
+                onClick={() => setCurrentView('settings')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'settings' ? 'text-blue-500' : 'text-gray-500'
+                }`}
+              >
+                <Settings className="w-6 h-6" />
+                <span className="text-xs">الإعدادات</span>
+              </button>
+            </>
+          )}
+
+          {/* Admin Navigation */}
+          {isLoggedIn && userType === 'admin' && (
+            <>
+              <button
+                onClick={() => setCurrentView('admin-dashboard')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'admin-dashboard' ? 'text-purple-500' : 'text-gray-500'
+                }`}
+              >
+                <div className="text-xl">⚙️</div>
+                <span className="text-xs">لوحة الإدارة</span>
+              </button>
+
+              <button
+                onClick={() => setCurrentView('search')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'search' ? 'text-blue-500' : 'text-gray-500'
+                }`}
+              >
+                <Search className="w-6 h-6" />
+                <span className="text-xs">تصفح الخدمات</span>
+              </button>
+
+              <button
+                onClick={() => setCurrentView('settings')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'settings' ? 'text-blue-500' : 'text-gray-500'
+                }`}
+              >
+                <Settings className="w-6 h-6" />
+                <span className="text-xs">إعدادات النظام</span>
+              </button>
+            </>
+          )}
         </div>
       </nav>
 
-      {showDetails && selectedPlace && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      {(() => {
+        console.log('Checking modal conditions:', { showDetails, selectedPlace: selectedPlace?.name });
+        return showDetails && selectedPlace;
+      })() && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          style={{display: 'block', zIndex: 9999}}
+        >
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
               <h2 className="text-xl font-bold">{selectedPlace.name}</h2>
@@ -3403,7 +3961,7 @@ ${markets.map(market => `• ${market.name}
                   image: uploadedImage || 'https://images.unsplash.com/photo-1555529902-de4e0750ea48?w=400',
                   services: selectedServices
                 };
-                handleAddPlace(newPlace);
+                handleSubmitServiceForReview(newPlace);
                 setShowEditCustomCategory(false);
                 setEditCustomCategoryName('');
                 setSelectedServices([]);

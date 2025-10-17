@@ -18,6 +18,8 @@ interface Place {
     name: string;
     icon: string;
   };
+  type?: string;
+  appointmentSettings?: any;
 }
 
 interface PlaceFormData {
@@ -35,6 +37,7 @@ interface PlaceFormData {
   };
   type?: string;
   products?: Array<{name: string, price: string, description: string}>;
+  appointmentSettings?: any;
 }
 
 interface PlaceFormProps {
