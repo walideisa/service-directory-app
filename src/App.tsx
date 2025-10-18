@@ -710,6 +710,19 @@ const App = () => {
   const [showEditCustomCategory, setShowEditCustomCategory] = useState(false);
   const [editCustomCategoryName, setEditCustomCategoryName] = useState('');
   const [showChat, setShowChat] = useState(false);
+
+  // Checkout states
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [checkoutStep, setCheckoutStep] = useState(1); // 1: Cart Review, 2: Shipping Info, 3: Payment, 4: Confirmation
+  const [shippingInfo, setShippingInfo] = useState({
+    fullName: '',
+    phone: '',
+    address: '',
+    city: 'مدينة 15 مايو',
+    notes: ''
+  });
+  const [paymentMethod, setPaymentMethod] = useState('cash'); // 'cash', 'card', 'vodafone'
+  const [orderData, setOrderData] = useState<any>(null);
   const [chatMessages, setChatMessages] = useState<Array<{id: number, text: string, isBot: boolean, timestamp: Date}>>([
     {
       id: 1,
@@ -1007,6 +1020,66 @@ const App = () => {
 
   const clearCart = () => {
     setCart([]);
+  };
+
+  // Checkout functions
+  const startCheckout = () => {
+    if (cart.length === 0) {
+      alert('السلة فارغة! أضف منتجات أولاً');
+      return;
+    }
+    setShowCheckout(true);
+    setCheckoutStep(1);
+  };
+
+  const nextCheckoutStep = () => {
+    if (checkoutStep === 2) {
+      // Validate shipping info
+      if (!shippingInfo.fullName || !shippingInfo.phone || !shippingInfo.address) {
+        alert('يرجى ملء جميع البيانات المطلوبة');
+        return;
+      }
+      if (!/^[0-9]{11}$/.test(shippingInfo.phone)) {
+        alert('يرجى إدخال رقم هاتف صحيح (11 رقم)');
+        return;
+      }
+    }
+    setCheckoutStep(prev => prev + 1);
+  };
+
+  const prevCheckoutStep = () => {
+    setCheckoutStep(prev => prev - 1);
+  };
+
+  const completeOrder = () => {
+    const order = {
+      id: Date.now().toString(),
+      items: cart,
+      shippingInfo,
+      paymentMethod,
+      total: getTotalPrice(),
+      deliveryFee: getTotalPrice() >= 500 ? 0 : 30,
+      orderDate: new Date(),
+      status: 'pending'
+    };
+
+    setOrderData(order);
+    setCheckoutStep(4);
+
+    // Clear cart after successful order
+    setTimeout(() => {
+      clearCart();
+      setShowCheckout(false);
+      setCheckoutStep(1);
+      setShippingInfo({
+        fullName: '',
+        phone: '',
+        address: '',
+        city: 'مدينة 15 مايو',
+        notes: ''
+      });
+      alert('تم تأكيد طلبك بنجاح! سنتواصل معك قريباً');
+    }, 3000);
   };
 
   const submitOrder = () => {
@@ -1767,6 +1840,19 @@ ${markets.map(market => `• ${market.name}
             </div>
 
             <div className="flex items-center gap-3">
+              {/* Cart Button - Available on all pages */}
+              {cart.length > 0 && (
+                <button
+                  onClick={() => setShowCart(!showCart)}
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center gap-2 transition-all duration-200"
+                >
+                  🛒 السلة ({cart.length})
+                  <span className="bg-green-600 text-white px-2 py-1 rounded-full text-xs">
+                    {getTotalPrice()} ج.م
+                  </span>
+                </button>
+              )}
+
               {isLoggedIn ? (
                 <div className="flex items-center gap-3">
                   <div className="text-right">
@@ -2963,16 +3049,31 @@ ${markets.map(market => `• ${market.name}
         {/* Service Details View */}
         {currentView === 'service-details' && selectedPlace && (
           <div className="space-y-6">
-            {/* Back Button */}
-            <button
-              onClick={() => setCurrentView('search')}
-              className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-4"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              العودة للبحث
-            </button>
+            {/* Header with Back Button and Cart */}
+            <div className="flex justify-between items-center mb-4">
+              <button
+                onClick={() => setCurrentView('search')}
+                className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                العودة للبحث
+              </button>
+
+              {/* Cart Button */}
+              {cart.length > 0 && (
+                <button
+                  onClick={() => setShowCart(!showCart)}
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center gap-2 transition-all duration-200"
+                >
+                  🛒 السلة ({cart.length})
+                  <span className="bg-green-600 text-white px-2 py-1 rounded-full text-xs">
+                    {getTotalPrice()} ج.م
+                  </span>
+                </button>
+              )}
+            </div>
 
             {/* Service Info Card */}
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -4048,125 +4149,6 @@ ${markets.map(market => `• ${market.name}
                         })}
                     </div>
 
-                    {/* Shopping Cart Modal */}
-                    {showCart && (
-                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
-                          <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
-                            <h3 className="text-lg font-semibold">🛒 السلة</h3>
-                            <button
-                              onClick={() => setShowCart(false)}
-                              className="text-gray-500 hover:text-gray-700"
-                            >
-                              <X className="w-5 h-5" />
-                            </button>
-                          </div>
-
-                          <div className="p-4">
-                            {cart.length === 0 ? (
-                              <p className="text-gray-500 text-center">السلة فارغة</p>
-                            ) : (
-                              <>
-                                {/* Cart items */}
-                                <div className="space-y-3 mb-4">
-                                  {cart.map((item, index) => (
-                                    <div key={index} className="bg-gray-50 p-3 rounded border">
-                                      <div className="flex justify-between items-start mb-2">
-                                        <div>
-                                          <h4 className="font-medium text-sm">{item.productName}</h4>
-                                          <p className="text-xs text-gray-600">{item.sizeName}</p>
-                                          <p className="text-sm text-green-600 font-bold">{item.price} جنيه</p>
-                                        </div>
-                                        <button
-                                          onClick={() => removeFromCart(item.productId, item.sizeIndex)}
-                                          className="text-red-500 hover:text-red-700"
-                                        >
-                                          <X className="w-4 h-4" />
-                                        </button>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <button
-                                          onClick={() => updateCartQuantity(item.productId, item.sizeIndex, item.quantity - 1)}
-                                          className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs"
-                                        >
-                                          -
-                                        </button>
-                                        <span className="text-sm font-medium">{item.quantity}</span>
-                                        <button
-                                          onClick={() => updateCartQuantity(item.productId, item.sizeIndex, item.quantity + 1)}
-                                          className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs"
-                                        >
-                                          +
-                                        </button>
-                                        <span className="text-sm text-gray-600 ml-auto">
-                                          = {item.quantity * item.price} جنيه
-                                        </span>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-
-                                {/* Total */}
-                                <div className="border-t pt-3 mb-4">
-                                  <div className="flex justify-between items-center text-lg font-bold">
-                                    <span>الإجمالي:</span>
-                                    <span className="text-green-600">{getTotalPrice()} جنيه</span>
-                                  </div>
-                                </div>
-
-                                {/* Order form */}
-                                <div className="space-y-3 mb-4">
-                                  <input
-                                    type="text"
-                                    value={orderForm.customerName}
-                                    onChange={(e) => setOrderForm({...orderForm, customerName: e.target.value})}
-                                    placeholder="اسم العميل *"
-                                    className="w-full px-3 py-2 border rounded"
-                                  />
-                                  <input
-                                    type="tel"
-                                    value={orderForm.customerPhone}
-                                    onChange={(e) => setOrderForm({...orderForm, customerPhone: e.target.value})}
-                                    placeholder="رقم الهاتف *"
-                                    className="w-full px-3 py-2 border rounded"
-                                  />
-                                  <input
-                                    type="text"
-                                    value={orderForm.customerAddress}
-                                    onChange={(e) => setOrderForm({...orderForm, customerAddress: e.target.value})}
-                                    placeholder="العنوان (اختياري)"
-                                    className="w-full px-3 py-2 border rounded"
-                                  />
-                                  <textarea
-                                    value={orderForm.notes}
-                                    onChange={(e) => setOrderForm({...orderForm, notes: e.target.value})}
-                                    placeholder="ملاحظات (اختياري)"
-                                    rows={2}
-                                    className="w-full px-3 py-2 border rounded"
-                                  />
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={clearCart}
-                                    className="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600"
-                                  >
-                                    إفراغ السلة
-                                  </button>
-                                  <button
-                                    onClick={submitOrder}
-                                    className="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600"
-                                  >
-                                    إرسال الطلب
-                                  </button>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
 
@@ -5583,6 +5565,506 @@ ${markets.map(market => `• ${market.name}
                     </div>
                   )}
                 </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Checkout Modal */}
+      {showCheckout && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b p-6 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-800">إتمام الشراء</h2>
+              <button
+                onClick={() => setShowCheckout(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Progress Steps */}
+            <div className="px-6 py-4 border-b">
+              <div className="flex items-center justify-between">
+                {[
+                  { step: 1, title: 'مراجعة السلة', icon: '🛒' },
+                  { step: 2, title: 'بيانات التوصيل', icon: '📍' },
+                  { step: 3, title: 'طريقة الدفع', icon: '💳' },
+                  { step: 4, title: 'تأكيد الطلب', icon: '✅' }
+                ].map((item, index) => (
+                  <div key={item.step} className="flex items-center">
+                    <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                      checkoutStep >= item.step
+                        ? 'bg-green-500 border-green-500 text-white'
+                        : 'bg-gray-100 border-gray-300 text-gray-500'
+                    }`}>
+                      {checkoutStep > item.step ? '✓' : item.icon}
+                    </div>
+                    <span className={`ml-2 text-sm font-medium ${
+                      checkoutStep >= item.step ? 'text-green-600' : 'text-gray-500'
+                    }`}>
+                      {item.title}
+                    </span>
+                    {index < 3 && (
+                      <div className={`w-16 h-1 mx-4 ${
+                        checkoutStep > item.step ? 'bg-green-500' : 'bg-gray-300'
+                      }`} />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-6">
+              {/* Step 1: Cart Review */}
+              {checkoutStep === 1 && (
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold text-gray-800">مراجعة طلبك</h3>
+
+                  <div className="space-y-4">
+                    {cart.map((item, index) => (
+                      <div key={index} className="bg-gray-50 p-4 rounded-lg border">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-lg">{item.productName}</h4>
+                            <p className="text-gray-600">{item.sizeName}</p>
+                            <p className="text-green-600 font-bold">{item.price} ج.م × {item.quantity}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-green-600">
+                              {(item.price * item.quantity).toFixed(0)} ج.م
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t pt-4">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>المجموع الفرعي:</span>
+                        <span>{getTotalPrice()} ج.م</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>رسوم التوصيل:</span>
+                        <span className={getTotalPrice() >= 500 ? 'text-green-600' : ''}>
+                          {getTotalPrice() >= 500 ? 'مجاني' : '30 ج.م'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xl font-bold border-t pt-2">
+                        <span>الإجمالي:</span>
+                        <span className="text-green-600">
+                          {getTotalPrice() + (getTotalPrice() >= 500 ? 0 : 30)} ج.م
+                        </span>
+                      </div>
+                    </div>
+
+                    {getTotalPrice() < 500 && (
+                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-blue-700 text-sm">
+                          💡 أضف منتجات بقيمة {500 - getTotalPrice()} ج.م أكثر واحصل على توصيل مجاني!
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={nextCheckoutStep}
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
+                  >
+                    التالي - بيانات التوصيل ←
+                  </button>
+                </div>
+              )}
+
+              {/* Step 2: Shipping Info */}
+              {checkoutStep === 2 && (
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold text-gray-800">بيانات التوصيل</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        الاسم الكامل *
+                      </label>
+                      <input
+                        type="text"
+                        value={shippingInfo.fullName}
+                        onChange={(e) => setShippingInfo({...shippingInfo, fullName: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="أدخل اسمك الكامل"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        رقم الهاتف *
+                      </label>
+                      <input
+                        type="tel"
+                        value={shippingInfo.phone}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 11);
+                          setShippingInfo({...shippingInfo, phone: value});
+                        }}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="01xxxxxxxxx"
+                        maxLength={11}
+                        pattern="[0-9]{11}"
+                        title="يجب أن يكون رقم الهاتف 11 رقم فقط"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        العنوان التفصيلي *
+                      </label>
+                      <textarea
+                        value={shippingInfo.address}
+                        onChange={(e) => setShippingInfo({...shippingInfo, address: e.target.value})}
+                        rows={3}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="أدخل عنوانك التفصيلي (الشارع، المنطقة، معالم مميزة)"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        المدينة
+                      </label>
+                      <select
+                        value={shippingInfo.city}
+                        onChange={(e) => setShippingInfo({...shippingInfo, city: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="مدينة 15 مايو">مدينة 15 مايو</option>
+                        <option value="القاهرة">القاهرة</option>
+                        <option value="الجيزة">الجيزة</option>
+                        <option value="أخرى">أخرى</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        ملاحظات (اختياري)
+                      </label>
+                      <input
+                        type="text"
+                        value={shippingInfo.notes}
+                        onChange={(e) => setShippingInfo({...shippingInfo, notes: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="أي ملاحظات إضافية"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button
+                      onClick={prevCheckoutStep}
+                      className="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-all duration-200"
+                    >
+                      ← السابق
+                    </button>
+                    <button
+                      onClick={nextCheckoutStep}
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
+                    >
+                      التالي - طريقة الدفع →
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Payment Method */}
+              {checkoutStep === 3 && (
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold text-gray-800">اختر طريقة الدفع</h3>
+
+                  <div className="space-y-4">
+                    <div
+                      onClick={() => setPaymentMethod('cash')}
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                        paymentMethod === 'cash'
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 ${
+                          paymentMethod === 'cash'
+                            ? 'border-green-500 bg-green-500'
+                            : 'border-gray-300'
+                        }`}>
+                          {paymentMethod === 'cash' && (
+                            <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">💵 الدفع عند الاستلام</h4>
+                          <p className="text-gray-600 text-sm">ادفع نقداً عند وصول الطلب</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setPaymentMethod('vodafone')}
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                        paymentMethod === 'vodafone'
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 ${
+                          paymentMethod === 'vodafone'
+                            ? 'border-green-500 bg-green-500'
+                            : 'border-gray-300'
+                        }`}>
+                          {paymentMethod === 'vodafone' && (
+                            <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">📱 فودافون كاش</h4>
+                          <p className="text-gray-600 text-sm">ادفع بسهولة عبر فودافون كاش</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setPaymentMethod('card')}
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                        paymentMethod === 'card'
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 ${
+                          paymentMethod === 'card'
+                            ? 'border-green-500 bg-green-500'
+                            : 'border-gray-300'
+                        }`}>
+                          {paymentMethod === 'card' && (
+                            <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">💳 البطاقة الائتمانية</h4>
+                          <p className="text-gray-600 text-sm">ادفع بأمان باستخدام بطاقتك</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button
+                      onClick={prevCheckoutStep}
+                      className="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-all duration-200"
+                    >
+                      ← السابق
+                    </button>
+                    <button
+                      onClick={nextCheckoutStep}
+                      className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200"
+                    >
+                      التالي - تأكيد الطلب →
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Order Confirmation */}
+              {checkoutStep === 4 && orderData && (
+                <div className="space-y-6 text-center">
+                  <div className="space-y-4">
+                    <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+                      <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+
+                    <h3 className="text-2xl font-bold text-green-600">تم تأكيد طلبك بنجاح!</h3>
+                    <p className="text-gray-600">
+                      رقم الطلب: <span className="font-bold text-blue-600">#{orderData.id}</span>
+                    </p>
+                  </div>
+
+                  <div className="bg-gray-50 p-6 rounded-lg text-right">
+                    <h4 className="font-semibold mb-4">ملخص الطلب:</h4>
+
+                    <div className="space-y-2 mb-4">
+                      {orderData.items.map((item: any, index: number) => (
+                        <div key={index} className="flex justify-between">
+                          <span>{item.productName} ({item.sizeName}) × {item.quantity}</span>
+                          <span>{(item.price * item.quantity).toFixed(0)} ج.م</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="border-t pt-4 space-y-2">
+                      <div className="flex justify-between">
+                        <span>المجموع الفرعي:</span>
+                        <span>{orderData.total} ج.م</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>رسوم التوصيل:</span>
+                        <span>{orderData.deliveryFee === 0 ? 'مجاني' : `${orderData.deliveryFee} ج.م`}</span>
+                      </div>
+                      <div className="flex justify-between font-bold text-lg border-t pt-2">
+                        <span>الإجمالي:</span>
+                        <span className="text-green-600">{orderData.total + orderData.deliveryFee} ج.م</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t text-sm text-gray-600">
+                      <p><strong>اسم المستلم:</strong> {orderData.shippingInfo.fullName}</p>
+                      <p><strong>رقم الهاتف:</strong> {orderData.shippingInfo.phone}</p>
+                      <p><strong>العنوان:</strong> {orderData.shippingInfo.address}, {orderData.shippingInfo.city}</p>
+                      <p><strong>طريقة الدفع:</strong> {
+                        orderData.paymentMethod === 'cash' ? 'الدفع عند الاستلام' :
+                        orderData.paymentMethod === 'vodafone' ? 'فودافون كاش' : 'البطاقة الائتمانية'
+                      }</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <p className="text-gray-600">
+                      سنتواصل معك قريباً لتأكيد الطلب وترتيب التوصيل
+                    </p>
+                    <p className="text-sm text-blue-600">
+                      📞 للاستفسار: {selectedPlace?.phone || '16789'}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => {
+                        setShowCheckout(false);
+                        setCurrentView('search');
+                      }}
+                      className="flex-1 bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition-all duration-200"
+                    >
+                      العودة للتسوق
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowCheckout(false);
+                        setCurrentView('search');
+                      }}
+                      className="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-all duration-200"
+                    >
+                      إغلاق
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Order Now Button for Step 3 */}
+              {checkoutStep === 3 && (
+                <div className="pt-4">
+                  <button
+                    onClick={completeOrder}
+                    className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-4 px-6 rounded-lg font-bold text-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105"
+                  >
+                    تأكيد الطلب - {getTotalPrice() + (getTotalPrice() >= 500 ? 0 : 30)} ج.م 🛒
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Global Shopping Cart Modal - Available on all pages */}
+      {showCart && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+              <h3 className="text-lg font-semibold">🛒 السلة</h3>
+              <button
+                onClick={() => setShowCart(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-4">
+              {cart.length === 0 ? (
+                <p className="text-gray-500 text-center">السلة فارغة</p>
+              ) : (
+                <>
+                  {/* Cart items */}
+                  <div className="space-y-3 mb-4">
+                    {cart.map((item, index) => (
+                      <div key={index} className="bg-gray-50 p-3 rounded border">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <h4 className="font-medium text-sm">{item.productName}</h4>
+                            <p className="text-xs text-gray-600">{item.sizeName}</p>
+                            <p className="text-sm text-green-600 font-bold">{item.price} جنيه</p>
+                          </div>
+                          <button
+                            onClick={() => removeFromCart(item.productId, item.sizeIndex)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => updateCartQuantity(item.productId, item.sizeIndex, item.quantity - 1)}
+                            className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs"
+                          >
+                            -
+                          </button>
+                          <span className="text-sm font-medium">{item.quantity}</span>
+                          <button
+                            onClick={() => updateCartQuantity(item.productId, item.sizeIndex, item.quantity + 1)}
+                            className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs"
+                          >
+                            +
+                          </button>
+                          <span className="text-sm text-gray-600 ml-auto">
+                            = {item.quantity * item.price} جنيه
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Total */}
+                  <div className="border-t pt-3 mb-4">
+                    <div className="flex justify-between items-center text-lg font-bold">
+                      <span>الإجمالي:</span>
+                      <span className="text-green-600">{getTotalPrice()} جنيه</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={clearCart}
+                      className="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600"
+                    >
+                      إفراغ السلة
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowCart(false);
+                        startCheckout();
+                      }}
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-2 px-4 rounded hover:from-green-600 hover:to-emerald-700 transition-all duration-200 font-semibold"
+                    >
+                      إتمام الشراء 🛒
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           </div>
