@@ -221,9 +221,9 @@ const App = () => {
   const [likes, setLikes] = useState<{[key: number]: boolean}>({});
   const [selectedPlace, setSelectedPlace] = useState<any>(null);
   const [showDetails, setShowDetails] = useState(false);
-  const [currentView, setCurrentView] = useState('search');
-  const [sortBy, setSortBy] = useState('name');
+  const [currentView, setCurrentView] = useState('home');
   const [selectedMainCategory, setSelectedMainCategory] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState('name');
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('all');
   const [managedPlaces, setManagedPlaces] = useState(places as any[]);
   const [editingPlace, setEditingPlace] = useState<any>(null);
@@ -747,9 +747,81 @@ const App = () => {
   const [selectedAppointments, setSelectedAppointments] = useState<Array<{date: string, timeSlot: string}>>([]);
   const [showMultipleBookings, setShowMultipleBookings] = useState(false);
   const [isChatMinimized, setIsChatMinimized] = useState(false);
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
 
   const categories = managedCategories;
+
+  // Main Categories with subcategories
+  const mainCategories = {
+    medical: {
+      name: 'طبي وصحي',
+      icon: '🏥',
+      color: 'from-blue-500 to-blue-600',
+      subcategories: [
+        { key: 'clinics', name: 'عيادات ومراكز طبية', icon: '👨‍⚕️' },
+        { key: 'hospitals', name: 'مستشفيات', icon: '🏥' },
+        { key: 'pharmacies', name: 'صيدليات', icon: '💊' },
+        { key: 'labs', name: 'معامل وأشعة', icon: '🔬' },
+        { key: 'emergency', name: 'أرقام طوارئ', icon: '🚨' }
+      ]
+    },
+    shopping: {
+      name: 'تسوق ومراكز تجارية',
+      icon: '🛍️',
+      color: 'from-green-500 to-green-600',
+      subcategories: [
+        { key: 'malls', name: 'مولات ومراكز تجارية', icon: '🏬' },
+        { key: 'markets', name: 'أسواق ومحلات', icon: '🏪' },
+        { key: 'supermarkets', name: 'سوبر ماركت', icon: '🛒' },
+        { key: 'online-shopping', name: 'تسوق إلكتروني', icon: '📱' }
+      ]
+    },
+    services: {
+      name: 'خدمات عامة',
+      icon: '🔧',
+      color: 'from-purple-500 to-purple-600',
+      subcategories: [
+        { key: 'maintenance', name: 'صيانة وإصلاح', icon: '🔧' },
+        { key: 'cleaning', name: 'تنظيف وغسيل', icon: '🧽' },
+        { key: 'delivery', name: 'توصيل وشحن', icon: '🚚' },
+        { key: 'technical', name: 'خدمات تقنية', icon: '💻' }
+      ]
+    },
+    education: {
+      name: 'تعليم وتدريب',
+      icon: '🎓',
+      color: 'from-orange-500 to-orange-600',
+      subcategories: [
+        { key: 'schools', name: 'مدارس وجامعات', icon: '🏫' },
+        { key: 'institutes', name: 'معاهد ومراكز تدريب', icon: '📚' },
+        { key: 'tutoring', name: 'دروس خصوصية', icon: '👨‍🏫' },
+        { key: 'languages', name: 'تعلم لغات', icon: '🗣️' }
+      ]
+    },
+    transport: {
+      name: 'مواصلات ونقل',
+      icon: '🚗',
+      color: 'from-red-500 to-red-600',
+      subcategories: [
+        { key: 'car-services', name: 'خدمات سيارات', icon: '🚗' },
+        { key: 'public-transport', name: 'مواصلات عامة', icon: '🚌' },
+        { key: 'taxi', name: 'تاكسي وأوبر', icon: '🚕' },
+        { key: 'gas-stations', name: 'محطات وقود', icon: '⛽' }
+      ]
+    },
+    entertainment: {
+      name: 'ترفيه ومطاعم',
+      icon: '🎉',
+      color: 'from-pink-500 to-pink-600',
+      subcategories: [
+        { key: 'restaurants', name: 'مطاعم ومقاهي', icon: '🍽️' },
+        { key: 'cafes', name: 'كافيهات وجيمنج', icon: '☕' },
+        { key: 'cinema', name: 'سينما وترفيه', icon: '🎬' },
+        { key: 'sports', name: 'رياضة وجيم', icon: '🏋️‍♂️' }
+      ]
+    }
+  };
 
   const filteredPlaces = managedPlaces.filter(place => {
     const matchesSearch = place.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -1895,6 +1967,148 @@ ${markets.map(market => `• ${market.name}
       </header>
 
       <div className="max-w-4xl mx-auto p-4 pb-20">
+        {/* Home Page - Main Categories */}
+        {currentView === 'home' && (
+          <div className="space-y-8">
+            {/* Welcome Section */}
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">مرحباً بك في دليل خدمات مدينة 15 مايو</h2>
+              <p className="text-gray-600 text-lg">اختر التصنيف المناسب للوصول لجميع الخدمات التي تحتاجها</p>
+            </div>
+
+            {/* Main Categories Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Object.entries(mainCategories).map(([key, category]) => (
+                <div
+                  key={key}
+                  onClick={() => {
+                    setSelectedMainCategory(key);
+                    setCurrentView('category-details');
+                  }}
+                  className={`bg-gradient-to-r ${category.color} rounded-xl p-6 text-white cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:scale-105`}
+                >
+                  <div className="text-center">
+                    <div className="text-4xl mb-4">{category.icon}</div>
+                    <h3 className="text-xl font-bold mb-2">{category.name}</h3>
+                    <p className="text-sm opacity-90 mb-4">
+                      {category.subcategories.length} خدمة متاحة
+                    </p>
+                    <div className="flex justify-center">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Quick Access Section */}
+            <div className="bg-gray-50 rounded-xl p-6">
+              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">🔍 البحث السريع</h3>
+              <div className="flex flex-wrap gap-3 justify-center">
+                <button
+                  onClick={() => setCurrentView('search')}
+                  className="bg-white text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors shadow-sm"
+                >
+                  🔍 البحث في جميع الخدمات
+                </button>
+                <button
+                  onClick={() => setShowEmergencyModal(true)}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  🚨 أرقام الطوارئ
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedMainCategory('shopping');
+                    setCurrentView('category-details');
+                  }}
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                >
+                  🛍️ تسوق سريع
+                </button>
+              </div>
+            </div>
+
+            {/* Statistics Section */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+                <div className="text-2xl font-bold text-blue-600">{managedPlaces.filter(p => p.isVisible !== false).length}</div>
+                <div className="text-gray-600 text-sm">خدمة متاحة</div>
+              </div>
+              <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+                <div className="text-2xl font-bold text-green-600">{Object.keys(mainCategories).length}</div>
+                <div className="text-gray-600 text-sm">تصنيف رئيسي</div>
+              </div>
+              <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+                <div className="text-2xl font-bold text-purple-600">24/7</div>
+                <div className="text-gray-600 text-sm">خدمة مستمرة</div>
+              </div>
+              <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+                <div className="text-2xl font-bold text-orange-600">⭐</div>
+                <div className="text-gray-600 text-sm">أعلى جودة</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Category Details Page */}
+        {currentView === 'category-details' && selectedMainCategory && (
+          <div className="space-y-6">
+            {/* Back Button */}
+            <button
+              onClick={() => setCurrentView('home')}
+              className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-4"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              العودة للصفحة الرئيسية
+            </button>
+
+            {/* Category Header */}
+            <div className={`bg-gradient-to-r ${mainCategories[selectedMainCategory].color} rounded-xl p-6 text-white`}>
+              <div className="text-center">
+                <div className="text-4xl mb-2">{mainCategories[selectedMainCategory].icon}</div>
+                <h2 className="text-2xl font-bold">{mainCategories[selectedMainCategory].name}</h2>
+                <p className="opacity-90">اختر الخدمة التي تحتاجها</p>
+              </div>
+            </div>
+
+            {/* Subcategories */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {mainCategories[selectedMainCategory].subcategories.map((subcat) => (
+                <div
+                  key={subcat.key}
+                  onClick={() => {
+                    if (subcat.key === 'emergency') {
+                      // Show emergency numbers modal
+                      setShowEmergencyModal(true);
+                    } else {
+                      // Navigate to services with filter
+                      setCurrentView('search');
+                      // You can add filtering logic here based on subcat.key
+                    }
+                  }}
+                  className="bg-white rounded-lg p-4 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="text-3xl">{subcat.icon}</div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-800">{subcat.name}</h3>
+                      <p className="text-gray-600 text-sm">انقر للوصول للخدمة</p>
+                    </div>
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {currentView === 'search' && (
           <>
             {/* Trending Services Section */}
@@ -3841,6 +4055,18 @@ ${markets.map(market => `• ${market.name}
           {/* Customer Navigation */}
           {(!isLoggedIn || userType === 'customer') && (
             <>
+              <button
+                onClick={() => setCurrentView('home')}
+                className={`flex flex-col items-center gap-1 ${
+                  currentView === 'home' || currentView === 'category-details' ? 'text-blue-500' : 'text-gray-500'
+                }`}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span className="text-xs">الرئيسية</span>
+              </button>
+
               <button
                 onClick={() => setCurrentView('search')}
                 className={`flex flex-col items-center gap-1 ${
@@ -6066,6 +6292,65 @@ ${markets.map(market => `• ${market.name}
                   </div>
                 </>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Emergency Numbers Modal */}
+      {showEmergencyModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="sticky top-0 bg-red-500 text-white p-4 rounded-t-lg flex justify-between items-center">
+              <h3 className="text-lg font-semibold">🚨 أرقام الطوارئ</h3>
+              <button
+                onClick={() => setShowEmergencyModal(false)}
+                className="text-white hover:text-gray-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-4">
+              <div className="space-y-3">
+                {/* Emergency Numbers */}
+                {[
+                  { name: 'الإسعاف', number: '123', icon: '🚑', color: 'bg-red-500' },
+                  { name: 'المطافي', number: '180', icon: '🚒', color: 'bg-orange-500' },
+                  { name: 'الشرطة', number: '122', icon: '👮‍♂️', color: 'bg-blue-500' },
+                  { name: 'الكهرباء', number: '121', icon: '⚡', color: 'bg-yellow-500' },
+                  { name: 'المياه', number: '125', icon: '💧', color: 'bg-blue-400' },
+                  { name: 'الغاز الطبيعي', number: '129', icon: '🔥', color: 'bg-purple-500' }
+                ].map((emergency, index) => (
+                  <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className={`${emergency.color} text-white w-10 h-10 rounded-full flex items-center justify-center text-lg`}>
+                        {emergency.icon}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">{emergency.name}</h4>
+                        <p className="text-gray-600 text-sm">{emergency.number}</p>
+                      </div>
+                    </div>
+                    <a
+                      href={`tel:${emergency.number}`}
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      اتصل الآن
+                    </a>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-yellow-800 text-sm font-medium">⚠️ تنبيه مهم</p>
+                <p className="text-yellow-700 text-xs mt-1">
+                  استخدم هذه الأرقام في حالات الطوارئ الحقيقية فقط
+                </p>
+              </div>
             </div>
           </div>
         </div>
