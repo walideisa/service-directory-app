@@ -96,6 +96,7 @@ const App = () => {
       description: 'عيادة متخصصة في طب الأطفال مع خدمة حجز المواعيد الإلكترونية',
       isVisible: true,
       type: 'حجورات',
+      owner: 'د. أحمد محمود',
       appointmentSettings: {
         sessionDuration: '30',
         consultationFee: '200',
@@ -118,6 +119,7 @@ const App = () => {
       description: 'صالون متخصص في تجميل السيدات مع إمكانية حجز المواعيد مسبقاً',
       isVisible: true,
       type: 'حجورات',
+      owner: 'نادية سالم',
       appointmentSettings: {
         sessionDuration: '60',
         consultationFee: '150',
@@ -148,6 +150,160 @@ const App = () => {
         endTime: '22:00',
         maxConcurrentBookings: '10'
       }
+    },
+    {
+      id: 14,
+      name: 'صيدلية النور الطبية',
+      category: 'hospital',
+      likes: 156,
+      address: 'المجاورة الثالثة، مدينة 15 مايو',
+      phone: '01111222333',
+      hours: '8:00 ص - 12:00 ص',
+      image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400',
+      services: ['أدوية', 'استشارات صيدلي', 'مكملات غذائية', 'قياس ضغط'],
+      description: 'صيدلية شاملة توفر الأدوية والاستشارات الصيدلية مع إمكانية حجز موعد',
+      isVisible: true,
+      type: 'مختلط',
+      owner: 'د. أحمد الصيدلي',
+      products: [
+        {
+          id: 'ph-1',
+          name: 'باراسيتامول 500مج',
+          price: 15,
+          image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300',
+          category: 'مسكنات',
+          description: 'مسكن وخافض للحرارة'
+        },
+        {
+          id: 'ph-2',
+          name: 'فيتامين د 5000',
+          price: 45,
+          image: 'https://images.unsplash.com/photo-1550572017-edd951aa8bd6?w=300',
+          category: 'فيتامينات',
+          description: 'مكمل فيتامين د عالي التركيز'
+        },
+        {
+          id: 'ph-3',
+          name: 'كريم مرطب للبشرة',
+          price: 25,
+          image: 'https://images.unsplash.com/photo-1556228578-dd6fcccd168b?w=300',
+          category: 'عناية',
+          description: 'كريم مرطب طبيعي للبشرة الجافة'
+        }
+      ],
+      appointmentSettings: {
+        sessionDuration: '15',
+        consultationFee: '50',
+        availableDays: ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'],
+        startTime: '08:00',
+        endTime: '24:00',
+        maxConcurrentBookings: '2'
+      }
+    },
+    {
+      id: 15,
+      name: 'سوبر ماركت المدينة',
+      category: 'mall',
+      likes: 89,
+      address: 'الشارع الرئيسي، مدينة 15 مايو',
+      phone: '01234567895',
+      hours: '8:00 ص - 11:00 م',
+      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
+      services: ['مواد غذائية', 'خضروات وفواكه', 'منتجات منزلية', 'مخبوزات'],
+      description: 'سوبر ماركت شامل يوفر جميع احتياجاتك اليومية مع خدمة التوصيل المنزلي',
+      isVisible: true,
+      type: 'طلبات',
+      owner: 'خالد أحمد',
+      products: [
+        {
+          id: 'p14-1',
+          name: 'أرز مصري',
+          price: 25,
+          image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300',
+          category: 'مواد غذائية',
+          description: 'أرز مصري عالي الجودة'
+        },
+        {
+          id: 'p14-2',
+          name: 'خبز فينو',
+          price: 3,
+          image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=300',
+          category: 'مخبوزات',
+          description: 'خبز فينو طازج يومياً'
+        },
+        {
+          id: 'p14-3',
+          name: 'تفاح أحمر',
+          price: 15,
+          image: 'https://images.unsplash.com/photo-1567306301408-9b74779a11af?w=300',
+          category: 'فواكه',
+          description: 'تفاح أحمر طازج'
+        },
+        {
+          id: 'p14-4',
+          name: 'زيت عباد الشمس',
+          price: 45,
+          image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300',
+          category: 'مواد غذائية',
+          description: 'زيت طبخ عباد الشمس'
+        }
+      ]
+    },
+    {
+      id: 16,
+      name: 'مركز صيانة الأجهزة الذكية',
+      category: 'service',
+      likes: 112,
+      address: 'الحي الثاني، مدينة 15 مايو',
+      phone: '01234567896',
+      hours: '9:00 ص - 8:00 م',
+      image: 'https://images.unsplash.com/photo-1593643620395-2a01e2c0ee58?w=400',
+      services: ['صيانة هواتف', 'صيانة أجهزة كمبيوتر', 'صيانة تابلت'],
+      description: 'مركز متخصص في صيانة وإصلاح جميع أنواع الأجهزة الذكية',
+      isVisible: true,
+      type: 'حجورات'
+    },
+    {
+      id: 17,
+      name: 'أكاديمية النجاح للتدريب',
+      category: 'education',
+      likes: 156,
+      address: 'المجاورة الرابعة، مدينة 15 مايو',
+      phone: '01234567897',
+      hours: '10:00 ص - 10:00 م',
+      image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400',
+      services: ['دورات كمبيوتر', 'دورات لغات', 'دورات مهنية'],
+      description: 'أكاديمية متخصصة في التدريب المهني وتطوير المهارات',
+      isVisible: true,
+      type: 'حجورات'
+    },
+    {
+      id: 18,
+      name: 'جيم فيتنس بلس',
+      category: 'entertainment',
+      likes: 203,
+      address: 'الشارع الجديد، مدينة 15 مايو',
+      phone: '01234567898',
+      hours: '6:00 ص - 11:00 م',
+      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
+      services: ['تمارين قوة', 'كارديو', 'يوجا', 'مدرب شخصي'],
+      description: 'جيم حديث مجهز بأحدث المعدات الرياضية',
+      isVisible: true,
+      type: 'حجورات'
+    },
+    {
+      id: 19,
+      name: 'محطة وقود النجم',
+      category: 'transport',
+      likes: 87,
+      address: 'مدخل المدينة، مدينة 15 مايو',
+      phone: '01234567899',
+      hours: '24 ساعة',
+      image: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=400',
+      services: ['بنزين 80', 'بنزين 92', 'بنزين 95', 'سولار'],
+      description: 'محطة وقود تعمل على مدار 24 ساعة مع خدمات إضافية',
+      isVisible: true,
+      type: 'طلبات'
     }
   ];
 
@@ -180,6 +336,46 @@ const App = () => {
       name: 'مدير النظام',
       email: 'admin@example.com',
       phone: '01234567892'
+    },
+    {
+      id: 4,
+      username: 'doctor1',
+      password: '123456',
+      type: 'service-owner',
+      name: 'د. أحمد محمود',
+      email: 'doctor@example.com',
+      phone: '01234567893',
+      businessName: 'عيادة د. أحمد محمود - طب الأطفال'
+    },
+    {
+      id: 5,
+      username: 'salon1',
+      password: '123456',
+      type: 'service-owner',
+      name: 'نادية سالم',
+      email: 'salon@example.com',
+      phone: '01234567894',
+      businessName: 'صالون روز للسيدات'
+    },
+    {
+      id: 6,
+      username: 'supermarket1',
+      password: '123456',
+      type: 'service-owner',
+      name: 'خالد أحمد',
+      email: 'supermarket@example.com',
+      phone: '01234567895',
+      businessName: 'سوبر ماركت المدينة'
+    },
+    {
+      id: 7,
+      username: 'pharmacy1',
+      password: '123456',
+      type: 'service-owner',
+      name: 'د. أحمد الصيدلي',
+      email: 'pharmacy@example.com',
+      phone: '01111222333',
+      businessName: 'صيدلية النور الطبية'
     }
   ];
 
@@ -224,7 +420,7 @@ const App = () => {
   const [currentView, setCurrentView] = useState('home');
   const [selectedMainCategory, setSelectedMainCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState('name');
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('all');
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
   const [managedPlaces, setManagedPlaces] = useState(places as any[]);
   const [editingPlace, setEditingPlace] = useState<any>(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -236,7 +432,11 @@ const App = () => {
     restaurant: { name: 'مطاعم', icon: '🍽️', isVisible: true },
     market: { name: 'أسواق', icon: '🛒', isVisible: true },
     hospital: { name: 'مستشفيات', icon: '🏥', isVisible: true },
-    bank: { name: 'بنوك', icon: '🏦', isVisible: true }
+    bank: { name: 'بنوك', icon: '🏦', isVisible: true },
+    service: { name: 'خدمات عامة', icon: '🔧', isVisible: true },
+    education: { name: 'تعليم وتدريب', icon: '🎓', isVisible: true },
+    transport: { name: 'مواصلات ونقل', icon: '🚗', isVisible: true },
+    entertainment: { name: 'ترفيه ورياضة', icon: '🎉', isVisible: true }
   });
 
   // Subcategories for each main category
@@ -331,6 +531,7 @@ const App = () => {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategoryName, setCustomCategoryName] = useState('');
+  const [selectedMainCategoryForService, setSelectedMainCategoryForService] = useState('');
   const [selectedServiceType, setSelectedServiceType] = useState('حجورات');
 
   // Product selection states for each product
@@ -752,6 +953,45 @@ const App = () => {
 
   const categories = managedCategories;
 
+  // Mapping subcategory keys to actual service categories
+  const subcategoryToServiceMapping = {
+    // Medical subcategories
+    clinics: 'hospital',
+    hospitals: 'hospital',
+    pharmacies: 'hospital',
+    labs: 'hospital',
+
+    // Shopping subcategories
+    malls: 'mall',
+    markets: 'market',
+    supermarkets: 'market',
+    'online-shopping': 'market',
+
+    // Services subcategories
+    maintenance: 'service',
+    cleaning: 'service',
+    delivery: 'service',
+    technical: 'service',
+
+    // Education subcategories
+    schools: 'education',
+    institutes: 'education',
+    tutoring: 'education',
+    languages: 'education',
+
+    // Transport subcategories
+    'car-services': 'transport',
+    'public-transport': 'transport',
+    taxi: 'transport',
+    'gas-stations': 'transport',
+
+    // Entertainment subcategories
+    restaurants: 'restaurant',
+    cafes: 'restaurant',
+    cinema: 'entertainment',
+    sports: 'entertainment'
+  };
+
   // Main Categories with subcategories
   const mainCategories = {
     medical: {
@@ -825,7 +1065,16 @@ const App = () => {
 
   const filteredPlaces = managedPlaces.filter(place => {
     const matchesSearch = place.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || place.category === selectedCategory;
+
+    let matchesCategory = true;
+
+    // Check if we're filtering by a subcategory
+    if (selectedSubCategory && subcategoryToServiceMapping[selectedSubCategory]) {
+      matchesCategory = place.category === subcategoryToServiceMapping[selectedSubCategory];
+    } else if (selectedCategory !== 'all') {
+      matchesCategory = place.category === selectedCategory;
+    }
+
     const isVisible = place.isVisible !== false;
     return matchesSearch && matchesCategory && isVisible;
   }).sort((a, b) => {
@@ -2058,7 +2307,10 @@ ${markets.map(market => `• ${market.name}
           <div className="space-y-6">
             {/* Back Button */}
             <button
-              onClick={() => setCurrentView('home')}
+              onClick={() => {
+                setCurrentView('home');
+                setSelectedSubCategory(''); // Reset subcategory filter when going back to home
+              }}
               className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-4"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2086,9 +2338,11 @@ ${markets.map(market => `• ${market.name}
                       // Show emergency numbers modal
                       setShowEmergencyModal(true);
                     } else {
-                      // Navigate to services with filter
+                      // Navigate to services with filter based on subcategory
+                      setSelectedSubCategory(subcat.key);
+                      setSelectedCategory('all'); // Reset main category filter
+                      setSearchTerm(''); // Reset search term to show all results for this subcategory
                       setCurrentView('search');
-                      // You can add filtering logic here based on subcat.key
                     }
                   }}
                   className="bg-white rounded-lg p-4 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
@@ -2111,6 +2365,38 @@ ${markets.map(market => `• ${market.name}
 
         {currentView === 'search' && (
           <>
+            {/* Subcategory Filter Indicator */}
+            {selectedSubCategory && (
+              <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl">
+                      {Object.values(mainCategories).find(cat =>
+                        cat.subcategories.some(sub => sub.key === selectedSubCategory)
+                      )?.subcategories.find(sub => sub.key === selectedSubCategory)?.icon || '📋'}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-blue-800">تصفية نشطة</h3>
+                      <p className="text-blue-600 text-sm">
+                        عرض خدمات: {Object.values(mainCategories).find(cat =>
+                          cat.subcategories.some(sub => sub.key === selectedSubCategory)
+                        )?.subcategories.find(sub => sub.key === selectedSubCategory)?.name}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedSubCategory('');
+                      setSelectedCategory('all');
+                    }}
+                    className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600 transition-colors"
+                  >
+                    إلغاء التصفية
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Trending Services Section */}
             <div className="mb-8">
               <div className="flex items-center gap-2 mb-4">
@@ -2827,6 +3113,7 @@ ${markets.map(market => `• ${market.name}
                 const submitterMobile = formData.get('submitterMobile') as string;
                 const selectedCategory = formData.get('category') as string;
                 const customCategory = formData.get('customCategory') as string;
+                const mainCategory = formData.get('mainCategory') as string;
 
                 let finalCategory = selectedCategory;
                 let customCategoryData = null;
@@ -2855,6 +3142,7 @@ ${markets.map(market => `• ${market.name}
                   services: selectedServices,
                   submitterMobile: submitterMobile && submitterMobile.length === 11 ? submitterMobile : null,
                   customCategoryData: customCategoryData,
+                  mainCategory: mainCategory,
                   type: serviceType,
                   products: serviceType === 'طلبات' ? selectedProducts : undefined,
                   appointmentSettings: serviceType === 'حجورات' ? appointmentSettings : undefined
@@ -2862,6 +3150,7 @@ ${markets.map(market => `• ${market.name}
                 handleSubmitServiceForReview(newPlace);
                 setShowCustomCategory(false);
                 setCustomCategoryName('');
+                setSelectedMainCategoryForService('');
                 setSelectedServices([]);
                 setCurrentService('');
                 setCurrentProduct({ name: '', price: '', description: '', category: '', sizes: [{ name: '', price: '' }], image: '' });
@@ -2891,7 +3180,25 @@ ${markets.map(market => `• ${market.name}
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      الفئة *
+                      الفئة الرئيسية *
+                    </label>
+                    <select
+                      name="mainCategory"
+                      required
+                      value={selectedMainCategoryForService}
+                      onChange={(e) => setSelectedMainCategoryForService(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    >
+                      <option value="">اختر الفئة الرئيسية</option>
+                      {Object.entries(mainCategories).map(([key, category]) => (
+                        <option key={key} value={key}>{category.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      الفئة الفرعية *
                     </label>
                     <select
                       name="category"
@@ -2906,10 +3213,26 @@ ${markets.map(market => `• ${market.name}
                       }}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     >
-                      <option value="">اختر الفئة</option>
-                      {Object.entries(managedCategories).filter(([key]) => key !== 'all').map(([key, category]) => (
-                        <option key={key} value={key}>{category.name}</option>
-                      ))}
+                      <option value="">اختر الفئة الفرعية</option>
+                      {selectedMainCategoryForService && mainCategories[selectedMainCategoryForService] ?
+                        // Show subcategories for selected main category and map them to managed categories
+                        mainCategories[selectedMainCategoryForService].subcategories.map((subcat) => {
+                          const mappedCategory = subcategoryToServiceMapping[subcat.key];
+                          if (mappedCategory && managedCategories[mappedCategory]) {
+                            return (
+                              <option key={mappedCategory} value={mappedCategory}>
+                                {subcat.icon} {subcat.name}
+                              </option>
+                            );
+                          }
+                          return null;
+                        }).filter(Boolean)
+                        :
+                        // Show all categories if no main category selected
+                        Object.entries(managedCategories).filter(([key]) => key !== 'all').map(([key, category]) => (
+                          <option key={key} value={key}>{category.name}</option>
+                        ))
+                      }
                       <option value="other">أخرى (اكتب فئة جديدة)</option>
                     </select>
                     {showCustomCategory && (
@@ -3676,88 +3999,184 @@ ${markets.map(market => `• ${market.name}
               <p className="text-gray-600">مرحباً {currentUser?.name} - إدارة أعمالك</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold">إجمالي الخدمات</h3>
-                    <p className="text-2xl font-bold">{managedPlaces.filter(p => p.owner === currentUser?.name).length}</p>
-                  </div>
-                  <div className="text-4xl opacity-80">🏪</div>
-                </div>
-              </div>
+            {(() => {
+              const userServices = managedPlaces.filter(p => p.owner === currentUser?.name);
+              const hasProductServices = userServices.some(s => s.type === 'طلبات' || s.type === 'مختلط');
+              const hasAppointmentServices = userServices.some(s => s.type === 'حجورات' || s.type === 'مختلط');
 
-              <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold">الطلبات الجديدة</h3>
-                    <p className="text-2xl font-bold">{receivedOrders.filter(order => order.businessName === currentUser?.businessName).length}</p>
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                  <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold">إجمالي الخدمات</h3>
+                        <p className="text-2xl font-bold">{userServices.length}</p>
+                      </div>
+                      <div className="text-4xl opacity-80">🏪</div>
+                    </div>
                   </div>
-                  <div className="text-4xl opacity-80">📋</div>
-                </div>
-              </div>
 
-              <div className="bg-orange-500 text-white p-6 rounded-lg shadow-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold">المنتجات</h3>
-                    <p className="text-2xl font-bold">{allProducts.filter(p => p.businessId === currentUser?.businessName).length}</p>
-                  </div>
-                  <div className="text-4xl opacity-80">📦</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow-lg">
-                <h3 className="text-xl font-bold mb-4">خدماتي</h3>
-                <div className="space-y-4">
-                  {managedPlaces.filter(place => place.owner === currentUser?.name).map(place => (
-                    <div key={place.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <img src={place.image} alt={place.name} className="w-12 h-12 rounded-lg object-cover" />
-                        <div>
-                          <h4 className="font-medium">{place.name}</h4>
-                          <p className="text-sm text-gray-500">{place.category}</p>
+                  {hasProductServices && (
+                    <>
+                      <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="text-lg font-semibold">الطلبات الجديدة</h3>
+                            <p className="text-2xl font-bold">{receivedOrders.filter(order => order.businessName === currentUser?.businessName).length}</p>
+                          </div>
+                          <div className="text-4xl opacity-80">📋</div>
                         </div>
                       </div>
-                      <button
-                        onClick={() => {
-                          setSelectedPlace(place);
-                          setShowMarketManagement(true);
-                        }}
-                        className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600"
-                      >
-                        إدارة
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-lg">
-                <h3 className="text-xl font-bold mb-4">الطلبات الأخيرة</h3>
-                <div className="space-y-4">
-                  {receivedOrders.filter(order => order.businessName === currentUser?.businessName).slice(0, 5).map(order => (
-                    <div key={order.id} className="p-3 border rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="font-medium">{order.customerName}</span>
-                        <span className="text-sm text-gray-500">{order.timestamp.toLocaleDateString('ar-EG')}</span>
+                      <div className="bg-orange-500 text-white p-6 rounded-lg shadow-lg">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="text-lg font-semibold">المنتجات</h3>
+                            <p className="text-2xl font-bold">{allProducts.filter(p => p.businessId === currentUser?.businessName).length}</p>
+                          </div>
+                          <div className="text-4xl opacity-80">📦</div>
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">إجمالي: {order.total} جنيه</p>
-                      <div className="flex gap-2">
-                        <button className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600">
-                          قبول
-                        </button>
-                        <button className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">
-                          رفض
-                        </button>
+                    </>
+                  )}
+
+                  {hasAppointmentServices && (
+                    <div className="bg-purple-500 text-white p-6 rounded-lg shadow-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold">المواعيد اليوم</h3>
+                          <p className="text-2xl font-bold">
+                            {/* Calculate today's appointments count */}
+                            {userServices.filter(s => s.type === 'حجورات').length * 3}
+                          </p>
+                        </div>
+                        <div className="text-4xl opacity-80">📅</div>
                       </div>
                     </div>
-                  ))}
+                  )}
                 </div>
-              </div>
-            </div>
+              );
+            })()}
+
+            {(() => {
+              const userServices = managedPlaces.filter(p => p.owner === currentUser?.name);
+              const hasProductServices = userServices.some(s => s.type === 'طلبات' || s.type === 'مختلط');
+              const hasAppointmentServices = userServices.some(s => s.type === 'حجورات' || s.type === 'مختلط');
+
+              return (
+                <div className="space-y-6">
+                  {/* Services Management */}
+                  <div className="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 className="text-xl font-bold mb-4">خدماتي</h3>
+                    <div className="space-y-4">
+                      {userServices.map(place => (
+                        <div key={place.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <img src={place.image} alt={place.name} className="w-12 h-12 rounded-lg object-cover" />
+                            <div>
+                              <h4 className="font-medium">{place.name}</h4>
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm text-gray-500">{place.category}</p>
+                                <span className={`text-xs px-2 py-1 rounded-full ${
+                                  place.type === 'طلبات'
+                                    ? 'bg-green-100 text-green-800'
+                                    : place.type === 'حجورات'
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-purple-100 text-purple-800'
+                                }`}>
+                                  {place.type === 'طلبات' ? '🛍️ متجر' : place.type === 'حجورات' ? '📅 حجز' : '🔄 مختلط'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => {
+                              setSelectedPlace(place);
+                              setShowMarketManagement(true);
+                            }}
+                            className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600"
+                          >
+                            إدارة
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Product Services Management */}
+                    {hasProductServices && (
+                      <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                          🛍️ الطلبات الأخيرة
+                        </h3>
+                        <div className="space-y-4">
+                          {receivedOrders.filter(order => order.businessName === currentUser?.businessName).slice(0, 5).map(order => (
+                            <div key={order.id} className="p-3 border rounded-lg">
+                              <div className="flex justify-between items-start mb-2">
+                                <span className="font-medium">{order.customerName}</span>
+                                <span className="text-sm text-gray-500">{order.timestamp.toLocaleDateString('ar-EG')}</span>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-2">إجمالي: {order.total} جنيه</p>
+                              <div className="flex gap-2">
+                                <button className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600">
+                                  قبول
+                                </button>
+                                <button className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">
+                                  رفض
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                          {receivedOrders.filter(order => order.businessName === currentUser?.businessName).length === 0 && (
+                            <p className="text-gray-500 text-center py-4">لا توجد طلبات حتى الآن</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Appointment Services Management */}
+                    {hasAppointmentServices && (
+                      <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                          📅 المواعيد اليوم
+                        </h3>
+                        <div className="space-y-4">
+                          {/* Sample appointments - in real app this would come from database */}
+                          {[
+                            { id: 1, customerName: 'أحمد محمد', time: '10:00 ص', service: 'فحص طبي', status: 'confirmed' },
+                            { id: 2, customerName: 'فاطمة علي', time: '11:30 ص', service: 'قص شعر', status: 'pending' },
+                            { id: 3, customerName: 'محمد حسن', time: '2:00 م', service: 'استشارة', status: 'confirmed' },
+                          ].map(appointment => (
+                            <div key={appointment.id} className="p-3 border rounded-lg">
+                              <div className="flex justify-between items-start mb-2">
+                                <span className="font-medium">{appointment.customerName}</span>
+                                <span className="text-sm text-gray-500">{appointment.time}</span>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-2">{appointment.service}</p>
+                              <div className="flex gap-2">
+                                <span className={`text-xs px-2 py-1 rounded-full ${
+                                  appointment.status === 'confirmed'
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {appointment.status === 'confirmed' ? 'مؤكد' : 'في الانتظار'}
+                                </span>
+                                {appointment.status === 'pending' && (
+                                  <button className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600">
+                                    تأكيد
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
 
@@ -4274,8 +4693,8 @@ ${markets.map(market => `• ${market.name}
                   </div>
                 </div>
 
-                {/* Products display for طلبات services */}
-                {selectedPlace.type === 'طلبات' && selectedPlace.products && selectedPlace.products.length > 0 && (
+                {/* Products display for طلبات and مختلط services */}
+                {(selectedPlace.type === 'طلبات' || selectedPlace.type === 'مختلط') && selectedPlace.products && selectedPlace.products.length > 0 && (
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="font-semibold">🛍️ المنتجات المتاحة</h3>
@@ -4378,8 +4797,8 @@ ${markets.map(market => `• ${market.name}
                   </div>
                 )}
 
-                {/* Appointment booking for حجورات services */}
-                {selectedPlace.type === 'حجورات' && selectedPlace.appointmentSettings && (
+                {/* Appointment booking for حجورات and مختلط services */}
+                {(selectedPlace.type === 'حجورات' || selectedPlace.type === 'مختلط') && selectedPlace.appointmentSettings && (
                   <div className="mb-4">
                     <h3 className="font-semibold mb-2">حجز موعد</h3>
                     <div className="bg-gray-50 p-4 rounded-lg">
