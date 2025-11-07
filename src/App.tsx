@@ -10,7 +10,7 @@ const App = () => {
       name: 'كارفور مول C3',
       category: 'mall',
       likes: 287,
-      address: 'مول C3، المجاورة الثالثة، مدينة 15 مايو',
+      address: 'مول C3، المجاورة الثالثة، المدنية',
       phone: '16789',
       hours: '9:00 ص - 12:00 ص',
       image: 'https://images.unsplash.com/photo-1555529902-de4e0750ea48?w=400',
@@ -20,7 +20,7 @@ const App = () => {
     },
     {
       id: 2,
-      name: 'ميجا مول مدينة 15 مايو',
+      name: 'ميجا مول المدنية',
       category: 'mall',
       likes: 156,
       address: 'القطعة 22، المجاورة الثالثة، مركز المدينة',
@@ -46,10 +46,10 @@ const App = () => {
     },
     {
       id: 4,
-      name: 'سوق 15 مايو الجديد',
+      name: 'سوق المدنية الجديد',
       category: 'market',
       likes: 145,
-      address: 'جنوب مدينة 15 مايو، بجوار الطريق الدائري',
+      address: 'جنوب المدنية، بجوار الطريق الدائري',
       phone: '02-38951600',
       hours: '5:00 ص - 8:00 م',
       image: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=400',
@@ -59,20 +59,20 @@ const App = () => {
     },
     {
       id: 5,
-      name: 'مستشفى 15 مايو العام',
+      name: 'مستشفى المدنية العام',
       category: 'hospital',
       likes: 234,
-      address: 'المجاورة الأولى، مدينة 15 مايو',
+      address: 'المجاورة الأولى، المدنية',
       phone: '02-38951700',
       hours: '24 ساعة',
       image: 'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=400',
       services: ['طوارئ 24 ساعة', 'عيادات خارجية', 'معامل تحاليل', 'صيدلية'],
-      description: 'المستشفى الحكومي الرئيسي بمدينة 15 مايو',
+      description: 'المستشفى الحكومي الرئيسي بالمدنية',
       isVisible: true
     },
     {
       id: 6,
-      name: 'بنك الإسكندرية - فرع 15 مايو',
+      name: 'بنك الإسكندرية - فرع المدنية',
       category: 'bank',
       likes: 98,
       address: 'المجاورة الثالثة، حي رجال الأعمال',
@@ -80,15 +80,15 @@ const App = () => {
       hours: '8:30 ص - 3:30 م',
       image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400',
       services: ['حسابات جارية', 'قروض', 'صراف آلي', 'تحويلات'],
-      description: 'فرع البنك الرئيسي لخدمة سكان مدينة 15 مايو',
+      description: 'فرع البنك الرئيسي لخدمة سكان المدنية',
       isVisible: true
     },
     {
       id: 7,
       name: 'عيادة د. أحمد محمود - طب الأطفال',
-      category: 'hospital',
+      category: 'clinic',
       likes: 156,
-      address: 'المجاورة الثانية، مدينة 15 مايو',
+      address: 'المجاورة الثانية، المدنية',
       phone: '01234567890',
       hours: '9:00 ص - 5:00 م',
       image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400',
@@ -111,7 +111,7 @@ const App = () => {
       name: 'صالون روز للسيدات',
       category: 'mall',
       likes: 89,
-      address: 'المجاورة الأولى، مدينة 15 مايو',
+      address: 'المجاورة الأولى، المدنية',
       phone: '01098765432',
       hours: '10:00 ص - 8:00 م',
       image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
@@ -134,7 +134,7 @@ const App = () => {
       name: 'كيدز لاند - منطقة ألعاب الأطفال',
       category: 'mall',
       likes: 178,
-      address: 'المجاورة الثالثة، مدينة 15 مايو',
+      address: 'المجاورة الثالثة، المدنية',
       phone: '01123456789',
       hours: '2:00 م - 10:00 م',
       image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400',
@@ -154,9 +154,9 @@ const App = () => {
     {
       id: 14,
       name: 'صيدلية النور الطبية',
-      category: 'hospital',
+      category: 'pharmacy',
       likes: 156,
-      address: 'المجاورة الثالثة، مدينة 15 مايو',
+      address: 'المجاورة الثالثة، المدنية',
       phone: '01111222333',
       hours: '8:00 ص - 12:00 ص',
       image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400',
@@ -205,7 +205,7 @@ const App = () => {
       name: 'سوبر ماركت المدينة',
       category: 'mall',
       likes: 89,
-      address: 'الشارع الرئيسي، مدينة 15 مايو',
+      address: 'الشارع الرئيسي، المدنية',
       phone: '01234567895',
       hours: '8:00 ص - 11:00 م',
       image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
@@ -254,7 +254,7 @@ const App = () => {
       name: 'مركز صيانة الأجهزة الذكية',
       category: 'service',
       likes: 112,
-      address: 'الحي الثاني، مدينة 15 مايو',
+      address: 'الحي الثاني، المدنية',
       phone: '01234567896',
       hours: '9:00 ص - 8:00 م',
       image: 'https://images.unsplash.com/photo-1593643620395-2a01e2c0ee58?w=400',
@@ -268,7 +268,7 @@ const App = () => {
       name: 'أكاديمية النجاح للتدريب',
       category: 'education',
       likes: 156,
-      address: 'المجاورة الرابعة، مدينة 15 مايو',
+      address: 'المجاورة الرابعة، المدنية',
       phone: '01234567897',
       hours: '10:00 ص - 10:00 م',
       image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400',
@@ -282,7 +282,7 @@ const App = () => {
       name: 'جيم فيتنس بلس',
       category: 'entertainment',
       likes: 203,
-      address: 'الشارع الجديد، مدينة 15 مايو',
+      address: 'الشارع الجديد، المدنية',
       phone: '01234567898',
       hours: '6:00 ص - 11:00 م',
       image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
@@ -296,7 +296,7 @@ const App = () => {
       name: 'محطة وقود النجم',
       category: 'transport',
       likes: 87,
-      address: 'مدخل المدينة، مدينة 15 مايو',
+      address: 'مدخل المدينة، المدنية',
       phone: '01234567899',
       hours: '24 ساعة',
       image: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=400',
@@ -304,6 +304,20 @@ const App = () => {
       description: 'محطة وقود تعمل على مدار 24 ساعة مع خدمات إضافية',
       isVisible: true,
       type: 'طلبات'
+    },
+    {
+      id: 15,
+      name: 'معمل النور للتحاليل الطبية',
+      category: 'lab',
+      likes: 89,
+      address: 'المجاورة الرابعة، المدنية',
+      phone: '01555666777',
+      hours: '7:00 ص - 2:00 م',
+      image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400',
+      services: ['تحليل دم شامل', 'تحليل بول', 'تحليل سكر', 'تحليل كوليسترول', 'أشعة إكس'],
+      description: 'معمل طبي متطور لجميع أنواع التحاليل الطبية والأشعة',
+      isVisible: true,
+      type: 'حجورات'
     }
   ];
 
@@ -432,6 +446,9 @@ const App = () => {
     restaurant: { name: 'مطاعم', icon: '🍽️', isVisible: true },
     market: { name: 'أسواق', icon: '🛒', isVisible: true },
     hospital: { name: 'مستشفيات', icon: '🏥', isVisible: true },
+    clinic: { name: 'عيادات ومراكز طبية', icon: '👨‍⚕️', isVisible: true },
+    pharmacy: { name: 'صيدليات', icon: '💊', isVisible: true },
+    lab: { name: 'معامل وأشعة', icon: '🔬', isVisible: true },
     bank: { name: 'بنوك', icon: '🏦', isVisible: true },
     service: { name: 'خدمات عامة', icon: '🔧', isVisible: true },
     education: { name: 'تعليم وتدريب', icon: '🎓', isVisible: true },
@@ -805,7 +822,7 @@ const App = () => {
       image: 'https://images.unsplash.com/photo-1511381939415-e44015466834?w=300',
       businessId: 'كارفور مول C3'
     },
-    // ميجا مول مدينة 15 مايو Products
+    // ميجا مول المدنية Products
     {
       id: 'mm1',
       name: 'فستان صيفي',
@@ -819,7 +836,7 @@ const App = () => {
         { name: 'XL', price: '220' }
       ],
       image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=300',
-      businessId: 'ميجا مول مدينة 15 مايو'
+      businessId: 'ميجا مول المدنية'
     },
     {
       id: 'mm2',
@@ -833,7 +850,7 @@ const App = () => {
         { name: 'كبيرة', price: '180' }
       ],
       image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300',
-      businessId: 'ميجا مول مدينة 15 مايو'
+      businessId: 'ميجا مول المدنية'
     },
     {
       id: 'mm3',
@@ -847,9 +864,9 @@ const App = () => {
         { name: '500 قطعة', price: '600' }
       ],
       image: 'https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=300',
-      businessId: 'ميجا مول مدينة 15 مايو'
+      businessId: 'ميجا مول المدنية'
     },
-    // سوق 15 مايو الجديد Products
+    // سوق المدنية الجديد Products
     {
       id: 'sm15-1',
       name: 'تفاح أحمر',
@@ -862,7 +879,7 @@ const App = () => {
         { name: '5 كيلو', price: '65' }
       ],
       image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=300',
-      businessId: 'سوق 15 مايو الجديد'
+      businessId: 'سوق المدنية الجديد'
     },
     {
       id: 'sm15-2',
@@ -876,7 +893,7 @@ const App = () => {
         { name: '5 كيلو', price: '35' }
       ],
       image: 'https://images.unsplash.com/photo-1546470427-e2e2c057659b?w=300',
-      businessId: 'سوق 15 مايو الجديد'
+      businessId: 'سوق المدنية الجديد'
     },
     {
       id: 'sm15-3',
@@ -890,7 +907,7 @@ const App = () => {
         { name: '3 كيلو', price: '125' }
       ],
       image: 'https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=300',
-      businessId: 'سوق 15 مايو الجديد'
+      businessId: 'سوق المدنية الجديد'
     }
   ]);
 
@@ -919,7 +936,7 @@ const App = () => {
     fullName: '',
     phone: '',
     address: '',
-    city: 'مدينة 15 مايو',
+    city: 'المدنية',
     notes: ''
   });
   const [paymentMethod, setPaymentMethod] = useState('cash'); // 'cash', 'card', 'vodafone'
@@ -927,7 +944,7 @@ const App = () => {
   const [chatMessages, setChatMessages] = useState<Array<{id: number, text: string, isBot: boolean, timestamp: Date}>>([
     {
       id: 1,
-      text: 'مرحباً! أنا مساعدك الذكي في دليل خدمات مدينة 15 مايو. كيف يمكنني مساعدتك اليوم؟',
+      text: 'مرحباً! أنا مساعدك الذكي في دليل خدمات المدنية. كيف يمكنني مساعدتك اليوم؟',
       isBot: true,
       timestamp: new Date()
     }
@@ -956,10 +973,10 @@ const App = () => {
   // Mapping subcategory keys to actual service categories
   const subcategoryToServiceMapping = {
     // Medical subcategories
-    clinics: 'hospital',
+    clinics: 'clinic',
     hospitals: 'hospital',
-    pharmacies: 'hospital',
-    labs: 'hospital',
+    pharmacies: 'pharmacy',
+    labs: 'lab',
 
     // Shopping subcategories
     malls: 'mall',
@@ -1396,7 +1413,7 @@ const App = () => {
         fullName: '',
         phone: '',
         address: '',
-        city: 'مدينة 15 مايو',
+        city: 'المدنية',
         notes: ''
       });
       alert('تم تأكيد طلبك بنجاح! سنتواصل معك قريباً');
@@ -1663,7 +1680,7 @@ ${appointmentsList}
 
   const sendSMSNotification = (phoneNumber: string, serviceName: string) => {
     // محاكاة إرسال SMS
-    console.log(`SMS sent to ${phoneNumber}: تم نشر خدمة "${serviceName}" بنجاح في دليل خدمات مدينة 15 مايو`);
+    console.log(`SMS sent to ${phoneNumber}: تم نشر خدمة "${serviceName}" بنجاح في دليل خدمات المدنية`);
 
     // في التطبيق الحقيقي، هنا سنستخدم خدمة SMS API مثل Twilio أو أي خدمة أخرى
     // مثال:
@@ -1672,7 +1689,7 @@ ${appointmentsList}
     //   headers: { 'Content-Type': 'application/json' },
     //   body: JSON.stringify({
     //     to: phoneNumber,
-    //     message: `تم نشر خدمة "${serviceName}" بنجاح في دليل خدمات مدينة 15 مايو`
+    //     message: `تم نشر خدمة "${serviceName}" بنجاح في دليل خدمات المدنية`
     //   })
     // });
   };
@@ -1774,23 +1791,23 @@ ${appointmentsList}
     try {
       // نصوص ومحتوى خاص بالبيانات المحلية
       const localContext = `
-أنت مساعد ذكي لدليل خدمات مدينة 15 مايو في مصر. لديك معلومات عن الخدمات التالية:
+أنت مساعد ذكي لدليل خدمات المدنية في مصر. لديك معلومات عن الخدمات التالية:
 
 المولات:
-- كارفور مول C3: مول C3، المجاورة الثالثة، مدينة 15 مايو، هاتف: 16789، الساعات: 9:00 ص - 12:00 ص
-- ميجا مول مدينة 15 مايو: القطعة 22، المجاورة الثالثة، مركز المدينة، هاتف: 02-38951200، الساعات: 10:00 ص - 11:00 م
+- كارفور مول C3: مول C3، المجاورة الثالثة، المدنية، هاتف: 16789، الساعات: 9:00 ص - 12:00 ص
+- ميجا مول المدنية: القطعة 22، المجاورة الثالثة، مركز المدينة، هاتف: 02-38951200، الساعات: 10:00 ص - 11:00 م
 
 المطاعم:
 - مطعم باك باك: المجاورة الثالثة، كمباوند وسط البلد، هاتف: 02-38951400، الساعات: 1:00 ظ - 12:00 ص
 
 الأسواق:
-- سوق 15 مايو الجديد: جنوب مدينة 15 مايو، بجوار الطريق الدائري، هاتف: 02-38951600، الساعات: 5:00 ص - 8:00 م
+- سوق المدنية الجديد: جنوب المدنية، بجوار الطريق الدائري، هاتف: 02-38951600، الساعات: 5:00 ص - 8:00 م
 
 المستشفيات:
-- مستشفى 15 مايو العام: المجاورة الأولى، مدينة 15 مايو، هاتف: 02-38951700، ساعات: 24 ساعة
+- مستشفى المدنية العام: المجاورة الأولى، المدنية، هاتف: 02-38951700، ساعات: 24 ساعة
 
 البنوك:
-- بنك الإسكندرية - فرع 15 مايو: المجاورة الثالثة، حي رجال الأعمال، هاتف: 16247، الساعات: 8:30 ص - 3:30 م
+- بنك الإسكندرية - فرع المدنية: المجاورة الثالثة، حي رجال الأعمال، هاتف: 16247، الساعات: 8:30 ص - 3:30 م
 
 استخدم هذه المعلومات للإجابة على أسئلة المستخدمين بطريقة مفيدة ودقيقة. إذا سأل المستخدم عن خدمة غير موجودة في القائمة، أعلمه بأنها غير متوفرة حالياً في قاعدة البيانات.
 `;
@@ -1827,7 +1844,7 @@ ${appointmentsList}
       // معلومات مفصلة عن الفئات
       if (message.includes('مول') || message.includes('تسوق') || message.includes('شراء')) {
         const malls = managedPlaces.filter(p => p.category === 'mall' && p.isVisible !== false);
-        return `🛍️ المولات المتاحة في مدينة 15 مايو (${malls.length} مول):
+        return `🛍️ المولات المتاحة في المدنية (${malls.length} مول):
 
 ${malls.map(mall => `• ${mall.name}
    📍 ${mall.address}
@@ -1842,7 +1859,7 @@ ${malls.map(mall => `• ${mall.name}
         const category = managedCategories[categoryKey];
         if (message.includes(category.name.toLowerCase())) {
           const places = managedPlaces.filter(p => p.category === categoryKey && p.isVisible !== false);
-          return `${category.icon} ${category.name} المتاحة في مدينة 15 مايو (${places.length} خدمة):
+          return `${category.icon} ${category.name} المتاحة في المدنية (${places.length} خدمة):
 
 ${places.map(place => `• ${place.name}
    📍 ${place.address}
@@ -1854,7 +1871,7 @@ ${places.map(place => `• ${place.name}
 
       if (message.includes('مطعم') || message.includes('أكل') || message.includes('طعام')) {
         const restaurants = managedPlaces.filter(p => p.category === 'restaurant');
-        return `🍽️ المطاعم المتاحة في مدينة 15 مايو (${restaurants.length} مطعم):
+        return `🍽️ المطاعم المتاحة في المدنية (${restaurants.length} مطعم):
 
 ${restaurants.map(restaurant => `• ${restaurant.name}
    📍 ${restaurant.address}
@@ -1866,7 +1883,7 @@ ${restaurants.map(restaurant => `• ${restaurant.name}
 
       if (message.includes('مستشفى') || message.includes('طبيب') || message.includes('علاج') || message.includes('صحة')) {
         const hospitals = managedPlaces.filter(p => p.category === 'hospital');
-        return `🏥 المستشفيات المتاحة في مدينة 15 مايو (${hospitals.length} مستشفى):
+        return `🏥 المستشفيات المتاحة في المدنية (${hospitals.length} مستشفى):
 
 ${hospitals.map(hospital => `• ${hospital.name}
    📍 ${hospital.address}
@@ -1879,7 +1896,7 @@ ${hospitals.map(hospital => `• ${hospital.name}
 
       if (message.includes('بنك') || message.includes('صراف') || message.includes('فلوس') || message.includes('حساب')) {
         const banks = managedPlaces.filter(p => p.category === 'bank');
-        return `🏦 البنوك المتاحة في مدينة 15 مايو (${banks.length} بنك):
+        return `🏦 البنوك المتاحة في المدنية (${banks.length} بنك):
 
 ${banks.map(bank => `• ${bank.name}
    📍 ${bank.address}
@@ -1892,7 +1909,7 @@ ${banks.map(bank => `• ${bank.name}
 
       if (message.includes('سوق') || message.includes('خضار') || message.includes('فاكهة') || message.includes('سمك')) {
         const markets = managedPlaces.filter(p => p.category === 'market');
-        return `🛒 الأسواق المتاحة في مدينة 15 مايو (${markets.length} سوق):
+        return `🛒 الأسواق المتاحة في المدنية (${markets.length} سوق):
 
 ${markets.map(market => `• ${market.name}
    📍 ${market.address}
@@ -1905,7 +1922,7 @@ ${markets.map(market => `• ${market.name}
 
       // ردود ذكية على الاستفسارات العامة
       if (message.includes('مساعدة') || message.includes('ساعدني') || message.includes('help')) {
-        return `🤖 أهلاً! أنا مساعدك الذكي في دليل خدمات مدينة 15 مايو
+        return `🤖 أهلاً! أنا مساعدك الذكي في دليل خدمات المدنية
 
 يمكنني مساعدتك في:
 🔍 البحث عن الخدمات والأماكن
@@ -1921,7 +1938,7 @@ ${markets.map(market => `• ${market.name}
       }
 
       if (message.includes('شكرا') || message.includes('شكراً') || message.includes('thanks')) {
-        return '😊 العفو! سعيد جداً لمساعدتك. إذا احتجت أي معلومات أخرى عن خدمات مدينة 15 مايو، أنا هنا دائماً!';
+        return '😊 العفو! سعيد جداً لمساعدتك. إذا احتجت أي معلومات أخرى عن خدمات المدنية، أنا هنا دائماً!';
       }
 
       if (message.includes('وقت') || message.includes('ساعة') || message.includes('متى')) {
@@ -2156,7 +2173,7 @@ ${markets.map(market => `• ${market.name}
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h1 className="text-2xl font-bold mb-2">دليل خدمات مدينة 15 مايو الشامل</h1>
+              <h1 className="text-2xl font-bold mb-2">دليل خدمات المدنية الشامل</h1>
               <p className="text-blue-100 text-sm">اكتشف جميع الخدمات والأماكن المهمة في مدينتك بسهولة</p>
             </div>
 
@@ -2221,7 +2238,7 @@ ${markets.map(market => `• ${market.name}
           <div className="space-y-8">
             {/* Welcome Section */}
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">مرحباً بك في دليل خدمات مدينة 15 مايو</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">مرحباً بك في دليل خدمات المدنية</h2>
               <p className="text-gray-600 text-lg">اختر التصنيف المناسب للوصول لجميع الخدمات التي تحتاجها</p>
             </div>
 
@@ -3054,7 +3071,7 @@ ${markets.map(market => `• ${market.name}
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="text-center mb-6">
                 <div className="text-6xl mb-4">🏪</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">دليل خدمات مدينة 15 مايو</h3>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">دليل خدمات المدنية</h3>
                 <p className="text-gray-600">الإصدار 1.0.0</p>
               </div>
 
@@ -3062,7 +3079,7 @@ ${markets.map(market => `• ${market.name}
                 <div className="border-t pt-4">
                   <h4 className="font-semibold mb-2">عن التطبيق</h4>
                   <p className="text-gray-600 text-sm">
-                    دليل شامل لجميع الخدمات والأماكن المهمة في مدينة 15 مايو، يتيح للمواطنين العثور على الخدمات بسهولة ومعرفة معلومات التواصل والمواقع.
+                    دليل شامل لجميع الخدمات والأماكن المهمة في المدنية، يتيح للمواطنين العثور على الخدمات بسهولة ومعرفة معلومات التواصل والمواقع.
                   </p>
                 </div>
 
@@ -3278,7 +3295,7 @@ ${markets.map(market => `• ${market.name}
                       name="address"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      placeholder="مثال: المجاورة الثالثة، مدينة 15 مايو"
+                      placeholder="مثال: المجاورة الثالثة، المدنية"
                     />
                   </div>
 
@@ -6386,7 +6403,7 @@ ${markets.map(market => `• ${market.name}
                         onChange={(e) => setShippingInfo({...shippingInfo, city: e.target.value})}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
-                        <option value="مدينة 15 مايو">مدينة 15 مايو</option>
+                        <option value="المدنية">المدنية</option>
                         <option value="القاهرة">القاهرة</option>
                         <option value="الجيزة">الجيزة</option>
                         <option value="أخرى">أخرى</option>

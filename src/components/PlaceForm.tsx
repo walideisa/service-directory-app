@@ -75,6 +75,7 @@ export const PlaceForm: React.FC<PlaceFormProps> = ({
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategoryName, setCustomCategoryName] = useState('');
   const [customCategoryIcon, setCustomCategoryIcon] = useState('🏢');
+  const [selectedMainCategory, setSelectedMainCategory] = useState('');
 
   // Services management
   const [currentService, setCurrentService] = useState('');
