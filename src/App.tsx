@@ -2365,7 +2365,7 @@ ${markets.map(market => `• ${market.name}
       <header className="bg-gradient-to-r from-green-600 to-green-500 text-white p-4 shadow-lg">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-start mb-4">
-            <div>
+            <div></div>
 
             <div className="flex items-center gap-3">
               {/* Cart Button - Available on all pages */}
@@ -2419,6 +2419,10 @@ ${markets.map(market => `• ${market.name}
         {/* Home Page - Main Categories */}
         {currentView === 'home' && (
           <div className="space-y-8">
+            {/* Title */}
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-gray-800 mb-6">دليل مدينة حدائق أكتوبر</h1>
+            </div>
 
             {/* Main Categories Grid */}
             <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
@@ -2515,25 +2519,16 @@ ${markets.map(market => `• ${market.name}
 
             {/* Statistics Section at Bottom */}
             <div className="mt-12 bg-gray-100 rounded-lg p-6">
+              <h3 className="text-lg font-bold text-gray-800 text-center mb-4">بيانات الدليل</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {/* الخدمات المتاحة */}
                 <div className="bg-gray-200 text-gray-700 rounded-lg p-4 text-center shadow-sm">
-                  <div className="flex justify-center mb-2">
-                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                    </svg>
-                  </div>
                   <div className="text-2xl font-bold text-gray-800">{managedPlaces.filter(p => p.isVisible !== false).length}</div>
                   <div className="text-gray-600 text-sm">خدمة متاحة</div>
                 </div>
 
                 {/* أقسام الدليل */}
                 <div className="bg-gray-200 text-gray-700 rounded-lg p-4 text-center shadow-sm">
-                  <div className="flex justify-center mb-2">
-                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/>
-                    </svg>
-                  </div>
                   <div className="text-2xl font-bold text-gray-800">
                     {Object.values(managedMainCategories).reduce((total, category) => total + category.subcategories.length, 0) + Object.keys(managedMainCategories).length}
                   </div>
@@ -2542,22 +2537,12 @@ ${markets.map(market => `• ${market.name}
 
                 {/* عداد الزائرين الإجمالي */}
                 <div className="bg-gray-200 text-gray-700 rounded-lg p-4 text-center shadow-sm">
-                  <div className="flex items-center justify-center mb-2">
-                    <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
                   <div className="text-2xl font-bold text-gray-800">{visitorCount.toLocaleString()}</div>
                   <div className="text-gray-600 text-sm">إجمالي الزائرين</div>
                 </div>
 
                 {/* زائرو اليوم */}
                 <div className="bg-gray-200 text-gray-700 rounded-lg p-4 text-center shadow-sm">
-                  <div className="flex items-center justify-center mb-2">
-                    <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                    </svg>
-                  </div>
                   <div className="text-2xl font-bold text-gray-800">{todayVisitors.toLocaleString()}</div>
                   <div className="text-gray-600 text-sm">زائرو اليوم</div>
                 </div>
