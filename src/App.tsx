@@ -565,71 +565,114 @@ const App = () => {
 
   // الأقسام الرئيسية - قابلة للتعديل
   const [managedMainCategories, setManagedMainCategories] = useState({
-    medical: {
-      name: 'طبي وصحي',
-      icon: '🏥',
-      color: 'from-white to-gray-50 border border-gray-200',
+    cityServices: {
+      name: 'خدمات المدينة',
+      icon: '🏛️',
+      color: 'from-blue-50 to-blue-100 border border-blue-200',
       subcategories: [
-        { key: 'clinics', name: 'عيادات ومراكز طبية', icon: '👨‍⚕️' },
-        { key: 'hospitals', name: 'مستشفيات', icon: '🏥' },
-        { key: 'pharmacies', name: 'صيدليات', icon: '💊' },
-        { key: 'labs', name: 'معامل وأشعة', icon: '🔬' },
-        { key: 'emergency', name: 'أرقام طوارئ', icon: '🚨' }
+        { key: 'municipality', name: 'مكتب العمدة', icon: '🏛️' },
+        { key: 'civic-services', name: 'خدمات مدنية', icon: '📋' },
+        { key: 'utilities', name: 'مرافق عامة', icon: '🔧' },
+        { key: 'permits', name: 'تراخيص وتصاريح', icon: '📄' }
       ]
     },
-    shopping: {
-      name: 'تسوق ومراكز تجارية',
-      icon: '🛍️',
-      color: 'from-white to-gray-50 border border-gray-200',
+    cityDevice: {
+      name: 'جهاز المدينة',
+      icon: '⚙️',
+      color: 'from-gray-50 to-gray-100 border border-gray-200',
       subcategories: [
-        { key: 'malls', name: 'مولات ومراكز تجارية', icon: '🏬' },
-        { key: 'markets', name: 'أسواق ومحلات', icon: '🏪' },
-        { key: 'supermarkets', name: 'سوبر ماركت', icon: '🛒' },
-        { key: 'online-shopping', name: 'تسوق إلكتروني', icon: '📱' }
+        { key: 'management', name: 'الإدارة العامة', icon: '👥' },
+        { key: 'departments', name: 'الأقسام الحكومية', icon: '🏢' },
+        { key: 'operations', name: 'العمليات والخدمات', icon: '⚙️' },
+        { key: 'planning', name: 'التخطيط والتطوير', icon: '📊' }
       ]
     },
-    services: {
-      name: 'خدمات عامة',
-      icon: '🔧',
-      color: 'from-white to-gray-50 border border-gray-200',
+    cityPolice: {
+      name: 'شرطة المدينة',
+      icon: '👮‍♂️',
+      color: 'from-red-50 to-red-100 border border-red-200',
       subcategories: [
-        { key: 'maintenance', name: 'صيانة وإصلاح', icon: '🔧' },
-        { key: 'cleaning', name: 'تنظيف وغسيل', icon: '🧽' },
-        { key: 'delivery', name: 'توصيل وشحن', icon: '🚚' },
-        { key: 'technical', name: 'خدمات تقنية', icon: '💻' }
+        { key: 'police-station', name: 'مركز الشرطة', icon: '🏪' },
+        { key: 'traffic-police', name: 'شرطة المرور', icon: '🚦' },
+        { key: 'emergency', name: 'الطوارئ', icon: '🚨' },
+        { key: 'security', name: 'الأمن العام', icon: '🛡️' }
+      ]
+    },
+    malls: {
+      name: 'مولات',
+      icon: '🏬',
+      color: 'from-purple-50 to-purple-100 border border-purple-200',
+      subcategories: [
+        { key: 'shopping-centers', name: 'مراكز تجارية', icon: '🏬' },
+        { key: 'markets', name: 'أسواق', icon: '🛒' },
+        { key: 'supermarkets', name: 'سوبر ماركت', icon: '🏪' },
+        { key: 'retail-stores', name: 'متاجر التجزئة', icon: '🛍️' }
       ]
     },
     education: {
-      name: 'تعليم وتدريب',
+      name: 'خدمات تعليمية',
       icon: '🎓',
-      color: 'from-white to-gray-50 border border-gray-200',
+      color: 'from-green-50 to-green-100 border border-green-200',
       subcategories: [
-        { key: 'schools', name: 'مدارس وجامعات', icon: '🏫' },
-        { key: 'institutes', name: 'معاهد ومراكز تدريب', icon: '📚' },
-        { key: 'tutoring', name: 'دروس خصوصية', icon: '👨‍🏫' },
-        { key: 'languages', name: 'تعلم لغات', icon: '🗣️' }
+        { key: 'schools', name: 'مدارس', icon: '🏫' },
+        { key: 'universities', name: 'جامعات', icon: '🎓' },
+        { key: 'institutes', name: 'معاهد تدريب', icon: '📚' },
+        { key: 'libraries', name: 'مكتبات', icon: '📖' }
+      ]
+    },
+    medical: {
+      name: 'خدمات طبية',
+      icon: '🏥',
+      color: 'from-teal-50 to-teal-100 border border-teal-200',
+      subcategories: [
+        { key: 'hospitals', name: 'مستشفيات', icon: '🏥' },
+        { key: 'clinics', name: 'عيادات', icon: '👩‍⚕️' },
+        { key: 'pharmacies', name: 'صيدليات', icon: '💊' },
+        { key: 'labs', name: 'معامل تحليل', icon: '🔬' }
+      ]
+    },
+    business: {
+      name: 'المال والأعمال',
+      icon: '💰',
+      color: 'from-yellow-50 to-yellow-100 border border-yellow-200',
+      subcategories: [
+        { key: 'banks', name: 'بنوك', icon: '🏦' },
+        { key: 'investments', name: 'استثمارات', icon: '📈' },
+        { key: 'business-services', name: 'خدمات أعمال', icon: '💼' },
+        { key: 'accounting', name: 'محاسبة', icon: '🧮' }
+      ]
+    },
+    realEstate: {
+      name: 'عقار ماب المدينة',
+      icon: '🏘️',
+      color: 'from-orange-50 to-orange-100 border border-orange-200',
+      subcategories: [
+        { key: 'apartments', name: 'شقق للإيجار', icon: '🏠' },
+        { key: 'houses', name: 'منازل للبيع', icon: '🏡' },
+        { key: 'commercial', name: 'عقارات تجارية', icon: '🏢' },
+        { key: 'land', name: 'أراضي', icon: '🗺️' }
       ]
     },
     transport: {
-      name: 'مواصلات ونقل',
+      name: 'نقل ومواصلات',
       icon: '🚗',
-      color: 'from-white to-gray-50 border border-gray-200',
+      color: 'from-indigo-50 to-indigo-100 border border-indigo-200',
       subcategories: [
-        { key: 'car-services', name: 'خدمات سيارات', icon: '🚗' },
         { key: 'public-transport', name: 'مواصلات عامة', icon: '🚌' },
-        { key: 'taxi', name: 'تاكسي وأوبر', icon: '🚕' },
+        { key: 'taxi', name: 'تاكسي', icon: '🚕' },
+        { key: 'car-services', name: 'خدمات سيارات', icon: '🚗' },
         { key: 'gas-stations', name: 'محطات وقود', icon: '⛽' }
       ]
     },
     entertainment: {
-      name: 'ترفيه ومطاعم',
-      icon: '🎉',
-      color: 'from-white to-gray-50 border border-gray-200',
+      name: 'مطاعم وترفيه',
+      icon: '🍽️',
+      color: 'from-pink-50 to-pink-100 border border-pink-200',
       subcategories: [
-        { key: 'restaurants', name: 'مطاعم ومقاهي', icon: '🍽️' },
-        { key: 'cafes', name: 'كافيهات وجيمنج', icon: '☕' },
-        { key: 'cinema', name: 'سينما وترفيه', icon: '🎬' },
-        { key: 'sports', name: 'رياضة وجيم', icon: '🏋️‍♂️' }
+        { key: 'restaurants', name: 'مطاعم', icon: '🍽️' },
+        { key: 'cafes', name: 'مقاهي', icon: '☕' },
+        { key: 'entertainment', name: 'ترفيه', icon: '🎉' },
+        { key: 'sports', name: 'رياضة', icon: '⚽' }
       ]
     }
   });
