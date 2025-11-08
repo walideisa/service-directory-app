@@ -502,8 +502,7 @@ const App = () => {
   // إدارة الأقسام الرئيسية
   const [newMainCategory, setNewMainCategory] = useState({
     name: '',
-    icon: '',
-    key: ''
+    icon: ''
   });
 
   const [editingMainCategory, setEditingMainCategory] = useState<{
@@ -1147,8 +1146,20 @@ const App = () => {
 
   // وظائف إدارة الأقسام الرئيسية
   const addMainCategory = () => {
-    if (newMainCategory.name && newMainCategory.icon && newMainCategory.key) {
-      const categoryKey = newMainCategory.key.toLowerCase().replace(/\s+/g, '-');
+    if (newMainCategory.name && newMainCategory.icon) {
+      const categoryKey = newMainCategory.name.toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[أ-ي]/g, (char) => {
+          // تحويل الأحرف العربية إلى أحرف لاتينية مقابلة
+          const arabicToLatin = {
+            'أ': 'a', 'ا': 'a', 'ب': 'b', 'ت': 't', 'ث': 'th', 'ج': 'j', 'ح': 'h', 'خ': 'kh',
+            'د': 'd', 'ذ': 'dh', 'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 'sh', 'ص': 's', 'ض': 'd',
+            'ط': 't', 'ظ': 'dh', 'ع': 'a', 'غ': 'gh', 'ف': 'f', 'ق': 'q', 'ك': 'k', 'ل': 'l',
+            'م': 'm', 'ن': 'n', 'ه': 'h', 'و': 'w', 'ي': 'y', 'ى': 'y', 'ة': 'h'
+          };
+          return arabicToLatin[char] || char;
+        });
+
       setManagedMainCategories(prev => ({
         ...prev,
         [categoryKey]: {
@@ -1158,7 +1169,7 @@ const App = () => {
           subcategories: []
         }
       }));
-      setNewMainCategory({ name: '', icon: '', key: '' });
+      setNewMainCategory({ name: '', icon: '' });
     }
   };
 
@@ -3323,7 +3334,7 @@ ${markets.map(market => `• ${market.name}
             {/* إضافة قسم جديد */}
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
               <h3 className="text-lg font-semibold text-green-800 mb-3">إضافة قسم رئيسي جديد</h3>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <input
                   type="text"
                   placeholder="اسم القسم (مثال: خدمات مالية)"
@@ -3338,16 +3349,9 @@ ${markets.map(market => `• ${market.name}
                   onChange={(e) => setNewMainCategory(prev => ({ ...prev, icon: e.target.value }))}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                 />
-                <input
-                  type="text"
-                  placeholder="مفتاح القسم (مثال: financial)"
-                  value={newMainCategory.key}
-                  onChange={(e) => setNewMainCategory(prev => ({ ...prev, key: e.target.value }))}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-                />
                 <button
                   onClick={addMainCategory}
-                  disabled={!newMainCategory.name || !newMainCategory.icon || !newMainCategory.key}
+                  disabled={!newMainCategory.name || !newMainCategory.icon}
                   className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
