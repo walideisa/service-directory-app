@@ -499,6 +499,142 @@ const App = () => {
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [settingsView, setSettingsView] = useState('main');
 
+  // إدارة الأقسام الرئيسية
+  const [newMainCategory, setNewMainCategory] = useState({
+    name: '',
+    icon: '',
+    key: ''
+  });
+
+  const [editingMainCategory, setEditingMainCategory] = useState<{
+    key: string,
+    name: string,
+    icon: string
+  } | null>(null);
+
+  // إدارة الأقسام الفرعية
+  const [managingSubcategoriesFor, setManagingSubcategoriesFor] = useState<string | null>(null);
+  const [newSubcategory, setNewSubcategory] = useState({
+    key: '',
+    name: '',
+    icon: ''
+  });
+  const [editingSubcategory, setEditingSubcategory] = useState<{
+    index: number,
+    key: string,
+    name: string,
+    icon: string
+  } | null>(null);
+
+  // إحصائيات الموقع
+  const [visitorCount, setVisitorCount] = useState(0);
+  const [todayVisitors, setTodayVisitors] = useState(0);
+
+  // تهيئة عداد الزائرين
+  useEffect(() => {
+    // محاكاة تحميل عدد الزائرين من localStorage أو API
+    const savedVisitorCount = localStorage.getItem('totalVisitors');
+    const savedTodayVisitors = localStorage.getItem('todayVisitors');
+    const lastVisitDate = localStorage.getItem('lastVisitDate');
+    const today = new Date().toDateString();
+
+    if (savedVisitorCount) {
+      setVisitorCount(parseInt(savedVisitorCount));
+    } else {
+      setVisitorCount(12485); // رقم ابتدائي
+    }
+
+    // إذا كان آخر زيارة اليوم، نزيد عداد اليوم، وإلا نبدأ من جديد
+    if (lastVisitDate === today && savedTodayVisitors) {
+      setTodayVisitors(parseInt(savedTodayVisitors));
+    } else {
+      setTodayVisitors(1);
+      localStorage.setItem('lastVisitDate', today);
+    }
+
+    // زيادة العدادات
+    const newTotalCount = savedVisitorCount ? parseInt(savedVisitorCount) + 1 : 12486;
+    const newTodayCount = (lastVisitDate === today && savedTodayVisitors) ? parseInt(savedTodayVisitors) + 1 : 1;
+
+    setVisitorCount(newTotalCount);
+    setTodayVisitors(newTodayCount);
+
+    // حفظ في localStorage
+    localStorage.setItem('totalVisitors', newTotalCount.toString());
+    localStorage.setItem('todayVisitors', newTodayCount.toString());
+  }, []);
+
+  // الأقسام الرئيسية - قابلة للتعديل
+  const [managedMainCategories, setManagedMainCategories] = useState({
+    medical: {
+      name: 'طبي وصحي',
+      icon: '🏥',
+      color: 'from-white to-gray-50 border border-gray-200',
+      subcategories: [
+        { key: 'clinics', name: 'عيادات ومراكز طبية', icon: '👨‍⚕️' },
+        { key: 'hospitals', name: 'مستشفيات', icon: '🏥' },
+        { key: 'pharmacies', name: 'صيدليات', icon: '💊' },
+        { key: 'labs', name: 'معامل وأشعة', icon: '🔬' },
+        { key: 'emergency', name: 'أرقام طوارئ', icon: '🚨' }
+      ]
+    },
+    shopping: {
+      name: 'تسوق ومراكز تجارية',
+      icon: '🛍️',
+      color: 'from-white to-gray-50 border border-gray-200',
+      subcategories: [
+        { key: 'malls', name: 'مولات ومراكز تجارية', icon: '🏬' },
+        { key: 'markets', name: 'أسواق ومحلات', icon: '🏪' },
+        { key: 'supermarkets', name: 'سوبر ماركت', icon: '🛒' },
+        { key: 'online-shopping', name: 'تسوق إلكتروني', icon: '📱' }
+      ]
+    },
+    services: {
+      name: 'خدمات عامة',
+      icon: '🔧',
+      color: 'from-white to-gray-50 border border-gray-200',
+      subcategories: [
+        { key: 'maintenance', name: 'صيانة وإصلاح', icon: '🔧' },
+        { key: 'cleaning', name: 'تنظيف وغسيل', icon: '🧽' },
+        { key: 'delivery', name: 'توصيل وشحن', icon: '🚚' },
+        { key: 'technical', name: 'خدمات تقنية', icon: '💻' }
+      ]
+    },
+    education: {
+      name: 'تعليم وتدريب',
+      icon: '🎓',
+      color: 'from-white to-gray-50 border border-gray-200',
+      subcategories: [
+        { key: 'schools', name: 'مدارس وجامعات', icon: '🏫' },
+        { key: 'institutes', name: 'معاهد ومراكز تدريب', icon: '📚' },
+        { key: 'tutoring', name: 'دروس خصوصية', icon: '👨‍🏫' },
+        { key: 'languages', name: 'تعلم لغات', icon: '🗣️' }
+      ]
+    },
+    transport: {
+      name: 'مواصلات ونقل',
+      icon: '🚗',
+      color: 'from-white to-gray-50 border border-gray-200',
+      subcategories: [
+        { key: 'car-services', name: 'خدمات سيارات', icon: '🚗' },
+        { key: 'public-transport', name: 'مواصلات عامة', icon: '🚌' },
+        { key: 'taxi', name: 'تاكسي وأوبر', icon: '🚕' },
+        { key: 'gas-stations', name: 'محطات وقود', icon: '⛽' }
+      ]
+    },
+    entertainment: {
+      name: 'ترفيه ومطاعم',
+      icon: '🎉',
+      color: 'from-white to-gray-50 border border-gray-200',
+      subcategories: [
+        { key: 'restaurants', name: 'مطاعم ومقاهي', icon: '🍽️' },
+        { key: 'cafes', name: 'كافيهات وجيمنج', icon: '☕' },
+        { key: 'cinema', name: 'سينما وترفيه', icon: '🎬' },
+        { key: 'sports', name: 'رياضة وجيم', icon: '🏋️‍♂️' }
+      ]
+    }
+  });
+
   // Shopping cart and orders state (for طلبات services)
   const [cart, setCart] = useState<Array<{
     productId: string,
@@ -1009,75 +1145,132 @@ const App = () => {
     sports: 'entertainment'
   };
 
-  // Main Categories with subcategories
-  const mainCategories = {
-    medical: {
-      name: 'طبي وصحي',
-      icon: '🏥',
-      color: 'from-blue-500 to-blue-600',
-      subcategories: [
-        { key: 'clinics', name: 'عيادات ومراكز طبية', icon: '👨‍⚕️' },
-        { key: 'hospitals', name: 'مستشفيات', icon: '🏥' },
-        { key: 'pharmacies', name: 'صيدليات', icon: '💊' },
-        { key: 'labs', name: 'معامل وأشعة', icon: '🔬' },
-        { key: 'emergency', name: 'أرقام طوارئ', icon: '🚨' }
-      ]
-    },
-    shopping: {
-      name: 'تسوق ومراكز تجارية',
-      icon: '🛍️',
-      color: 'from-green-500 to-green-600',
-      subcategories: [
-        { key: 'malls', name: 'مولات ومراكز تجارية', icon: '🏬' },
-        { key: 'markets', name: 'أسواق ومحلات', icon: '🏪' },
-        { key: 'supermarkets', name: 'سوبر ماركت', icon: '🛒' },
-        { key: 'online-shopping', name: 'تسوق إلكتروني', icon: '📱' }
-      ]
-    },
-    services: {
-      name: 'خدمات عامة',
-      icon: '🔧',
-      color: 'from-purple-500 to-purple-600',
-      subcategories: [
-        { key: 'maintenance', name: 'صيانة وإصلاح', icon: '🔧' },
-        { key: 'cleaning', name: 'تنظيف وغسيل', icon: '🧽' },
-        { key: 'delivery', name: 'توصيل وشحن', icon: '🚚' },
-        { key: 'technical', name: 'خدمات تقنية', icon: '💻' }
-      ]
-    },
-    education: {
-      name: 'تعليم وتدريب',
-      icon: '🎓',
-      color: 'from-orange-500 to-orange-600',
-      subcategories: [
-        { key: 'schools', name: 'مدارس وجامعات', icon: '🏫' },
-        { key: 'institutes', name: 'معاهد ومراكز تدريب', icon: '📚' },
-        { key: 'tutoring', name: 'دروس خصوصية', icon: '👨‍🏫' },
-        { key: 'languages', name: 'تعلم لغات', icon: '🗣️' }
-      ]
-    },
-    transport: {
-      name: 'مواصلات ونقل',
-      icon: '🚗',
-      color: 'from-red-500 to-red-600',
-      subcategories: [
-        { key: 'car-services', name: 'خدمات سيارات', icon: '🚗' },
-        { key: 'public-transport', name: 'مواصلات عامة', icon: '🚌' },
-        { key: 'taxi', name: 'تاكسي وأوبر', icon: '🚕' },
-        { key: 'gas-stations', name: 'محطات وقود', icon: '⛽' }
-      ]
-    },
-    entertainment: {
-      name: 'ترفيه ومطاعم',
-      icon: '🎉',
-      color: 'from-pink-500 to-pink-600',
-      subcategories: [
-        { key: 'restaurants', name: 'مطاعم ومقاهي', icon: '🍽️' },
-        { key: 'cafes', name: 'كافيهات وجيمنج', icon: '☕' },
-        { key: 'cinema', name: 'سينما وترفيه', icon: '🎬' },
-        { key: 'sports', name: 'رياضة وجيم', icon: '🏋️‍♂️' }
-      ]
+  // وظائف إدارة الأقسام الرئيسية
+  const addMainCategory = () => {
+    if (newMainCategory.name && newMainCategory.icon && newMainCategory.key) {
+      const categoryKey = newMainCategory.key.toLowerCase().replace(/\s+/g, '-');
+      setManagedMainCategories(prev => ({
+        ...prev,
+        [categoryKey]: {
+          name: newMainCategory.name,
+          icon: newMainCategory.icon,
+          color: 'from-white to-gray-50 border border-gray-200',
+          subcategories: []
+        }
+      }));
+      setNewMainCategory({ name: '', icon: '', key: '' });
     }
+  };
+
+  const deleteMainCategory = (categoryKey: string) => {
+    if (window.confirm(`هل أنت متأكد من حذف قسم "${managedMainCategories[categoryKey].name}"؟`)) {
+      const newCategories = { ...managedMainCategories };
+      delete newCategories[categoryKey];
+      setManagedMainCategories(newCategories);
+    }
+  };
+
+  const startEditingMainCategory = (categoryKey: string) => {
+    const category = managedMainCategories[categoryKey];
+    setEditingMainCategory({
+      key: categoryKey,
+      name: category.name,
+      icon: category.icon
+    });
+  };
+
+  const saveMainCategoryEdit = () => {
+    if (editingMainCategory) {
+      setManagedMainCategories(prev => ({
+        ...prev,
+        [editingMainCategory.key]: {
+          ...prev[editingMainCategory.key],
+          name: editingMainCategory.name,
+          icon: editingMainCategory.icon
+        }
+      }));
+      setEditingMainCategory(null);
+    }
+  };
+
+  const cancelMainCategoryEdit = () => {
+    setEditingMainCategory(null);
+  };
+
+  // وظائف إدارة الأقسام الفرعية
+  const addSubcategory = (mainCategoryKey: string) => {
+    if (newSubcategory.key && newSubcategory.name && newSubcategory.icon) {
+      setManagedMainCategories(prev => ({
+        ...prev,
+        [mainCategoryKey]: {
+          ...prev[mainCategoryKey],
+          subcategories: [
+            ...prev[mainCategoryKey].subcategories,
+            {
+              key: newSubcategory.key,
+              name: newSubcategory.name,
+              icon: newSubcategory.icon
+            }
+          ]
+        }
+      }));
+      setNewSubcategory({ key: '', name: '', icon: '' });
+    }
+  };
+
+  const deleteSubcategory = (mainCategoryKey: string, subcategoryIndex: number) => {
+    const subcategory = managedMainCategories[mainCategoryKey].subcategories[subcategoryIndex];
+    if (window.confirm(`هل أنت متأكد من حذف "${subcategory.name}"؟`)) {
+      setManagedMainCategories(prev => ({
+        ...prev,
+        [mainCategoryKey]: {
+          ...prev[mainCategoryKey],
+          subcategories: prev[mainCategoryKey].subcategories.filter((_, index) => index !== subcategoryIndex)
+        }
+      }));
+    }
+  };
+
+  const startEditingSubcategory = (mainCategoryKey: string, subcategoryIndex: number) => {
+    const subcategory = managedMainCategories[mainCategoryKey].subcategories[subcategoryIndex];
+    setEditingSubcategory({
+      index: subcategoryIndex,
+      key: subcategory.key,
+      name: subcategory.name,
+      icon: subcategory.icon
+    });
+  };
+
+  const saveSubcategoryEdit = (mainCategoryKey: string) => {
+    if (editingSubcategory) {
+      setManagedMainCategories(prev => ({
+        ...prev,
+        [mainCategoryKey]: {
+          ...prev[mainCategoryKey],
+          subcategories: prev[mainCategoryKey].subcategories.map((subcat, index) =>
+            index === editingSubcategory.index
+              ? {
+                  key: editingSubcategory.key,
+                  name: editingSubcategory.name,
+                  icon: editingSubcategory.icon
+                }
+              : subcat
+          )
+        }
+      }));
+      setEditingSubcategory(null);
+    }
+  };
+
+  const cancelSubcategoryEdit = () => {
+    setEditingSubcategory(null);
+  };
+
+  const updateMainCategory = (categoryKey: string, updatedCategory: any) => {
+    setManagedMainCategories(prev => ({
+      ...prev,
+      [categoryKey]: updatedCategory
+    }));
   };
 
   const filteredPlaces = managedPlaces.filter(place => {
@@ -1510,7 +1703,7 @@ ${orderSummary}
   const getOrderStatusColor = (status: string) => {
     const colorMap = {
       pending: 'bg-yellow-100 text-yellow-800',
-      confirmed: 'bg-blue-100 text-blue-800',
+      confirmed: 'bg-green-100 text-green-800',
       preparing: 'bg-orange-100 text-orange-800',
       ready: 'bg-green-100 text-green-800',
       delivered: 'bg-gray-100 text-gray-800'
@@ -2039,7 +2232,7 @@ ${markets.map(market => `• ${market.name}
         <a
           key={match.index}
           href={linkUrl}
-          className="text-blue-600 underline hover:text-blue-800 font-medium"
+          className="text-green-600 underline hover:text-green-800 font-medium"
           onClick={(e) => {
             e.preventDefault();
             window.location.href = linkUrl;
@@ -2096,7 +2289,7 @@ ${markets.map(market => `• ${market.name}
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-gray-800">{place.name}</h3>
-          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
             {categories[place.category]?.name}
           </span>
         </div>
@@ -2111,7 +2304,7 @@ ${markets.map(market => `• ${market.name}
           >
             <ThumbsUp
               className={`w-4 h-4 ${
-                likes[place.id] ? 'text-blue-500 fill-current' : 'text-gray-400'
+                likes[place.id] ? 'text-green-500 fill-current' : 'text-gray-400'
               }`}
             />
             <span className="text-sm text-gray-600">
@@ -2169,13 +2362,10 @@ ${markets.map(market => `• ${market.name}
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 shadow-lg">
+      <header className="bg-gradient-to-r from-green-600 to-green-500 text-white p-4 shadow-lg">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h1 className="text-2xl font-bold mb-2">دليل خدمات المدنية الشامل</h1>
-              <p className="text-blue-100 text-sm">اكتشف جميع الخدمات والأماكن المهمة في مدينتك بسهولة</p>
-            </div>
 
             <div className="flex items-center gap-3">
               {/* Cart Button - Available on all pages */}
@@ -2208,14 +2398,7 @@ ${markets.map(market => `• ${market.name}
                     تسجيل خروج
                   </button>
                 </div>
-              ) : (
-                <button
-                  onClick={() => setShowLoginForm(true)}
-                  className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg text-sm transition-colors"
-                >
-                  تسجيل دخول
-                </button>
-              )}
+              ) : null}
             </div>
           </div>
 
@@ -2236,31 +2419,26 @@ ${markets.map(market => `• ${market.name}
         {/* Home Page - Main Categories */}
         {currentView === 'home' && (
           <div className="space-y-8">
-            {/* Welcome Section */}
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">مرحباً بك في دليل خدمات المدنية</h2>
-              <p className="text-gray-600 text-lg">اختر التصنيف المناسب للوصول لجميع الخدمات التي تحتاجها</p>
-            </div>
 
             {/* Main Categories Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Object.entries(mainCategories).map(([key, category]) => (
+            <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+              {Object.entries(managedMainCategories).map(([key, category]) => (
                 <div
                   key={key}
                   onClick={() => {
                     setSelectedMainCategory(key);
                     setCurrentView('category-details');
                   }}
-                  className={`bg-gradient-to-r ${category.color} rounded-xl p-6 text-white cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:scale-105`}
+                  className={`bg-gradient-to-r ${category.color} rounded-xl p-3 md:p-6 text-gray-800 cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:scale-105`}
                 >
                   <div className="text-center">
-                    <div className="text-4xl mb-4">{category.icon}</div>
-                    <h3 className="text-xl font-bold mb-2">{category.name}</h3>
-                    <p className="text-sm opacity-90 mb-4">
+                    <div className="text-2xl md:text-4xl mb-2 md:mb-4">{category.icon}</div>
+                    <h3 className="text-sm md:text-xl font-bold mb-1 md:mb-2">{category.name}</h3>
+                    <p className="text-xs md:text-sm opacity-90 mb-2 md:mb-4">
                       {category.subcategories.length} خدمة متاحة
                     </p>
                     <div className="flex justify-center">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
@@ -2269,53 +2447,123 @@ ${markets.map(market => `• ${market.name}
               ))}
             </div>
 
-            {/* Quick Access Section */}
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">🔍 البحث السريع</h3>
-              <div className="flex flex-wrap gap-3 justify-center">
-                <button
-                  onClick={() => setCurrentView('search')}
-                  className="bg-white text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors shadow-sm"
-                >
-                  🔍 البحث في جميع الخدمات
-                </button>
-                <button
-                  onClick={() => setShowEmergencyModal(true)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                >
-                  🚨 أرقام الطوارئ
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedMainCategory('shopping');
-                    setCurrentView('category-details');
-                  }}
-                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
-                >
-                  🛍️ تسوق سريع
+            {/* Latest City News Section */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-800 flex items-center justify-center gap-3">
+                  📰 أحدث أخبار المدينة
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                {/* News Item 1 */}
+                <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full">عاجل</span>
+                    <span className="text-gray-500 text-xs">منذ ساعتين</span>
+                  </div>
+                  <h4 className="font-semibold text-gray-800 mb-2">افتتاح مركز طبي جديد بالمدينة</h4>
+                  <p className="text-gray-600 text-sm mb-3">تم افتتاح المركز الطبي الشامل بالمجاورة الثالثة لخدمة سكان المنطقة</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-green-600 text-xs">أخبار الصحة</span>
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* News Item 2 */}
+                <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="bg-blue-100 text-blue-600 text-xs font-bold px-2 py-1 rounded-full">جديد</span>
+                    <span className="text-gray-500 text-xs">منذ 4 ساعات</span>
+                  </div>
+                  <h4 className="font-semibold text-gray-800 mb-2">تطوير شبكة النقل العام</h4>
+                  <p className="text-gray-600 text-sm mb-3">بدء أعمال تطوير محطات النقل العام وإضافة خطوط جديدة لربط المدينة</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-blue-600 text-xs">أخبار النقل</span>
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* News Item 3 */}
+                <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="bg-green-100 text-green-600 text-xs font-bold px-2 py-1 rounded-full">محلي</span>
+                    <span className="text-gray-500 text-xs">منذ 6 ساعات</span>
+                  </div>
+                  <h4 className="font-semibold text-gray-800 mb-2">مهرجان المدينة للتراث الشعبي</h4>
+                  <p className="text-gray-600 text-sm mb-3">انطلاق فعاليات مهرجان التراث الشعبي بمشاركة الأسر المحلية</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-purple-600 text-xs">أخبار ثقافية</span>
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <button className="text-green-600 hover:text-green-800 text-sm font-medium bg-green-50 hover:bg-green-100 px-4 py-2 rounded-lg transition-colors">
+                  عرض المزيد من الأخبار
                 </button>
               </div>
             </div>
 
-            {/* Statistics Section */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white rounded-lg p-4 text-center shadow-sm">
-                <div className="text-2xl font-bold text-blue-600">{managedPlaces.filter(p => p.isVisible !== false).length}</div>
-                <div className="text-gray-600 text-sm">خدمة متاحة</div>
-              </div>
-              <div className="bg-white rounded-lg p-4 text-center shadow-sm">
-                <div className="text-2xl font-bold text-green-600">{Object.keys(mainCategories).length}</div>
-                <div className="text-gray-600 text-sm">تصنيف رئيسي</div>
-              </div>
-              <div className="bg-white rounded-lg p-4 text-center shadow-sm">
-                <div className="text-2xl font-bold text-purple-600">24/7</div>
-                <div className="text-gray-600 text-sm">خدمة مستمرة</div>
-              </div>
-              <div className="bg-white rounded-lg p-4 text-center shadow-sm">
-                <div className="text-2xl font-bold text-orange-600">⭐</div>
-                <div className="text-gray-600 text-sm">أعلى جودة</div>
+
+            {/* Statistics Section at Bottom */}
+            <div className="mt-12 bg-gray-100 rounded-lg p-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* الخدمات المتاحة */}
+                <div className="bg-gray-200 text-gray-700 rounded-lg p-4 text-center shadow-sm">
+                  <div className="flex justify-center mb-2">
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                  </div>
+                  <div className="text-2xl font-bold text-gray-800">{managedPlaces.filter(p => p.isVisible !== false).length}</div>
+                  <div className="text-gray-600 text-sm">خدمة متاحة</div>
+                </div>
+
+                {/* أقسام الدليل */}
+                <div className="bg-gray-200 text-gray-700 rounded-lg p-4 text-center shadow-sm">
+                  <div className="flex justify-center mb-2">
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/>
+                    </svg>
+                  </div>
+                  <div className="text-2xl font-bold text-gray-800">
+                    {Object.values(managedMainCategories).reduce((total, category) => total + category.subcategories.length, 0) + Object.keys(managedMainCategories).length}
+                  </div>
+                  <div className="text-gray-600 text-sm">أقسام الدليل</div>
+                </div>
+
+                {/* عداد الزائرين الإجمالي */}
+                <div className="bg-gray-200 text-gray-700 rounded-lg p-4 text-center shadow-sm">
+                  <div className="flex items-center justify-center mb-2">
+                    <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <div className="text-2xl font-bold text-gray-800">{visitorCount.toLocaleString()}</div>
+                  <div className="text-gray-600 text-sm">إجمالي الزائرين</div>
+                </div>
+
+                {/* زائرو اليوم */}
+                <div className="bg-gray-200 text-gray-700 rounded-lg p-4 text-center shadow-sm">
+                  <div className="flex items-center justify-center mb-2">
+                    <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                    </svg>
+                  </div>
+                  <div className="text-2xl font-bold text-gray-800">{todayVisitors.toLocaleString()}</div>
+                  <div className="text-gray-600 text-sm">زائرو اليوم</div>
+                </div>
               </div>
             </div>
+
           </div>
         )}
 
@@ -2328,7 +2576,7 @@ ${markets.map(market => `• ${market.name}
                 setCurrentView('home');
                 setSelectedSubCategory(''); // Reset subcategory filter when going back to home
               }}
-              className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-4"
+              className="flex items-center gap-2 text-green-600 hover:text-green-800 mb-4"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -2337,17 +2585,17 @@ ${markets.map(market => `• ${market.name}
             </button>
 
             {/* Category Header */}
-            <div className={`bg-gradient-to-r ${mainCategories[selectedMainCategory].color} rounded-xl p-6 text-white`}>
+            <div className={`bg-gradient-to-r ${managedMainCategories[selectedMainCategory].color} rounded-xl p-6 text-gray-800`}>
               <div className="text-center">
-                <div className="text-4xl mb-2">{mainCategories[selectedMainCategory].icon}</div>
-                <h2 className="text-2xl font-bold">{mainCategories[selectedMainCategory].name}</h2>
+                <div className="text-4xl mb-2">{managedMainCategories[selectedMainCategory].icon}</div>
+                <h2 className="text-2xl font-bold">{managedMainCategories[selectedMainCategory].name}</h2>
                 <p className="opacity-90">اختر الخدمة التي تحتاجها</p>
               </div>
             </div>
 
             {/* Subcategories */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mainCategories[selectedMainCategory].subcategories.map((subcat) => (
+              {managedMainCategories[selectedMainCategory].subcategories.map((subcat) => (
                 <div
                   key={subcat.key}
                   onClick={() => {
@@ -2384,18 +2632,18 @@ ${markets.map(market => `• ${market.name}
           <>
             {/* Subcategory Filter Indicator */}
             {selectedSubCategory && (
-              <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="text-2xl">
-                      {Object.values(mainCategories).find(cat =>
+                      {Object.values(managedMainCategories).find(cat =>
                         cat.subcategories.some(sub => sub.key === selectedSubCategory)
                       )?.subcategories.find(sub => sub.key === selectedSubCategory)?.icon || '📋'}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-blue-800">تصفية نشطة</h3>
-                      <p className="text-blue-600 text-sm">
-                        عرض خدمات: {Object.values(mainCategories).find(cat =>
+                      <h3 className="font-semibold text-green-800">تصفية نشطة</h3>
+                      <p className="text-green-600 text-sm">
+                        عرض خدمات: {Object.values(managedMainCategories).find(cat =>
                           cat.subcategories.some(sub => sub.key === selectedSubCategory)
                         )?.subcategories.find(sub => sub.key === selectedSubCategory)?.name}
                       </p>
@@ -2406,7 +2654,7 @@ ${markets.map(market => `• ${market.name}
                       setSelectedSubCategory('');
                       setSelectedCategory('all');
                     }}
-                    className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600 transition-colors"
+                    className="bg-green-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-600 transition-colors"
                   >
                     إلغاء التصفية
                   </button>
@@ -2561,7 +2809,7 @@ ${markets.map(market => `• ${market.name}
                     }}
                     className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
                       selectedCategory === key
-                        ? 'bg-blue-500 text-white'
+                        ? 'bg-green-500 text-white'
                         : 'bg-white text-gray-700 hover:bg-gray-100'
                     }`}
                   >
@@ -2632,8 +2880,8 @@ ${markets.map(market => `• ${market.name}
                 className="w-full bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow flex items-center justify-between"
               >
                 <div className="flex items-center gap-4">
-                  <div className="bg-blue-100 p-3 rounded-lg">
-                    <List className="w-6 h-6 text-blue-600" />
+                  <div className="bg-green-100 p-3 rounded-lg">
+                    <List className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="text-right">
                     <h3 className="font-semibold text-lg">إدارة قاعدة بيانات الخدمات</h3>
@@ -2664,6 +2912,24 @@ ${markets.map(market => `• ${market.name}
               </button>
 
               <button
+                onClick={() => setSettingsView('main-categories')}
+                className="w-full bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-purple-100 p-3 rounded-lg">
+                    <div className="w-6 h-6 text-purple-600">📂</div>
+                  </div>
+                  <div className="text-right">
+                    <h3 className="font-semibold text-lg">إدارة الأقسام الرئيسية</h3>
+                    <p className="text-sm text-gray-500">
+                      إضافة وتعديل وحذف الأقسام الرئيسية للتطبيق ({Object.keys(managedMainCategories).length} قسم)
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-6 h-6 text-gray-400" />
+              </button>
+
+              <button
                 onClick={() => setSettingsView('about')}
                 className="w-full bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow flex items-center justify-between"
               >
@@ -2685,8 +2951,8 @@ ${markets.map(market => `• ${market.name}
             <div className="bg-white rounded-lg shadow-md p-6 mt-6">
               <h3 className="text-xl font-semibold mb-4">إحصائيات شاملة للنظام</h3>
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-50 p-4 rounded-lg text-center">
-                  <div className="text-3xl font-bold text-blue-600">{managedPlaces.length}</div>
+                <div className="bg-green-50 p-4 rounded-lg text-center">
+                  <div className="text-3xl font-bold text-green-600">{managedPlaces.length}</div>
                   <div className="text-sm text-gray-600 mt-1">إجمالي الخدمات المسجلة</div>
                 </div>
                 <div className="bg-green-50 p-4 rounded-lg text-center">
@@ -2711,7 +2977,7 @@ ${markets.map(market => `• ${market.name}
             <div className="flex items-center gap-3 mb-6">
               <button
                 onClick={() => setSettingsView('main')}
-                className="text-blue-600 hover:text-blue-800 font-medium"
+                className="text-green-600 hover:text-green-800 font-medium"
               >
                 ← رجوع
               </button>
@@ -2786,7 +3052,7 @@ ${markets.map(market => `• ${market.name}
                           </button>
                           <button
                             onClick={() => handleEditCategory(key)}
-                            className="text-blue-600 hover:text-blue-800 p-1"
+                            className="text-green-600 hover:text-green-800 p-1"
                             title="تعديل"
                           >
                             <Edit2 className="w-4 h-4" />
@@ -2831,7 +3097,7 @@ ${markets.map(market => `• ${market.name}
             <div className="flex items-center gap-3 mb-6">
               <button
                 onClick={() => setSettingsView('main')}
-                className="text-blue-600 hover:text-blue-800 font-medium"
+                className="text-green-600 hover:text-green-800 font-medium"
               >
                 ← رجوع
               </button>
@@ -2846,14 +3112,14 @@ ${markets.map(market => `• ${market.name}
                     placeholder="البحث في الخدمات..."
                     value={serviceSearchTerm}
                     onChange={(e) => setServiceSearchTerm(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
                 <div className="flex gap-2">
                   <select
                     value={serviceFilterCategory}
                     onChange={(e) => setServiceFilterCategory(e.target.value)}
-                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   >
                     <option value="all">جميع الفئات</option>
                     {Object.entries(managedCategories).filter(([key]) => key !== 'all').map(([key, category]) => (
@@ -2863,7 +3129,7 @@ ${markets.map(market => `• ${market.name}
                   <select
                     value={serviceFilterStatus}
                     onChange={(e) => setServiceFilterStatus(e.target.value)}
-                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   >
                     <option value="all">جميع الحالات</option>
                     <option value="visible">ظاهرة</option>
@@ -2875,7 +3141,7 @@ ${markets.map(market => `• ${market.name}
                       setEditingPlace(null);
                       setShowAddForm(true);
                     }}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600"
+                    className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600"
                   >
                     <Plus className="w-5 h-5" />
                     إضافة خدمة
@@ -2922,7 +3188,7 @@ ${markets.map(market => `• ${market.name}
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-semibold text-lg">{place.name}</h4>
-                            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
                               {managedCategories[place.category]?.name || (place.customCategoryData ? place.customCategoryData.name : place.category)}
                             </span>
                             {place.customCategoryData && (
@@ -3005,7 +3271,7 @@ ${markets.map(market => `• ${market.name}
                             </button>
                             <button
                               onClick={() => handleEditPlace(place)}
-                              className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
+                              className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200"
                               title="تعديل قبل النشر"
                             >
                               <Edit2 className="w-4 h-4" />
@@ -3033,7 +3299,7 @@ ${markets.map(market => `• ${market.name}
                             </button>
                             <button
                               onClick={() => handleEditPlace(place)}
-                              className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
+                              className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200"
                               title="تعديل"
                             >
                               <Edit2 className="w-4 h-4" />
@@ -3056,12 +3322,313 @@ ${markets.map(market => `• ${market.name}
           </div>
         )}
 
+        {currentView === 'settings' && settingsView === 'main-categories' && (
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => setSettingsView('main')}
+                className="text-green-600 hover:text-green-800 font-medium"
+              >
+                ← العودة للإعدادات
+              </button>
+            </div>
+
+            <h2 className="text-2xl font-bold mb-6">📂 إدارة الأقسام الرئيسية</h2>
+
+            {/* إضافة قسم جديد */}
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+              <h3 className="text-lg font-semibold text-green-800 mb-3">إضافة قسم رئيسي جديد</h3>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input
+                  type="text"
+                  placeholder="اسم القسم (مثال: خدمات مالية)"
+                  value={newMainCategory.name}
+                  onChange={(e) => setNewMainCategory(prev => ({ ...prev, name: e.target.value }))}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                />
+                <input
+                  type="text"
+                  placeholder="أيقونة القسم (مثال: 💰)"
+                  value={newMainCategory.icon}
+                  onChange={(e) => setNewMainCategory(prev => ({ ...prev, icon: e.target.value }))}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                />
+                <input
+                  type="text"
+                  placeholder="مفتاح القسم (مثال: financial)"
+                  value={newMainCategory.key}
+                  onChange={(e) => setNewMainCategory(prev => ({ ...prev, key: e.target.value }))}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                />
+                <button
+                  onClick={addMainCategory}
+                  disabled={!newMainCategory.name || !newMainCategory.icon || !newMainCategory.key}
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  إضافة القسم
+                </button>
+              </div>
+            </div>
+
+            {/* قائمة الأقسام الحالية */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.entries(managedMainCategories).map(([key, category]) => (
+                <div key={key} className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{category.icon}</span>
+                      <h3 className="font-semibold text-lg">{category.name}</h3>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => startEditingMainCategory(key)}
+                        className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200"
+                        title="تعديل القسم"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => deleteMainCategory(key)}
+                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+                        title="حذف القسم"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="text-sm text-gray-600 mb-2">
+                    عدد الأقسام الفرعية: {category.subcategories.length}
+                  </div>
+
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {category.subcategories.map((subcat, index) => (
+                      <span key={index} className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
+                        {subcat.icon} {subcat.name}
+                      </span>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setManagingSubcategoriesFor(key)}
+                    className="w-full bg-gray-50 text-gray-700 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 flex items-center justify-center gap-2 text-sm"
+                  >
+                    <List className="w-4 h-4" />
+                    إدارة الأقسام الفرعية
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* نموذج تعديل القسم */}
+            {editingMainCategory && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md mx-4">
+                  <h3 className="text-xl font-bold mb-4">تعديل القسم الرئيسي</h3>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">اسم القسم</label>
+                      <input
+                        type="text"
+                        value={editingMainCategory.name}
+                        onChange={(e) => setEditingMainCategory(prev => prev ? { ...prev, name: e.target.value } : null)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                        placeholder="اسم القسم"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">أيقونة القسم</label>
+                      <input
+                        type="text"
+                        value={editingMainCategory.icon}
+                        onChange={(e) => setEditingMainCategory(prev => prev ? { ...prev, icon: e.target.value } : null)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                        placeholder="أيقونة القسم"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-3 mt-6">
+                    <button
+                      onClick={cancelMainCategoryEdit}
+                      className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                    >
+                      إلغاء
+                    </button>
+                    <button
+                      onClick={saveMainCategoryEdit}
+                      disabled={!editingMainCategory.name || !editingMainCategory.icon}
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
+                      <Save className="w-4 h-4" />
+                      حفظ التعديل
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* واجهة إدارة الأقسام الفرعية */}
+            {managingSubcategoriesFor && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xl font-bold">
+                        إدارة الأقسام الفرعية - {managedMainCategories[managingSubcategoriesFor].name}
+                      </h3>
+                      <button
+                        onClick={() => setManagingSubcategoriesFor(null)}
+                        className="p-2 hover:bg-gray-100 rounded-lg"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    {/* إضافة قسم فرعي جديد */}
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                      <h4 className="text-lg font-semibold text-green-800 mb-3">إضافة قسم فرعي جديد</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <input
+                          type="text"
+                          placeholder="مفتاح القسم (مثال: clinics)"
+                          value={newSubcategory.key}
+                          onChange={(e) => setNewSubcategory(prev => ({ ...prev, key: e.target.value }))}
+                          className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+                        />
+                        <input
+                          type="text"
+                          placeholder="اسم القسم"
+                          value={newSubcategory.name}
+                          onChange={(e) => setNewSubcategory(prev => ({ ...prev, name: e.target.value }))}
+                          className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+                        />
+                        <input
+                          type="text"
+                          placeholder="الأيقونة"
+                          value={newSubcategory.icon}
+                          onChange={(e) => setNewSubcategory(prev => ({ ...prev, icon: e.target.value }))}
+                          className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+                        />
+                        <button
+                          onClick={() => addSubcategory(managingSubcategoriesFor)}
+                          disabled={!newSubcategory.key || !newSubcategory.name || !newSubcategory.icon}
+                          className="bg-green-500 text-white px-3 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+                        >
+                          <Plus className="w-4 h-4" />
+                          إضافة
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* قائمة الأقسام الفرعية الحالية */}
+                    <div className="space-y-3">
+                      <h4 className="text-lg font-semibold text-gray-800">الأقسام الفرعية الحالية</h4>
+                      {managedMainCategories[managingSubcategoriesFor].subcategories.map((subcat, index) => (
+                        <div key={index} className="bg-gray-50 rounded-lg p-3 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-xl">{subcat.icon}</span>
+                            <div>
+                              <div className="font-medium">{subcat.name}</div>
+                              <div className="text-sm text-gray-500">{subcat.key}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => startEditingSubcategory(managingSubcategoriesFor, index)}
+                              className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200"
+                              title="تعديل"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => deleteSubcategory(managingSubcategoriesFor, index)}
+                              className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+                              title="حذف"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                      {managedMainCategories[managingSubcategoriesFor].subcategories.length === 0 && (
+                        <div className="text-center text-gray-500 py-8">
+                          لا توجد أقسام فرعية. أضف قسماً فرعياً جديداً أعلاه.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* نموذج تعديل القسم الفرعي */}
+            {editingSubcategory && managingSubcategoriesFor && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md mx-4">
+                  <h3 className="text-xl font-bold mb-4">تعديل القسم الفرعي</h3>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">مفتاح القسم</label>
+                      <input
+                        type="text"
+                        value={editingSubcategory.key}
+                        onChange={(e) => setEditingSubcategory(prev => prev ? { ...prev, key: e.target.value } : null)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">اسم القسم</label>
+                      <input
+                        type="text"
+                        value={editingSubcategory.name}
+                        onChange={(e) => setEditingSubcategory(prev => prev ? { ...prev, name: e.target.value } : null)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">الأيقونة</label>
+                      <input
+                        type="text"
+                        value={editingSubcategory.icon}
+                        onChange={(e) => setEditingSubcategory(prev => prev ? { ...prev, icon: e.target.value } : null)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-3 mt-6">
+                    <button
+                      onClick={cancelSubcategoryEdit}
+                      className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                    >
+                      إلغاء
+                    </button>
+                    <button
+                      onClick={() => saveSubcategoryEdit(managingSubcategoriesFor)}
+                      disabled={!editingSubcategory.key || !editingSubcategory.name || !editingSubcategory.icon}
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
+                      <Save className="w-4 h-4" />
+                      حفظ التعديل
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {currentView === 'settings' && settingsView === 'about' && (
           <div>
             <div className="flex items-center gap-3 mb-6">
               <button
                 onClick={() => setSettingsView('main')}
-                className="text-blue-600 hover:text-blue-800 font-medium"
+                className="text-green-600 hover:text-green-800 font-medium"
               >
                 ← رجوع
               </button>
@@ -3101,8 +3668,8 @@ ${markets.map(market => `• ${market.name}
         {currentView === 'add-service' && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold mb-6 text-center">تقديم طلب إضافة خدمة جديدة للمراجعة</h2>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <h3 className="text-lg font-semibold text-blue-800 mb-2">إرشادات تقديم الطلب:</h3>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+              <h3 className="text-lg font-semibold text-green-800 mb-2">إرشادات تقديم الطلب:</h3>
               <ul className="text-sm text-blue-700 space-y-1">
                 <li>• املأ جميع البيانات المطلوبة بدقة وصحة</li>
                 <li>• سيتم مراجعة طلبك من قبل الإدارة قبل النشر</li>
@@ -3190,7 +3757,7 @@ ${markets.map(market => `• ${market.name}
                       type="text"
                       name="name"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                       placeholder="مثال: مطعم الأسرة السعيدة"
                     />
                   </div>
@@ -3204,10 +3771,10 @@ ${markets.map(market => `• ${market.name}
                       required
                       value={selectedMainCategoryForService}
                       onChange={(e) => setSelectedMainCategoryForService(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     >
                       <option value="">اختر الفئة الرئيسية</option>
-                      {Object.entries(mainCategories).map(([key, category]) => (
+                      {Object.entries(managedMainCategories).map(([key, category]) => (
                         <option key={key} value={key}>{category.name}</option>
                       ))}
                     </select>
@@ -3228,12 +3795,12 @@ ${markets.map(market => `• ${market.name}
                           setCustomCategoryName('');
                         }
                       }}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     >
                       <option value="">اختر الفئة الفرعية</option>
-                      {selectedMainCategoryForService && mainCategories[selectedMainCategoryForService] ?
+                      {selectedMainCategoryForService && managedMainCategories[selectedMainCategoryForService] ?
                         // Show subcategories for selected main category and map them to managed categories
-                        mainCategories[selectedMainCategoryForService].subcategories.map((subcat) => {
+                        managedMainCategories[selectedMainCategoryForService].subcategories.map((subcat) => {
                           const mappedCategory = subcategoryToServiceMapping[subcat.key];
                           if (mappedCategory && managedCategories[mappedCategory]) {
                             return (
@@ -3279,7 +3846,7 @@ ${markets.map(market => `• ${market.name}
                       required
                       value={selectedServiceType}
                       onChange={(e) => setSelectedServiceType(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     >
                       <option value="حجورات">حجورات</option>
                       <option value="طلبات">طلبات</option>
@@ -3294,7 +3861,7 @@ ${markets.map(market => `• ${market.name}
                       type="text"
                       name="address"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                       placeholder="مثال: المجاورة الثالثة، المدنية"
                     />
                   </div>
@@ -3310,7 +3877,7 @@ ${markets.map(market => `• ${market.name}
                       pattern="[0-9]{11}"
                       maxLength={11}
                       inputMode="numeric"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                       placeholder="مثال: 01234567890"
                       title="يجب أن يكون رقم الهاتف صحيح"
                     />
@@ -3328,7 +3895,7 @@ ${markets.map(market => `• ${market.name}
                           name="startTime"
                           required
                           defaultValue="09:00"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                           placeholder="09:00"
                         />
                       </div>
@@ -3339,7 +3906,7 @@ ${markets.map(market => `• ${market.name}
                           name="endTime"
                           required
                           defaultValue="22:00"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                           placeholder="22:00"
                         />
                       </div>
@@ -3357,7 +3924,7 @@ ${markets.map(market => `• ${market.name}
                       name="description"
                       required
                       rows={4}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                       placeholder="اكتب وصفاً مفصلاً عن الخدمة والمميزات التي تقدمها..."
                     />
                   </div>
@@ -3372,13 +3939,13 @@ ${markets.map(market => `• ${market.name}
                         value={currentService}
                         onChange={(e) => setCurrentService(e.target.value)}
                         onKeyPress={handleServiceKeyPress}
-                        className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                         placeholder="اكتب اسم الخدمة واضغط إضافة"
                       />
                       <button
                         type="button"
                         onClick={addService}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors"
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -3389,13 +3956,13 @@ ${markets.map(market => `• ${market.name}
                         {selectedServices.map((service, index) => (
                           <span
                             key={index}
-                            className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                            className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
                           >
                             {service}
                             <button
                               type="button"
                               onClick={() => removeService(service)}
-                              className="text-blue-600 hover:text-blue-800 transition-colors"
+                              className="text-green-600 hover:text-green-800 transition-colors"
                             >
                               <X className="w-3 h-3" />
                             </button>
@@ -3437,16 +4004,16 @@ ${markets.map(market => `• ${market.name}
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         إعدادات حجز المواعيد
                       </label>
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-blue-800 mb-2">
+                            <label className="block text-sm font-medium text-green-800 mb-2">
                               مدة الموعد (بالدقائق)
                             </label>
                             <select
                               value={appointmentSettings.sessionDuration}
                               onChange={(e) => setAppointmentSettings({...appointmentSettings, sessionDuration: e.target.value})}
-                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                             >
                               <option value="15">15 دقيقة</option>
                               <option value="30">30 دقيقة</option>
@@ -3457,25 +4024,25 @@ ${markets.map(market => `• ${market.name}
                             </select>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-blue-800 mb-2">
+                            <label className="block text-sm font-medium text-green-800 mb-2">
                               سعر الخدمة (جنيه)
                             </label>
                             <input
                               type="text"
                               value={appointmentSettings.consultationFee}
                               onChange={(e) => setAppointmentSettings({...appointmentSettings, consultationFee: e.target.value})}
-                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                               placeholder="مثال: 200"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-blue-800 mb-2">
+                            <label className="block text-sm font-medium text-green-800 mb-2">
                               عدد المواعيد المتاحة
                             </label>
                             <select
                               value={appointmentSettings.maxConcurrentBookings}
                               onChange={(e) => setAppointmentSettings({...appointmentSettings, maxConcurrentBookings: e.target.value})}
-                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                             >
                               <option value="1">موعد واحد</option>
                               <option value="2">موعدان</option>
@@ -3490,7 +4057,7 @@ ${markets.map(market => `• ${market.name}
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-blue-800 mb-2">
+                          <label className="block text-sm font-medium text-green-800 mb-2">
                             الأيام المتاحة للحجز
                           </label>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -3500,9 +4067,9 @@ ${markets.map(market => `• ${market.name}
                                   type="checkbox"
                                   checked={appointmentSettings.availableDays.includes(day)}
                                   onChange={() => toggleAvailableDay(day)}
-                                  className="rounded border-blue-300 text-blue-600 focus:ring-blue-500"
+                                  className="rounded border-blue-300 text-green-600 focus:ring-green-500"
                                 />
-                                <span className="text-sm text-blue-800">{day}</span>
+                                <span className="text-sm text-green-800">{day}</span>
                               </label>
                             ))}
                           </div>
@@ -3510,25 +4077,25 @@ ${markets.map(market => `• ${market.name}
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-blue-800 mb-2">
+                            <label className="block text-sm font-medium text-green-800 mb-2">
                               بداية العمل
                             </label>
                             <input
                               type="time"
                               value={appointmentSettings.startTime}
                               onChange={(e) => setAppointmentSettings({...appointmentSettings, startTime: e.target.value})}
-                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-blue-800 mb-2">
+                            <label className="block text-sm font-medium text-green-800 mb-2">
                               نهاية العمل
                             </label>
                             <input
                               type="time"
                               value={appointmentSettings.endTime}
                               onChange={(e) => setAppointmentSettings({...appointmentSettings, endTime: e.target.value})}
-                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                             />
                           </div>
                         </div>
@@ -3544,7 +4111,7 @@ ${markets.map(market => `• ${market.name}
                       type="file"
                       accept="image/*"
                       onChange={(e) => handleImageUpload(e, false)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     />
                     {uploadedImage && (
                       <div className="mt-3">
@@ -3564,7 +4131,7 @@ ${markets.map(market => `• ${market.name}
                       pattern="[0-9]{11}"
                       maxLength={11}
                       inputMode="numeric"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                       placeholder="مثال: 01234567890"
                       title="لإرسال إشعار عند قبول الطلب"
                     />
@@ -3578,7 +4145,7 @@ ${markets.map(market => `• ${market.name}
                   <div className="flex gap-4">
                     <button
                       type="submit"
-                      className="flex-1 bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                      className="flex-1 bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
                     >
                       <Plus className="w-5 h-5" />
                       تقديم طلب إضافة الخدمة
@@ -3607,7 +4174,7 @@ ${markets.map(market => `• ${market.name}
             <div className="flex justify-between items-center mb-4">
               <button
                 onClick={() => setCurrentView('search')}
-                className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
+                className="flex items-center gap-2 text-green-600 hover:text-green-800"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -3695,7 +4262,7 @@ ${markets.map(market => `• ${market.name}
                 </div>
 
                 {/* Buy 2 Get 1 Free */}
-                <div className="relative bg-gradient-to-r from-green-500 to-blue-500 rounded-lg p-6 text-white overflow-hidden">
+                <div className="relative bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white overflow-hidden">
                   <div className="absolute top-0 right-0 bg-orange-400 text-green-700 px-3 py-1 rounded-bl-lg font-bold text-sm">
                     عرض مميز
                   </div>
@@ -3767,7 +4334,7 @@ ${markets.map(market => `• ${market.name}
                 {productCategories.map((category) => (
                   <button
                     key={category.id}
-                    className="whitespace-nowrap px-4 py-2 text-sm font-medium border-b-2 border-blue-500 text-blue-600 transition-colors flex items-center gap-2"
+                    className="whitespace-nowrap px-4 py-2 text-sm font-medium border-b-2 border-green-500 text-green-600 transition-colors flex items-center gap-2"
                   >
                     {category.icon && <span>{category.icon}</span>}
                     {category.name}
@@ -3803,8 +4370,8 @@ ${markets.map(market => `• ${market.name}
                         <h3 className="font-bold text-gray-800 mb-1 text-lg">{product.name}</h3>
                         <p className="text-gray-600 text-sm mb-2">{product.description}</p>
                         <div className="flex items-center justify-between">
-                          <span className="text-blue-600 font-bold text-xl">{currentPrice} ج.م</span>
-                          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">{product.category}</span>
+                          <span className="text-green-600 font-bold text-xl">{currentPrice} ج.م</span>
+                          <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">{product.category}</span>
                         </div>
                       </div>
 
@@ -3815,7 +4382,7 @@ ${markets.map(market => `• ${market.name}
                           <select
                             value={selection.selectedSize}
                             onChange={(e) => updateProductSelection(product.id!, 'selectedSize', parseInt(e.target.value))}
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           >
                             {product.sizes.map((size, index) => (
                               <option key={index} value={index}>
@@ -3859,7 +4426,7 @@ ${markets.map(market => `• ${market.name}
                       {/* Add to Cart Button */}
                       <button
                         onClick={() => addProductToCart(product)}
-                        className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3 rounded-md font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                        className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-3 rounded-md font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
                       >
                         🛒 أضف للسلة
                       </button>
@@ -3880,7 +4447,7 @@ ${markets.map(market => `• ${market.name}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">جميع المنتجات</h2>
-                <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
+                <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-medium">
                   {selectedProducts.length} منتج
                 </span>
               </div>
@@ -3922,7 +4489,7 @@ ${markets.map(market => `• ${market.name}
 
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex flex-col">
-                            <span className="text-2xl font-bold text-blue-600">{currentPrice} ج.م</span>
+                            <span className="text-2xl font-bold text-green-600">{currentPrice} ج.م</span>
                             {selectedSize && selectedSize.price !== product.price && (
                               <span className="text-sm text-gray-500 line-through">{product.price} ج.م</span>
                             )}
@@ -3940,7 +4507,7 @@ ${markets.map(market => `• ${market.name}
                           <select
                             value={selection.selectedSize}
                             onChange={(e) => updateProductSelection(product.id!, 'selectedSize', parseInt(e.target.value))}
-                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                           >
                             {product.sizes.map((size, index) => (
                               <option key={index} value={index}>
@@ -3972,7 +4539,7 @@ ${markets.map(market => `• ${market.name}
                       </div>
 
                       {/* Total Price */}
-                      <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+                      <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
                         <div className="flex justify-between items-center">
                           <span className="text-gray-700 font-medium">الإجمالي:</span>
                           <span className="font-bold text-green-600 text-lg">
@@ -3984,7 +4551,7 @@ ${markets.map(market => `• ${market.name}
                       {/* Add to Cart Button */}
                       <button
                         onClick={() => addProductToCart(product)}
-                        className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                        className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-3 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 5M7 13l-1.5-5m0 0h13M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z" />
@@ -4023,7 +4590,7 @@ ${markets.map(market => `• ${market.name}
 
               return (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                  <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
+                  <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg">
                     <div className="flex items-center justify-between">
                       <div>
                         <h3 className="text-lg font-semibold">إجمالي الخدمات</h3>
@@ -4098,7 +4665,7 @@ ${markets.map(market => `• ${market.name}
                                   place.type === 'طلبات'
                                     ? 'bg-green-100 text-green-800'
                                     : place.type === 'حجورات'
-                                    ? 'bg-blue-100 text-blue-800'
+                                    ? 'bg-green-100 text-green-800'
                                     : 'bg-purple-100 text-purple-800'
                                 }`}>
                                   {place.type === 'طلبات' ? '🛍️ متجر' : place.type === 'حجورات' ? '📅 حجز' : '🔄 مختلط'}
@@ -4111,7 +4678,7 @@ ${markets.map(market => `• ${market.name}
                               setSelectedPlace(place);
                               setShowMarketManagement(true);
                             }}
-                            className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600"
+                            className="bg-green-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-600"
                           >
                             إدارة
                           </button>
@@ -4216,7 +4783,7 @@ ${markets.map(market => `• ${market.name}
                 </div>
               </div>
 
-              <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
+              <div className="bg-green-500 text-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold">الطلبات المعلقة</h3>
@@ -4375,7 +4942,7 @@ ${markets.map(market => `• ${market.name}
                     onClick={() => setSelectedSubCategory(subCat.id)}
                     className={`px-4 py-2 rounded-full flex items-center gap-2 transition-colors ${
                       selectedSubCategory === subCat.id
-                        ? 'bg-blue-500 text-white'
+                        ? 'bg-green-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -4448,7 +5015,7 @@ ${markets.map(market => `• ${market.name}
                   type="text"
                   value={loginCredentials.username}
                   onChange={(e) => setLoginCredentials({...loginCredentials, username: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   placeholder="أدخل اسم المستخدم"
                 />
               </div>
@@ -4461,7 +5028,7 @@ ${markets.map(market => `• ${market.name}
                   type="password"
                   value={loginCredentials.password}
                   onChange={(e) => setLoginCredentials({...loginCredentials, password: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                   placeholder="أدخل كلمة المرور"
                 />
               </div>
@@ -4494,7 +5061,7 @@ ${markets.map(market => `• ${market.name}
               <button
                 onClick={() => setCurrentView('home')}
                 className={`flex flex-col items-center gap-1 ${
-                  currentView === 'home' || currentView === 'category-details' ? 'text-blue-500' : 'text-gray-500'
+                  currentView === 'home' || currentView === 'category-details' ? 'text-green-500' : 'text-gray-500'
                 }`}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4506,7 +5073,7 @@ ${markets.map(market => `• ${market.name}
               <button
                 onClick={() => setCurrentView('search')}
                 className={`flex flex-col items-center gap-1 ${
-                  currentView === 'search' ? 'text-blue-500' : 'text-gray-500'
+                  currentView === 'search' ? 'text-green-500' : 'text-gray-500'
                 }`}
               >
                 <Search className="w-6 h-6" />
@@ -4526,7 +5093,7 @@ ${markets.map(market => `• ${market.name}
               <button
                 onClick={() => setCurrentView('favorites')}
                 className={`flex flex-col items-center gap-1 ${
-                  currentView === 'favorites' ? 'text-blue-500' : 'text-gray-500'
+                  currentView === 'favorites' ? 'text-green-500' : 'text-gray-500'
                 }`}
               >
                 <Heart className="w-6 h-6" />
@@ -4536,7 +5103,7 @@ ${markets.map(market => `• ${market.name}
               <button
                 onClick={() => setCurrentView('settings')}
                 className={`flex flex-col items-center gap-1 ${
-                  currentView === 'settings' ? 'text-blue-500' : 'text-gray-500'
+                  currentView === 'settings' ? 'text-green-500' : 'text-gray-500'
                 }`}
               >
                 <Settings className="w-6 h-6" />
@@ -4551,7 +5118,7 @@ ${markets.map(market => `• ${market.name}
               <button
                 onClick={() => setCurrentView('owner-dashboard')}
                 className={`flex flex-col items-center gap-1 ${
-                  currentView === 'owner-dashboard' ? 'text-blue-500' : 'text-gray-500'
+                  currentView === 'owner-dashboard' ? 'text-green-500' : 'text-gray-500'
                 }`}
               >
                 <div className="text-xl">🏪</div>
@@ -4561,7 +5128,7 @@ ${markets.map(market => `• ${market.name}
               <button
                 onClick={() => setCurrentView('search')}
                 className={`flex flex-col items-center gap-1 ${
-                  currentView === 'search' ? 'text-blue-500' : 'text-gray-500'
+                  currentView === 'search' ? 'text-green-500' : 'text-gray-500'
                 }`}
               >
                 <Search className="w-6 h-6" />
@@ -4581,7 +5148,7 @@ ${markets.map(market => `• ${market.name}
               <button
                 onClick={() => setCurrentView('settings')}
                 className={`flex flex-col items-center gap-1 ${
-                  currentView === 'settings' ? 'text-blue-500' : 'text-gray-500'
+                  currentView === 'settings' ? 'text-green-500' : 'text-gray-500'
                 }`}
               >
                 <Settings className="w-6 h-6" />
@@ -4606,7 +5173,7 @@ ${markets.map(market => `• ${market.name}
               <button
                 onClick={() => setCurrentView('search')}
                 className={`flex flex-col items-center gap-1 ${
-                  currentView === 'search' ? 'text-blue-500' : 'text-gray-500'
+                  currentView === 'search' ? 'text-green-500' : 'text-gray-500'
                 }`}
               >
                 <Search className="w-6 h-6" />
@@ -4616,7 +5183,7 @@ ${markets.map(market => `• ${market.name}
               <button
                 onClick={() => setCurrentView('settings')}
                 className={`flex flex-col items-center gap-1 ${
-                  currentView === 'settings' ? 'text-blue-500' : 'text-gray-500'
+                  currentView === 'settings' ? 'text-green-500' : 'text-gray-500'
                 }`}
               >
                 <Settings className="w-6 h-6" />
@@ -4685,7 +5252,7 @@ ${markets.map(market => `• ${market.name}
                   <h3 className="font-semibold mb-2">الهاتف</h3>
                   <div className="flex items-center gap-2">
                     <Phone className="w-5 h-5 text-gray-500" />
-                    <a href={`tel:${selectedPlace.phone}`} className="text-blue-600 hover:underline">
+                    <a href={`tel:${selectedPlace.phone}`} className="text-green-600 hover:underline">
                       {selectedPlace.phone}
                     </a>
                   </div>
@@ -4703,7 +5270,7 @@ ${markets.map(market => `• ${market.name}
                   <h3 className="font-semibold mb-2">الخدمات المتاحة</h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedPlace.services.map((service: string, index: number) => (
-                      <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                      <span key={index} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
                         {service}
                       </span>
                     ))}
@@ -4735,7 +5302,7 @@ ${markets.map(market => `• ${market.name}
                           onClick={() => setSelectedProductCategory('all')}
                           className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
                             selectedProductCategory === 'all'
-                              ? 'bg-blue-500 text-white'
+                              ? 'bg-green-500 text-white'
                               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                           }`}
                         >
@@ -4747,7 +5314,7 @@ ${markets.map(market => `• ${market.name}
                             onClick={() => setSelectedProductCategory(category.id)}
                             className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
                               selectedProductCategory === category.id
-                                ? 'bg-blue-500 text-white'
+                                ? 'bg-green-500 text-white'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                           >
@@ -4771,7 +5338,7 @@ ${markets.map(market => `• ${market.name}
                                 <div>
                                   <h4 className="font-medium text-gray-800">{product.name}</h4>
                                   {category && (
-                                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mt-1 inline-block">
+                                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mt-1 inline-block">
                                       {category.icon} {category.name}
                                     </span>
                                   )}
@@ -4799,7 +5366,7 @@ ${markets.map(market => `• ${market.name}
                                         parseFloat(size.price),
                                         product.category
                                       )}
-                                      className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                                      className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600"
                                     >
                                       إضافة للسلة
                                     </button>
@@ -4828,7 +5395,7 @@ ${markets.map(market => `• ${market.name}
                       {!showAppointmentBooking ? (
                         <button
                           onClick={() => setShowAppointmentBooking(true)}
-                          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2"
+                          className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 flex items-center justify-center gap-2"
                         >
                           <Calendar className="w-5 h-5" />
                           احجز موعد
@@ -4843,7 +5410,7 @@ ${markets.map(market => `• ${market.name}
                                 onClick={() => setShowMultipleBookings(false)}
                                 className={`px-3 py-1 text-xs rounded-full ${
                                   !showMultipleBookings
-                                    ? 'bg-blue-500 text-white'
+                                    ? 'bg-green-500 text-white'
                                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                 }`}
                               >
@@ -4853,7 +5420,7 @@ ${markets.map(market => `• ${market.name}
                                 onClick={() => setShowMultipleBookings(true)}
                                 className={`px-3 py-1 text-xs rounded-full ${
                                   showMultipleBookings
-                                    ? 'bg-blue-500 text-white'
+                                    ? 'bg-green-500 text-white'
                                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                 }`}
                               >
@@ -4872,7 +5439,7 @@ ${markets.map(market => `• ${market.name}
                                   onClick={() => setSelectedDate(date)}
                                   className={`p-2 text-sm rounded-lg border ${
                                     selectedDate === date
-                                      ? 'bg-blue-500 text-white border-blue-500'
+                                      ? 'bg-green-500 text-white border-green-500'
                                       : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'
                                   }`}
                                 >
@@ -4897,7 +5464,7 @@ ${markets.map(market => `• ${market.name}
                                     onClick={() => setSelectedTimeSlot(timeSlot)}
                                     className={`p-2 text-sm rounded-lg border ${
                                       selectedTimeSlot === timeSlot
-                                        ? 'bg-blue-500 text-white border-blue-500'
+                                        ? 'bg-green-500 text-white border-green-500'
                                         : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'
                                     }`}
                                   >
@@ -4927,7 +5494,7 @@ ${markets.map(market => `• ${market.name}
                               <h4 className="font-medium text-gray-800 mb-2">المواعيد المحددة ({selectedAppointments.length})</h4>
                               <div className="space-y-2 max-h-32 overflow-y-auto">
                                 {selectedAppointments.map((appointment, index) => (
-                                  <div key={index} className="flex items-center justify-between bg-blue-50 p-2 rounded-lg">
+                                  <div key={index} className="flex items-center justify-between bg-green-50 p-2 rounded-lg">
                                     <span className="text-sm">
                                       📅 {new Date(appointment.date).toLocaleDateString('ar-EG')} - ⏰ {appointment.timeSlot}
                                     </span>
@@ -4955,7 +5522,7 @@ ${markets.map(market => `• ${market.name}
                                 placeholder="الاسم الكامل"
                                 value={appointmentForm.patientName}
                                 onChange={(e) => setAppointmentForm({...appointmentForm, patientName: e.target.value})}
-                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                               />
                               <input
                                 type="tel"
@@ -4969,20 +5536,20 @@ ${markets.map(market => `• ${market.name}
                                 maxLength={11}
                                 inputMode="numeric"
                                 title="يجب أن يكون رقم الهاتف صحيح"
-                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                               />
                               <input
                                 type="text"
                                 placeholder="العمر (اختياري)"
                                 value={appointmentForm.patientAge}
                                 onChange={(e) => setAppointmentForm({...appointmentForm, patientAge: e.target.value})}
-                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                               />
                               <textarea
                                 placeholder="تفاصيل إضافية (اختياري)"
                                 value={appointmentForm.appointmentReason}
                                 onChange={(e) => setAppointmentForm({...appointmentForm, appointmentReason: e.target.value})}
-                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                 rows={3}
                               />
 
@@ -5276,7 +5843,7 @@ ${markets.map(market => `• ${market.name}
                       type="text"
                       name="name"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     />
                   </div>
 
@@ -5295,7 +5862,7 @@ ${markets.map(market => `• ${market.name}
                           setEditCustomCategoryName('');
                         }
                       }}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     >
                       <option value="">اختر الفئة</option>
                       {Object.entries(managedCategories).filter(([key]) => key !== 'all').map(([key, category]) => (
@@ -5329,7 +5896,7 @@ ${markets.map(market => `• ${market.name}
                       type="text"
                       name="address"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     />
                   </div>
 
@@ -5344,7 +5911,7 @@ ${markets.map(market => `• ${market.name}
                       pattern="[0-9]{11}"
                       maxLength={11}
                       inputMode="numeric"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                       placeholder="مثال: 01234567890"
                       title="يجب أن يكون رقم الهاتف صحيح"
                     />
@@ -5362,7 +5929,7 @@ ${markets.map(market => `• ${market.name}
                           name="startTime"
                           required
                           defaultValue="09:00"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                           placeholder="09:00"
                         />
                       </div>
@@ -5373,7 +5940,7 @@ ${markets.map(market => `• ${market.name}
                           name="endTime"
                           required
                           defaultValue="22:00"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                           placeholder="22:00"
                         />
                       </div>
@@ -5391,7 +5958,7 @@ ${markets.map(market => `• ${market.name}
                       name="description"
                       required
                       rows={3}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     />
                   </div>
 
@@ -5405,13 +5972,13 @@ ${markets.map(market => `• ${market.name}
                         value={currentService}
                         onChange={(e) => setCurrentService(e.target.value)}
                         onKeyPress={handleServiceKeyPress}
-                        className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                         placeholder="اكتب اسم الخدمة واضغط إضافة"
                       />
                       <button
                         type="button"
                         onClick={addService}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition-colors"
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -5422,13 +5989,13 @@ ${markets.map(market => `• ${market.name}
                         {selectedServices.map((service, index) => (
                           <span
                             key={index}
-                            className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                            className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
                           >
                             {service}
                             <button
                               type="button"
                               onClick={() => removeService(service)}
-                              className="text-blue-600 hover:text-blue-800 transition-colors"
+                              className="text-green-600 hover:text-green-800 transition-colors"
                             >
                               <X className="w-3 h-3" />
                             </button>
@@ -5452,7 +6019,7 @@ ${markets.map(market => `• ${market.name}
                       type="file"
                       accept="image/*"
                       onChange={(e) => handleImageUpload(e, false)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     />
                     {uploadedImage && (
                       <div className="mt-2">
@@ -5465,7 +6032,7 @@ ${markets.map(market => `• ${market.name}
                 <div className="flex gap-3 mt-6">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                    className="flex-1 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
                   >
                     إضافة الخدمة
                   </button>
@@ -5587,7 +6154,7 @@ ${markets.map(market => `• ${market.name}
                     type="text"
                     value={editingPlace.name}
                     onChange={(e) => setEditingPlace({...editingPlace, name: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -5607,7 +6174,7 @@ ${markets.map(market => `• ${market.name}
                         setEditingPlace({...editingPlace, category: e.target.value});
                       }
                     }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   >
                     {Object.entries(managedCategories).filter(([key]) => key !== 'all').map(([key, category]) => (
                       <option key={key} value={key}>{category.name}</option>
@@ -5639,7 +6206,7 @@ ${markets.map(market => `• ${market.name}
                     type="text"
                     value={editingPlace.address}
                     onChange={(e) => setEditingPlace({...editingPlace, address: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -5657,7 +6224,7 @@ ${markets.map(market => `• ${market.name}
                     pattern="[0-9]{11}"
                     maxLength={11}
                     inputMode="numeric"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     placeholder="مثال: 01234567890"
                     title="يجب أن يكون رقم الهاتف صحيح (أرقام فقط)"
                   />
@@ -5678,7 +6245,7 @@ ${markets.map(market => `• ${market.name}
                           const hours = `${e.target.value} - ${endTime}`;
                           setEditingPlace({...editingPlace, hours});
                         }}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                         placeholder="09:00"
                       />
                     </div>
@@ -5692,7 +6259,7 @@ ${markets.map(market => `• ${market.name}
                           const hours = `${startTime} - ${e.target.value}`;
                           setEditingPlace({...editingPlace, hours});
                         }}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                         placeholder="22:00"
                       />
                     </div>
@@ -5710,7 +6277,7 @@ ${markets.map(market => `• ${market.name}
                     value={editingPlace.description}
                     onChange={(e) => setEditingPlace({...editingPlace, description: e.target.value})}
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -5722,7 +6289,7 @@ ${markets.map(market => `• ${market.name}
                     type="text"
                     value={editingPlace.services.join(', ')}
                     onChange={(e) => setEditingPlace({...editingPlace, services: e.target.value.split(',').map(s => s.trim()).filter(s => s)})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -5738,7 +6305,7 @@ ${markets.map(market => `• ${market.name}
                           alt={editingPlace.name}
                           className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200 shadow-sm"
                         />
-                        <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                        <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
                           📷
                         </div>
                       </div>
@@ -5747,7 +6314,7 @@ ${markets.map(market => `• ${market.name}
                           type="file"
                           accept="image/*"
                           onChange={(e) => handleImageUpload(e, true)}
-                          className="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all"
+                          className="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-blue-700 hover:file:bg-green-100 transition-all"
                         />
                         <p className="mt-2 text-sm text-gray-500">PNG, JPG حتى 10MB • يُفضل 400×300 بكسل</p>
                       </div>
@@ -5759,7 +6326,7 @@ ${markets.map(market => `• ${market.name}
               <div className="sticky bottom-0 bg-white border-t p-6 mt-6 flex gap-3">
                 <button
                   onClick={handleSaveEdit}
-                  className="flex-1 bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2 font-semibold"
+                  className="flex-1 bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 flex items-center justify-center gap-2 font-semibold"
                 >
                   <Save className="w-5 h-5" />
                   حفظ جميع التعديلات
@@ -5802,7 +6369,7 @@ ${markets.map(market => `• ${market.name}
       {!showChat && (
         <button
           onClick={() => setShowChat(true)}
-          className="fixed bottom-24 left-4 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition-colors z-40 animate-pulse"
+          className="fixed bottom-24 left-4 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-colors z-40 animate-pulse"
         >
           <MessageCircle className="w-6 h-6" />
         </button>
@@ -5812,7 +6379,7 @@ ${markets.map(market => `• ${market.name}
       {showChat &&
         <div className={`fixed ${isChatMinimized ? 'bottom-4 left-4 w-80 h-16' : 'bottom-4 left-4 w-80 h-96'} bg-white rounded-lg shadow-2xl border z-50 flex flex-col transition-all duration-300`}>
           {/* رأس الشات */}
-          <div className="bg-blue-500 text-white p-4 rounded-t-lg flex items-center justify-between">
+          <div className="bg-green-500 text-white p-4 rounded-t-lg flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5" />
               <span className="font-semibold">المساعد الذكي</span>
@@ -5821,13 +6388,13 @@ ${markets.map(market => `• ${market.name}
             <div className="flex gap-2">
               <button
                 onClick={() => setIsChatMinimized(!isChatMinimized)}
-                className="p-1 hover:bg-blue-600 rounded"
+                className="p-1 hover:bg-green-600 rounded"
               >
                 {isChatMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
               </button>
               <button
                 onClick={() => setShowChat(false)}
-                className="p-1 hover:bg-blue-600 rounded"
+                className="p-1 hover:bg-green-600 rounded"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -5843,14 +6410,14 @@ ${markets.map(market => `• ${market.name}
                     key={message.id}
                     className={`flex items-start gap-2 ${message.isBot ? '' : 'flex-row-reverse'}`}
                   >
-                    <div className={`p-2 rounded-full ${message.isBot ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-600'}`}>
+                    <div className={`p-2 rounded-full ${message.isBot ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-600'}`}>
                       {message.isBot ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
                     </div>
                     <div
                       className={`max-w-64 p-3 rounded-lg text-sm ${
                         message.isBot
                           ? 'bg-white border text-gray-800'
-                          : 'bg-blue-500 text-white'
+                          : 'bg-green-500 text-white'
                       }`}
                       style={{ whiteSpace: 'pre-line' }}
                     >
@@ -5861,7 +6428,7 @@ ${markets.map(market => `• ${market.name}
 
                 {isTyping && (
                   <div className="flex items-start gap-2">
-                    <div className="p-2 rounded-full bg-blue-100 text-blue-600">
+                    <div className="p-2 rounded-full bg-green-100 text-green-600">
                       <Bot className="w-4 h-4" />
                     </div>
                     <div className="bg-white border p-3 rounded-lg text-sm">
@@ -5884,13 +6451,13 @@ ${markets.map(market => `• ${market.name}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                     placeholder="اكتب رسالتك هنا..."
-                    className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                     disabled={isTyping}
                   />
                   <button
                     onClick={handleSendMessage}
                     disabled={!chatInput.trim() || isTyping}
-                    className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send className="w-4 h-4" />
                   </button>
@@ -5925,7 +6492,7 @@ ${markets.map(market => `• ${market.name}
                   onClick={() => setMarketManagementTab('products')}
                   className={`px-4 py-3 text-sm font-medium border-b-2 ${
                     marketManagementTab === 'products'
-                      ? 'border-blue-500 text-blue-600'
+                      ? 'border-green-500 text-green-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -5935,7 +6502,7 @@ ${markets.map(market => `• ${market.name}
                   onClick={() => setMarketManagementTab('orders')}
                   className={`px-4 py-3 text-sm font-medium border-b-2 ${
                     marketManagementTab === 'orders'
-                      ? 'border-blue-500 text-blue-600'
+                      ? 'border-green-500 text-green-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -5950,8 +6517,8 @@ ${markets.map(market => `• ${market.name}
                 <div className="space-y-6">
 
                   {/* إدارة التصنيفات */}
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-3">📂 إدارة تصنيفات المنتجات</h3>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-green-800 mb-3">📂 إدارة تصنيفات المنتجات</h3>
 
                     {/* إضافة تصنيف جديد */}
                     <div className="flex gap-2 mb-4">
@@ -5959,13 +6526,13 @@ ${markets.map(market => `• ${market.name}
                         type="text"
                         value={newCategoryName}
                         onChange={(e) => setNewCategoryName(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                         placeholder="اسم التصنيف الجديد"
                       />
                       <button
                         type="button"
                         onClick={addProductCategory}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                        className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
                       >
                         <Plus className="w-4 h-4 inline ml-1" />
                         إضافة
@@ -6061,7 +6628,7 @@ ${markets.map(market => `• ${market.name}
                         <button
                           type="button"
                           onClick={addSizeToCurrentProduct}
-                          className="text-blue-500 hover:text-blue-700 text-sm"
+                          className="text-green-500 hover:text-blue-700 text-sm"
                         >
                           + إضافة حجم آخر
                         </button>
@@ -6093,7 +6660,7 @@ ${markets.map(market => `• ${market.name}
                                   <div className="flex items-center gap-2 mb-2">
                                     <h4 className="font-medium text-gray-800">{product.name}</h4>
                                     {category && (
-                                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
                                         {category.icon} {category.name}
                                       </span>
                                     )}
@@ -6132,7 +6699,7 @@ ${markets.map(market => `• ${market.name}
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-semibold">📋 الطلبات الواردة</h3>
-                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
                       إجمالي {receivedOrders.filter(order => order.businessName === selectedPlace?.name).length} طلب
                     </span>
                   </div>
@@ -6193,7 +6760,7 @@ ${markets.map(market => `• ${market.name}
                               <>
                                 <button
                                   onClick={() => updateOrderStatus(order.id, 'confirmed')}
-                                  className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                                  className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600"
                                   disabled={order.status === 'confirmed'}
                                 >
                                   تأكيد
@@ -6326,7 +6893,7 @@ ${markets.map(market => `• ${market.name}
                     </div>
 
                     {getTotalPrice() < 500 && (
-                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                         <p className="text-blue-700 text-sm">
                           💡 أضف منتجات بقيمة {500 - getTotalPrice()} ج.م أكثر واحصل على توصيل مجاني!
                         </p>
@@ -6357,7 +6924,7 @@ ${markets.map(market => `• ${market.name}
                         type="text"
                         value={shippingInfo.fullName}
                         onChange={(e) => setShippingInfo({...shippingInfo, fullName: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         placeholder="أدخل اسمك الكامل"
                       />
                     </div>
@@ -6373,7 +6940,7 @@ ${markets.map(market => `• ${market.name}
                           const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 11);
                           setShippingInfo({...shippingInfo, phone: value});
                         }}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         placeholder="01xxxxxxxxx"
                         maxLength={11}
                         pattern="[0-9]{11}"
@@ -6389,7 +6956,7 @@ ${markets.map(market => `• ${market.name}
                         value={shippingInfo.address}
                         onChange={(e) => setShippingInfo({...shippingInfo, address: e.target.value})}
                         rows={3}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         placeholder="أدخل عنوانك التفصيلي (الشارع، المنطقة، معالم مميزة)"
                       />
                     </div>
@@ -6401,7 +6968,7 @@ ${markets.map(market => `• ${market.name}
                       <select
                         value={shippingInfo.city}
                         onChange={(e) => setShippingInfo({...shippingInfo, city: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       >
                         <option value="المدنية">المدنية</option>
                         <option value="القاهرة">القاهرة</option>
@@ -6418,7 +6985,7 @@ ${markets.map(market => `• ${market.name}
                         type="text"
                         value={shippingInfo.notes}
                         onChange={(e) => setShippingInfo({...shippingInfo, notes: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         placeholder="أي ملاحظات إضافية"
                       />
                     </div>
@@ -6552,7 +7119,7 @@ ${markets.map(market => `• ${market.name}
 
                     <h3 className="text-2xl font-bold text-green-600">تم تأكيد طلبك بنجاح!</h3>
                     <p className="text-gray-600">
-                      رقم الطلب: <span className="font-bold text-blue-600">#{orderData.id}</span>
+                      رقم الطلب: <span className="font-bold text-green-600">#{orderData.id}</span>
                     </p>
                   </div>
 
@@ -6598,7 +7165,7 @@ ${markets.map(market => `• ${market.name}
                     <p className="text-gray-600">
                       سنتواصل معك قريباً لتأكيد الطلب وترتيب التوصيل
                     </p>
-                    <p className="text-sm text-blue-600">
+                    <p className="text-sm text-green-600">
                       📞 للاستفسار: {selectedPlace?.phone || '16789'}
                     </p>
                   </div>
@@ -6609,7 +7176,7 @@ ${markets.map(market => `• ${market.name}
                         setShowCheckout(false);
                         setCurrentView('search');
                       }}
-                      className="flex-1 bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition-all duration-200"
+                      className="flex-1 bg-green-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-600 transition-all duration-200"
                     >
                       العودة للتسوق
                     </button>
@@ -6753,7 +7320,7 @@ ${markets.map(market => `• ${market.name}
                 {[
                   { name: 'الإسعاف', number: '123', icon: '🚑', color: 'bg-red-500' },
                   { name: 'المطافي', number: '180', icon: '🚒', color: 'bg-orange-500' },
-                  { name: 'الشرطة', number: '122', icon: '👮‍♂️', color: 'bg-blue-500' },
+                  { name: 'الشرطة', number: '122', icon: '👮‍♂️', color: 'bg-green-500' },
                   { name: 'الكهرباء', number: '121', icon: '⚡', color: 'bg-yellow-500' },
                   { name: 'المياه', number: '125', icon: '💧', color: 'bg-blue-400' },
                   { name: 'الغاز الطبيعي', number: '129', icon: '🔥', color: 'bg-purple-500' }
