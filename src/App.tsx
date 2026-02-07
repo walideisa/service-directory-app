@@ -10,7 +10,7 @@ const App = () => {
       name: 'كارفور مول C3',
       category: 'mall',
       likes: 287,
-      address: 'مول C3، المجاورة الثالثة، المدنية',
+      address: 'مول C3، المجاورة الثالثة، حدائق أكتوبر',
       phone: '16789',
       hours: '9:00 ص - 12:00 ص',
       image: 'https://images.unsplash.com/photo-1555529902-de4e0750ea48?w=400',
@@ -20,7 +20,7 @@ const App = () => {
     },
     {
       id: 2,
-      name: 'ميجا مول المدنية',
+      name: 'ميجا مول حدائق أكتوبر',
       category: 'mall',
       likes: 156,
       address: 'القطعة 22، المجاورة الثالثة، مركز المدينة',
@@ -46,10 +46,10 @@ const App = () => {
     },
     {
       id: 4,
-      name: 'سوق المدنية الجديد',
+      name: 'سوق حدائق أكتوبر الجديد',
       category: 'market',
       likes: 145,
-      address: 'جنوب المدنية، بجوار الطريق الدائري',
+      address: 'جنوب حدائق أكتوبر، بجوار الطريق الدائري',
       phone: '02-38951600',
       hours: '5:00 ص - 8:00 م',
       image: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=400',
@@ -59,20 +59,20 @@ const App = () => {
     },
     {
       id: 5,
-      name: 'مستشفى المدنية العام',
+      name: 'مستشفى حدائق أكتوبر العام',
       category: 'hospital',
       likes: 234,
-      address: 'المجاورة الأولى، المدنية',
+      address: 'المجاورة الأولى، حدائق أكتوبر',
       phone: '02-38951700',
       hours: '24 ساعة',
       image: 'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=400',
       services: ['طوارئ 24 ساعة', 'عيادات خارجية', 'معامل تحاليل', 'صيدلية'],
-      description: 'المستشفى الحكومي الرئيسي بالمدنية',
+      description: 'المستشفى الحكومي الرئيسي بحدائق أكتوبر',
       isVisible: true
     },
     {
       id: 6,
-      name: 'بنك الإسكندرية - فرع المدنية',
+      name: 'بنك الإسكندرية - فرع حدائق أكتوبر',
       category: 'bank',
       likes: 98,
       address: 'المجاورة الثالثة، حي رجال الأعمال',
@@ -80,7 +80,7 @@ const App = () => {
       hours: '8:30 ص - 3:30 م',
       image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400',
       services: ['حسابات جارية', 'قروض', 'صراف آلي', 'تحويلات'],
-      description: 'فرع البنك الرئيسي لخدمة سكان المدنية',
+      description: 'فرع البنك الرئيسي لخدمة سكان حدائق أكتوبر',
       isVisible: true
     },
     {
@@ -88,7 +88,7 @@ const App = () => {
       name: 'عيادة د. أحمد محمود - طب الأطفال',
       category: 'clinic',
       likes: 156,
-      address: 'المجاورة الثانية، المدنية',
+      address: 'المجاورة الثانية، حدائق أكتوبر',
       phone: '01234567890',
       hours: '9:00 ص - 5:00 م',
       image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400',
@@ -111,7 +111,7 @@ const App = () => {
       name: 'صالون روز للسيدات',
       category: 'mall',
       likes: 89,
-      address: 'المجاورة الأولى، المدنية',
+      address: 'المجاورة الأولى، حدائق أكتوبر',
       phone: '01098765432',
       hours: '10:00 ص - 8:00 م',
       image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
@@ -134,7 +134,7 @@ const App = () => {
       name: 'كيدز لاند - منطقة ألعاب الأطفال',
       category: 'mall',
       likes: 178,
-      address: 'المجاورة الثالثة، المدنية',
+      address: 'المجاورة الثالثة، حدائق أكتوبر',
       phone: '01123456789',
       hours: '2:00 م - 10:00 م',
       image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400',
@@ -156,7 +156,7 @@ const App = () => {
       name: 'صيدلية النور الطبية',
       category: 'pharmacy',
       likes: 156,
-      address: 'المجاورة الثالثة، المدنية',
+      address: 'المجاورة الثالثة، حدائق أكتوبر',
       phone: '01111222333',
       hours: '8:00 ص - 12:00 ص',
       image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400',
@@ -205,7 +205,7 @@ const App = () => {
       name: 'سوبر ماركت المدينة',
       category: 'mall',
       likes: 89,
-      address: 'الشارع الرئيسي، المدنية',
+      address: 'الشارع الرئيسي، حدائق أكتوبر',
       phone: '01234567895',
       hours: '8:00 ص - 11:00 م',
       image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
@@ -254,7 +254,7 @@ const App = () => {
       name: 'مركز صيانة الأجهزة الذكية',
       category: 'service',
       likes: 112,
-      address: 'الحي الثاني، المدنية',
+      address: 'الحي الثاني، حدائق أكتوبر',
       phone: '01234567896',
       hours: '9:00 ص - 8:00 م',
       image: 'https://images.unsplash.com/photo-1593643620395-2a01e2c0ee58?w=400',
@@ -268,7 +268,7 @@ const App = () => {
       name: 'أكاديمية النجاح للتدريب',
       category: 'education',
       likes: 156,
-      address: 'المجاورة الرابعة، المدنية',
+      address: 'المجاورة الرابعة، حدائق أكتوبر',
       phone: '01234567897',
       hours: '10:00 ص - 10:00 م',
       image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400',
@@ -282,7 +282,7 @@ const App = () => {
       name: 'جيم فيتنس بلس',
       category: 'entertainment',
       likes: 203,
-      address: 'الشارع الجديد، المدنية',
+      address: 'الشارع الجديد، حدائق أكتوبر',
       phone: '01234567898',
       hours: '6:00 ص - 11:00 م',
       image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
@@ -296,7 +296,7 @@ const App = () => {
       name: 'محطة وقود النجم',
       category: 'transport',
       likes: 87,
-      address: 'مدخل المدينة، المدنية',
+      address: 'مدخل المدينة، حدائق أكتوبر',
       phone: '01234567899',
       hours: '24 ساعة',
       image: 'https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=400',
@@ -310,7 +310,7 @@ const App = () => {
       name: 'معمل النور للتحاليل الطبية',
       category: 'lab',
       likes: 89,
-      address: 'المجاورة الرابعة، المدنية',
+      address: 'المجاورة الرابعة، حدائق أكتوبر',
       phone: '01555666777',
       hours: '7:00 ص - 2:00 م',
       image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400',
@@ -436,6 +436,385 @@ const App = () => {
   const [sortBy, setSortBy] = useState('name');
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
   const [managedPlaces, setManagedPlaces] = useState(places as any[]);
+
+  // Default services for each subcategory
+  const subcategoryServices = {
+    // City Services
+    municipality: [
+      {
+        id: 1001, name: 'مكتب العمدة', category: 'service', likes: 45,
+        address: 'المبنى الإداري، المجاورة الأولى', phone: '0123456789',
+        hours: '8:00 ص - 3:00 م', services: ['تصاريح بناء', 'شكاوي المواطنين', 'طلبات التوظيف'],
+        image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400',
+        description: 'مكتب عمدة المدينة - خدمات إدارية وتصاريح', isVisible: true, type: 'حجورات'
+      },
+      {
+        id: 1002, name: 'قسم شؤون المواطنين', category: 'service', likes: 32,
+        address: 'الدور الثاني، المبنى الإداري', phone: '0123456790',
+        hours: '8:00 ص - 2:00 م', services: ['بطاقات الهوية', 'شهادات الميلاد', 'تجديد الوثائق'],
+        image: 'https://images.unsplash.com/photo-1560472355-536de3962603?w=400',
+        description: 'خدمات الوثائق الرسمية والهوية', isVisible: true, type: 'حجورات'
+      }
+    ],
+    'civic-services': [
+      {
+        id: 1003, name: 'مكتب الضرائب المحلية', category: 'service', likes: 28,
+        address: 'شارع الحكومة، المجاورة الثانية', phone: '0123456791',
+        hours: '9:00 ص - 4:00 م', services: ['ضريبة العقارات', 'ضريبة المحلات', 'إعفاءات ضريبية'],
+        image: 'https://images.unsplash.com/photo-1554224154-26032fced8bd?w=400',
+        description: 'مكتب تحصيل الضرائب المحلية', isVisible: true, type: 'طلبات'
+      }
+    ],
+    utilities: [
+      {
+        id: 1004, name: 'مكتب المياه والصرف', category: 'service', likes: 41,
+        address: 'المنطقة الصناعية، المجاورة الرابعة', phone: '0123456792',
+        hours: '24 ساعة طوارئ', services: ['إصلاح المياه', 'تركيب عدادات', 'فواتير المياه'],
+        image: 'https://images.unsplash.com/photo-1581093458791-9d42e3b4b5b6?w=400',
+        description: 'خدمات المياه والصرف الصحي', isVisible: true, type: 'مختلط'
+      }
+    ],
+    permits: [
+      {
+        id: 1005, name: 'مكتب التراخيص والتصاريح', category: 'service', likes: 35,
+        address: 'مجمع الخدمات الحكومية', phone: '0123456793',
+        hours: '8:00 ص - 3:00 م', services: ['رخص البناء', 'تصاريح العمل', 'تراخيص المحلات'],
+        image: 'https://images.unsplash.com/photo-1554224154-22dec7ec8818?w=400',
+        description: 'إصدار وتجديد كافة أنواع التراخيص', isVisible: true, type: 'حجورات'
+      }
+    ],
+
+    // City Device/Government
+    management: [
+      {
+        id: 1006, name: 'الإدارة العامة للمدينة', category: 'service', likes: 38,
+        address: 'المقر الرئيسي لجهاز المدينة', phone: '0123456794',
+        hours: '8:00 ص - 4:00 م', services: ['تخطيط المدينة', 'إدارة المشاريع', 'التطوير العمراني'],
+        image: 'https://images.unsplash.com/photo-1554224154-26032fced8bd?w=400',
+        description: 'الإدارة المركزية لتطوير وتنظيم المدينة', isVisible: true, type: 'حجورات'
+      }
+    ],
+    departments: [
+      {
+        id: 1007, name: 'قسم التخطيط والمتابعة', category: 'service', likes: 33,
+        address: 'مبنى الإدارات الحكومية', phone: '0123456795',
+        hours: '9:00 ص - 5:00 م', services: ['خطط التطوير', 'دراسات الجدوى', 'متابعة المشاريع'],
+        image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400',
+        description: 'التخطيط الاستراتيجي ومتابعة تنفيذ المشاريع', isVisible: true, type: 'حجورات'
+      }
+    ],
+
+    // Police subcategories
+    'police-station': [
+      {
+        id: 1008, name: 'مركز شرطة حدائق أكتوبر', category: 'service', likes: 67,
+        address: 'شارع الأمن، المجاورة المركزية', phone: '122',
+        hours: '24 ساعة', services: ['بلاغات الجرائم', 'فقدان الوثائق', 'حوادث السير'],
+        image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=400',
+        description: 'مركز الشرطة الرئيسي - خدمات الأمن والطوارئ', isVisible: true, type: 'مختلط'
+      }
+    ],
+    'traffic-police': [
+      {
+        id: 1009, name: 'إدارة المرور', category: 'service', likes: 44,
+        address: 'تقاطع الطريق الدائري الرئيسي', phone: '128',
+        hours: '24 ساعة', services: ['رخص القيادة', 'استعلام المخالفات', 'حوادث المرور'],
+        image: 'https://images.unsplash.com/photo-1544827763-2d9c209be5d3?w=400',
+        description: 'إدارة مرور حدائق أكتوبر - خدمات المرور والقيادة', isVisible: true, type: 'مختلط'
+      }
+    ],
+    emergency: [
+      {
+        id: 1010, name: 'غرفة عمليات الطوارئ', category: 'service', likes: 89,
+        address: 'مجمع الطوارئ المركزي', phone: '112',
+        hours: '24 ساعة', services: ['استقبال البلاغات', 'تنسيق الطوارئ', 'الإسعاف السريع'],
+        image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=400',
+        description: 'مركز استقبال ومعالجة حالات الطوارئ', isVisible: true, type: 'مختلط'
+      }
+    ],
+    security: [
+      {
+        id: 1011, name: 'إدارة الأمن العام', category: 'service', likes: 56,
+        address: 'مقر قيادة الأمن', phone: '0123456796',
+        hours: '24 ساعة', services: ['الأمن الوقائي', 'حراسات خاصة', 'أمن المناسبات'],
+        image: 'https://images.unsplash.com/photo-1541447270888-87ef62a27857?w=400',
+        description: 'إدارة الأمن العام والحماية', isVisible: true, type: 'مختلط'
+      }
+    ],
+
+    // Medical subcategories
+    hospitals: [
+      {
+        id: 1012, name: 'مستشفى حدائق أكتوبر العام', category: 'hospital', likes: 234,
+        address: 'المجاورة الطبية المركزية', phone: '0123456797',
+        hours: '24 ساعة', services: ['طوارئ', 'جراحة عامة', 'عيادات متخصصة', 'عناية مركزة'],
+        image: 'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=400',
+        description: 'المستشفى الرئيسي بالمدينة - خدمات طبية شاملة', isVisible: true, type: 'حجورات'
+      },
+      {
+        id: 1013, name: 'مستشفى النساء والتوليد', category: 'hospital', likes: 198,
+        address: 'المنطقة الطبية، المجاورة الثانية', phone: '0123456798',
+        hours: '24 ساعة', services: ['ولادة طبيعية', 'عمليات قيصرية', 'متابعة حمل', 'عيادة نساء'],
+        image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400',
+        description: 'مستشفى متخصص في طب النساء والتوليد', isVisible: true, type: 'حجورات'
+      }
+    ],
+    clinics: [
+      {
+        id: 1014, name: 'عيادة الأطفال التخصصية', category: 'clinic', likes: 156,
+        address: 'المجمع الطبي، المجاورة الثانية', phone: '0123456799',
+        hours: '9:00 ص - 5:00 م', services: ['فحص الأطفال', 'التطعيمات', 'متابعة النمو'],
+        image: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400',
+        description: 'عيادة متخصصة في طب الأطفال', isVisible: true, type: 'حجورات'
+      }
+    ],
+    pharmacies: [
+      {
+        id: 1015, name: 'صيدلية النور', category: 'pharmacy', likes: 78,
+        address: 'شارع الطب، المجاورة الأولى', phone: '0123456800',
+        hours: '24 ساعة', services: ['أدوية عامة', 'أدوية مزمنة', 'مستلزمات طبية', 'قياس ضغط'],
+        image: 'https://images.unsplash.com/photo-1576602976047-174e57a47881?w=400',
+        description: 'صيدلية شاملة بخدمة 24 ساعة', isVisible: true, type: 'طلبات'
+      }
+    ],
+    labs: [
+      {
+        id: 1016, name: 'مختبر الأمل للتحاليل', category: 'lab', likes: 91,
+        address: 'برج الخدمات الطبية، الدور الثالث', phone: '0123456801',
+        hours: '7:00 ص - 8:00 م', services: ['تحاليل دم', 'أشعة سينية', 'موجات صوتية', 'رنين مغناطيسي'],
+        image: 'https://images.unsplash.com/photo-1582560469781-1965b9af903d?w=400',
+        description: 'مختبر حديث لجميع أنواع التحاليل والأشعة', isVisible: true, type: 'حجورات'
+      }
+    ],
+
+    // Shopping/Malls
+    'shopping-centers': [
+      {
+        id: 1017, name: 'مول حدائق أكتوبر سنتر', category: 'mall', likes: 287,
+        address: 'المجاورة الثالثة، وسط المدينة', phone: '0123456802',
+        hours: '9:00 ص - 12:00 ص', services: ['مطاعم ومقاهي', 'محلات ملابس', 'سينما', 'مواقف مجانية'],
+        image: 'https://images.unsplash.com/photo-1555529902-de4e0750ea48?w=400',
+        description: 'أكبر مجمع تسوق في حدائق أكتوبر', isVisible: true, type: 'مختلط'
+      }
+    ],
+    markets: [
+      {
+        id: 1018, name: 'سوق الخضار المركزي', category: 'market', likes: 145,
+        address: 'المنطقة التجارية المركزية', phone: '0123456803',
+        hours: '5:00 ص - 8:00 م', services: ['خضار وفاكهة طازجة', 'أسماك', 'لحوم', 'بقالة'],
+        image: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=400',
+        description: 'سوق شعبي للخضار والفاكهة الطازجة', isVisible: true, type: 'طلبات'
+      }
+    ],
+    supermarkets: [
+      {
+        id: 1019, name: 'هايبر ماركت حدائق أكتوبر', category: 'market', likes: 203,
+        address: 'طريق الإسكندرية الصحراوي', phone: '0123456804',
+        hours: '8:00 ص - 12:00 ص', services: ['بقالة شاملة', 'منتجات غذائية', 'مستلزمات منزلية', 'ملابس'],
+        image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
+        description: 'هايبر ماركت شامل بأفضل الأسعار', isVisible: true, type: 'طلبات'
+      }
+    ],
+    'retail-stores': [
+      {
+        id: 1020, name: 'معرض الإلكترونيات الحديثة', category: 'mall', likes: 167,
+        address: 'شارع التجارة، المجاورة الرابعة', phone: '0123456805',
+        hours: '10:00 ص - 10:00 م', services: ['جوالات', 'أجهزة كمبيوتر', 'أجهزة منزلية', 'ضمان وصيانة'],
+        image: 'https://images.unsplash.com/photo-1560472355-536de3962603?w=400',
+        description: 'أحدث الأجهزة الإلكترونية والتقنية', isVisible: true, type: 'مختلط'
+      }
+    ],
+
+    // Education
+    schools: [
+      {
+        id: 1021, name: 'مدرسة حدائق أكتوبر الثانوية', category: 'education', likes: 134,
+        address: 'حي المدارس، المجاورة الثالثة', phone: '0123456806',
+        hours: '7:00 ص - 2:00 م', services: ['تعليم ثانوي', 'أنشطة طلابية', 'مختبرات علمية', 'مكتبة'],
+        image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400',
+        description: 'مدرسة ثانوية حكومية متميزة', isVisible: true, type: 'حجورات'
+      }
+    ],
+    universities: [
+      {
+        id: 1022, name: 'جامعة حدائق أكتوبر التكنولوجية', category: 'education', likes: 267,
+        address: 'المدينة الجامعية، شمال المدينة', phone: '0123456807',
+        hours: '8:00 ص - 6:00 م', services: ['هندسة', 'علوم كمبيوتر', 'إدارة أعمال', 'دراسات عليا'],
+        image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=400',
+        description: 'جامعة حديثة متخصصة في التكنولوجيا', isVisible: true, type: 'حجورات'
+      }
+    ],
+    institutes: [
+      {
+        id: 1023, name: 'معهد التدريب المهني', category: 'education', likes: 89,
+        address: 'المنطقة الصناعية التعليمية', phone: '0123456808',
+        hours: '9:00 ص - 5:00 م', services: ['دورات حرفية', 'تدريب تقني', 'شهادات مهنية', 'ورش عملية'],
+        image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400',
+        description: 'معهد تدريب مهني وتقني متطور', isVisible: true, type: 'حجورات'
+      }
+    ],
+    libraries: [
+      {
+        id: 1024, name: 'مكتبة حدائق أكتوبر العامة', category: 'education', likes: 76,
+        address: 'ميدان الثقافة، المجاورة الأولى', phone: '0123456809',
+        hours: '8:00 ص - 8:00 م', services: ['استعارة كتب', 'قاعات مطالعة', 'إنترنت مجاني', 'أنشطة ثقافية'],
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+        description: 'مكتبة عامة شاملة بخدمات متنوعة', isVisible: true, type: 'حجورات'
+      }
+    ],
+
+    // Business & Finance
+    banks: [
+      {
+        id: 1025, name: 'بنك مصر فرع حدائق أكتوبر', category: 'bank', likes: 198,
+        address: 'الشارع التجاري الرئيسي', phone: '19777',
+        hours: '8:30 ص - 3:30 م', services: ['حسابات جارية', 'قروض شخصية', 'تحويلات', 'صراف آلي'],
+        image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400',
+        description: 'فرع بنك مصر - خدمات مصرفية شاملة', isVisible: true, type: 'حجورات'
+      }
+    ],
+    investments: [
+      {
+        id: 1026, name: 'شركة الاستثمارات المصرية', category: 'bank', likes: 156,
+        address: 'برج الأعمال، الدور العاشر', phone: '0123456810',
+        hours: '9:00 ص - 4:00 م', services: ['استشارات مالية', 'إدارة محافظ', 'تداول أسهم', 'استثمار عقاري'],
+        image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400',
+        description: 'شركة استشارات مالية واستثمارية', isVisible: true, type: 'حجورات'
+      }
+    ],
+    'business-services': [
+      {
+        id: 1027, name: 'مكتب خدمات الأعمال المتكامل', category: 'service', likes: 87,
+        address: 'مجمع الأعمال، المجاورة التجارية', phone: '0123456811',
+        hours: '9:00 ص - 6:00 م', services: ['تأسيس شركات', 'خدمات ضريبية', 'استشارات قانونية', 'ترخيص أنشطة'],
+        image: 'https://images.unsplash.com/photo-1560472355-109703aa3edc?w=400',
+        description: 'خدمات الأعمال والاستشارات القانونية', isVisible: true, type: 'حجورات'
+      }
+    ],
+    accounting: [
+      {
+        id: 1028, name: 'مكتب المحاسبة والمراجعة', category: 'service', likes: 65,
+        address: 'شارع المحاسبين، برج المهن', phone: '0123456812',
+        hours: '9:00 ص - 5:00 م', services: ['مسك دفاتر', 'إقرارات ضريبية', 'مراجعة حسابات', 'استشارات مالية'],
+        image: 'https://images.unsplash.com/photo-1554224154-26032fced8bd?w=400',
+        description: 'مكتب محاسبة ومراجعة معتمد', isVisible: true, type: 'حجورات'
+      }
+    ],
+
+    // Restaurants & Entertainment
+    restaurants: [
+      {
+        id: 1029, name: 'مطعم الأصالة للمأكولات الشرقية', category: 'restaurant', likes: 245,
+        address: 'كورنيش النيل، المجاورة السياحية', phone: '0123456813',
+        hours: '1:00 م - 2:00 ص', services: ['كباب ومشاوي', 'مولوخية', 'فراخ مشوية', 'توصيل منازل'],
+        image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400',
+        description: 'مطعم أصيل للمأكولات المصرية التقليدية', isVisible: true, type: 'طلبات'
+      }
+    ],
+    cafes: [
+      {
+        id: 1030, name: 'كافيه النيل', category: 'restaurant', likes: 189,
+        address: 'كورنيش النيل، أمام الجامعة', phone: '0123456814',
+        hours: '8:00 ص - 1:00 ص', services: ['قهوة تركية', 'شيشة', 'مشروبات ساخنة', 'إفطار خفيف'],
+        image: 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=400',
+        description: 'مقهى شعبي بإطلالة على النيل', isVisible: true, type: 'طلبات'
+      }
+    ],
+    entertainment: [
+      {
+        id: 1031, name: 'مركز بولينج حدائق أكتوبر', category: 'entertainment', likes: 134,
+        address: 'مجمع الألعاب، المجاورة الترفيهية', phone: '0123456815',
+        hours: '2:00 م - 12:00 ص', services: ['بولينج', 'بلياردو', 'ألعاب فيديو', 'مقهى داخلي'],
+        image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400',
+        description: 'مركز ترفيه متكامل للعائلات والشباب', isVisible: true, type: 'حجورات'
+      }
+    ],
+    sports: [
+      {
+        id: 1032, name: 'نادي حدائق أكتوبر الرياضي', category: 'entertainment', likes: 201,
+        address: 'المنطقة الرياضية، شمال المدينة', phone: '0123456816',
+        hours: '6:00 ص - 11:00 م', services: ['كرة قدم', 'تنس', 'سباحة', 'جيم ولياقة بدنية'],
+        image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
+        description: 'نادي رياضي شامل بمرافق حديثة', isVisible: true, type: 'حجورات'
+      }
+    ],
+
+    // Transport
+    'public-transport': [
+      {
+        id: 1033, name: 'محطة أتوبيسات حدائق أكتوبر', category: 'transport', likes: 98,
+        address: 'ميدان المحطة المركزي', phone: '0123456817',
+        hours: '5:00 ص - 11:00 م', services: ['خطوط داخلية', 'رحلات خارجية', 'حجز تذاكر', 'استعلامات'],
+        image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400',
+        description: 'محطة المواصلات العامة الرئيسية', isVisible: true, type: 'مختلط'
+      }
+    ],
+    taxi: [
+      {
+        id: 1034, name: 'موقف تاكسي وسط البلد', category: 'transport', likes: 67,
+        address: 'ميدان الساعة، المجاورة المركزية', phone: '0123456818',
+        hours: '24 ساعة', services: ['تاكسي أبيض', 'تاكسي تطبيقات', 'رحلات قصيرة', 'رحلات طويلة'],
+        image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400',
+        description: 'موقف تاكسي مرخص وآمن', isVisible: true, type: 'مختلط'
+      }
+    ],
+    'car-services': [
+      {
+        id: 1035, name: 'مركز صيانة السيارات الحديث', category: 'transport', likes: 156,
+        address: 'الطريق الدائري، المنطقة الصناعية', phone: '0123456819',
+        hours: '8:00 ص - 6:00 م', services: ['صيانة عامة', 'قطع غيار أصلية', 'كهرباء سيارات', 'تكييف'],
+        image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400',
+        description: 'مركز صيانة متخصص بخدمة شاملة', isVisible: true, type: 'مختلط'
+      }
+    ],
+    'gas-stations': [
+      {
+        id: 1036, name: 'محطة وقود الطاقة', category: 'transport', likes: 89,
+        address: 'تقاطع الطرق الرئيسية، خروج المدينة', phone: '0123456820',
+        hours: '24 ساعة', services: ['بنزين 80-92-95', 'سولار', 'غاز طبيعي', 'زيوت ومواد تشحيم'],
+        image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',
+        description: 'محطة وقود حديثة بخدمة 24 ساعة', isVisible: true, type: 'مختلط'
+      }
+    ],
+
+    // Real Estate
+    apartments: [
+      {
+        id: 1037, name: 'مكتب عقارات حدائق أكتوبر للإيجار', category: 'service', likes: 78,
+        address: 'شارع العقار، المجاورة السكنية', phone: '0123456821',
+        hours: '9:00 ص - 8:00 م', services: ['شقق مفروشة', 'شقق فارغة', 'استوديوهات', 'معاينة مجانية'],
+        image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400',
+        description: 'مكتب عقاري متخصص في الإيجار', isVisible: true, type: 'حجورات'
+      }
+    ],
+    houses: [
+      {
+        id: 1038, name: 'مكتب بيع الفلل والمنازل', category: 'service', likes: 134,
+        address: 'طريق القاهرة، المنطقة السكنية الراقية', phone: '0123456822',
+        hours: '10:00 ص - 7:00 م', services: ['فلل للبيع', 'بيوت شعبية', 'أراضي سكنية', 'تقييم عقاري'],
+        image: 'https://images.unsplash.com/photo-1560184897-ae75f418493e?w=400',
+        description: 'مكتب عقاري لبيع المنازل والفلل', isVisible: true, type: 'حجورات'
+      }
+    ],
+    commercial: [
+      {
+        id: 1039, name: 'مكتب العقارات التجارية والمكاتب', category: 'service', likes: 92,
+        address: 'المنطقة التجارية المركزية', phone: '0123456823',
+        hours: '9:00 ص - 6:00 م', services: ['محلات للإيجار', 'مكاتب إدارية', 'مخازن', 'معارض تجارية'],
+        image: 'https://images.unsplash.com/photo-1560179406-2b96f3c1f21e?w=400',
+        description: 'وسيط عقاري للمشاريع التجارية', isVisible: true, type: 'حجورات'
+      }
+    ],
+    land: [
+      {
+        id: 1040, name: 'مكتب الأراضي والاستثمار العقاري', category: 'service', likes: 67,
+        address: 'مكتب التطوير العقاري، شارع الاستثمار', phone: '0123456824',
+        hours: '9:00 ص - 5:00 م', services: ['أراضي زراعية', 'قطع سكنية', 'أراضي صناعية', 'استشارات عقارية'],
+        image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400',
+        description: 'متخصصون في بيع وشراء الأراضي', isVisible: true, type: 'حجورات'
+      }
+    ]
+  };
   const [editingPlace, setEditingPlace] = useState<any>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -563,8 +942,22 @@ const App = () => {
     localStorage.setItem('todayVisitors', newTodayCount.toString());
   }, []);
 
+  // إدارة البنرات لكل قسم
+  const [categoryBanners, setCategoryBanners] = useState<{[key: string]: {visible: boolean, image?: string, title?: string}}>({});
+
   // الأقسام الرئيسية - قابلة للتعديل
   const [managedMainCategories, setManagedMainCategories] = useState({
+    cityNews: {
+      name: 'أخبار المدينة',
+      icon: '📰',
+      color: 'from-cyan-50 to-cyan-100 border border-cyan-200',
+      subcategories: [
+        { key: 'breaking-news', name: 'أخبار عاجلة', icon: '🚨' },
+        { key: 'local-news', name: 'أخبار محلية', icon: '🏘️' },
+        { key: 'events', name: 'فعاليات وأنشطة', icon: '🎪' },
+        { key: 'announcements', name: 'إعلانات رسمية', icon: '📢' }
+      ]
+    },
     cityServices: {
       name: 'خدمات المدينة',
       icon: '🏛️',
@@ -1000,7 +1393,7 @@ const App = () => {
       image: 'https://images.unsplash.com/photo-1511381939415-e44015466834?w=300',
       businessId: 'كارفور مول C3'
     },
-    // ميجا مول المدنية Products
+    // ميجا مول حدائق أكتوبر Products
     {
       id: 'mm1',
       name: 'فستان صيفي',
@@ -1014,7 +1407,7 @@ const App = () => {
         { name: 'XL', price: '220' }
       ],
       image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=300',
-      businessId: 'ميجا مول المدنية'
+      businessId: 'ميجا مول حدائق أكتوبر'
     },
     {
       id: 'mm2',
@@ -1028,7 +1421,7 @@ const App = () => {
         { name: 'كبيرة', price: '180' }
       ],
       image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300',
-      businessId: 'ميجا مول المدنية'
+      businessId: 'ميجا مول حدائق أكتوبر'
     },
     {
       id: 'mm3',
@@ -1042,9 +1435,9 @@ const App = () => {
         { name: '500 قطعة', price: '600' }
       ],
       image: 'https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=300',
-      businessId: 'ميجا مول المدنية'
+      businessId: 'ميجا مول حدائق أكتوبر'
     },
-    // سوق المدنية الجديد Products
+    // سوق حدائق أكتوبر الجديد Products
     {
       id: 'sm15-1',
       name: 'تفاح أحمر',
@@ -1057,7 +1450,7 @@ const App = () => {
         { name: '5 كيلو', price: '65' }
       ],
       image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=300',
-      businessId: 'سوق المدنية الجديد'
+      businessId: 'سوق حدائق أكتوبر الجديد'
     },
     {
       id: 'sm15-2',
@@ -1071,7 +1464,7 @@ const App = () => {
         { name: '5 كيلو', price: '35' }
       ],
       image: 'https://images.unsplash.com/photo-1546470427-e2e2c057659b?w=300',
-      businessId: 'سوق المدنية الجديد'
+      businessId: 'سوق حدائق أكتوبر الجديد'
     },
     {
       id: 'sm15-3',
@@ -1085,7 +1478,7 @@ const App = () => {
         { name: '3 كيلو', price: '125' }
       ],
       image: 'https://images.unsplash.com/photo-1544943910-4c1dc44aab44?w=300',
-      businessId: 'سوق المدنية الجديد'
+      businessId: 'سوق حدائق أكتوبر الجديد'
     }
   ]);
 
@@ -1114,7 +1507,7 @@ const App = () => {
     fullName: '',
     phone: '',
     address: '',
-    city: 'المدنية',
+    city: 'حدائق أكتوبر',
     notes: ''
   });
   const [paymentMethod, setPaymentMethod] = useState('cash'); // 'cash', 'card', 'vodafone'
@@ -1122,7 +1515,7 @@ const App = () => {
   const [chatMessages, setChatMessages] = useState<Array<{id: number, text: string, isBot: boolean, timestamp: Date}>>([
     {
       id: 1,
-      text: 'مرحباً! أنا مساعدك الذكي في دليل خدمات المدنية. كيف يمكنني مساعدتك اليوم؟',
+      text: 'مرحباً! أنا مساعدك الذكي في حدائق أكتوبر. كيف يمكنني مساعدتك اليوم؟',
       isBot: true,
       timestamp: new Date()
     }
@@ -1220,6 +1613,34 @@ const App = () => {
     if (window.confirm(`هل أنت متأكد من حذف قسم "${managedMainCategories[categoryKey].name}"؟`)) {
       const newCategories = { ...managedMainCategories };
       delete newCategories[categoryKey];
+      setManagedMainCategories(newCategories);
+    }
+  };
+
+  const moveCategoryUp = (categoryKey: string) => {
+    const entries = Object.entries(managedMainCategories);
+    const currentIndex = entries.findIndex(([key]) => key === categoryKey);
+
+    if (currentIndex > 0) {
+      // Swap with the previous item
+      [entries[currentIndex - 1], entries[currentIndex]] = [entries[currentIndex], entries[currentIndex - 1]];
+
+      // Convert back to object
+      const newCategories = Object.fromEntries(entries) as typeof managedMainCategories;
+      setManagedMainCategories(newCategories);
+    }
+  };
+
+  const moveCategoryDown = (categoryKey: string) => {
+    const entries = Object.entries(managedMainCategories);
+    const currentIndex = entries.findIndex(([key]) => key === categoryKey);
+
+    if (currentIndex < entries.length - 1) {
+      // Swap with the next item
+      [entries[currentIndex], entries[currentIndex + 1]] = [entries[currentIndex + 1], entries[currentIndex]];
+
+      // Convert back to object
+      const newCategories = Object.fromEntries(entries) as typeof managedMainCategories;
       setManagedMainCategories(newCategories);
     }
   };
@@ -1333,8 +1754,18 @@ const App = () => {
     let matchesCategory = true;
 
     // Check if we're filtering by a subcategory
-    if (selectedSubCategory && subcategoryToServiceMapping[selectedSubCategory]) {
-      matchesCategory = place.category === subcategoryToServiceMapping[selectedSubCategory];
+    if (selectedSubCategory) {
+      // Check if this service belongs to the selected subcategory
+      const subcatServices = subcategoryServices[selectedSubCategory] || [];
+      const subcatServiceIds = subcatServices.map(s => s.id);
+
+      if (subcatServiceIds.includes(place.id)) {
+        matchesCategory = true;
+      } else if (subcategoryToServiceMapping[selectedSubCategory]) {
+        matchesCategory = place.category === subcategoryToServiceMapping[selectedSubCategory];
+      } else {
+        matchesCategory = false;
+      }
     } else if (selectedCategory !== 'all') {
       matchesCategory = place.category === selectedCategory;
     }
@@ -1660,7 +2091,7 @@ const App = () => {
         fullName: '',
         phone: '',
         address: '',
-        city: 'المدنية',
+        city: 'حدائق أكتوبر',
         notes: ''
       });
       alert('تم تأكيد طلبك بنجاح! سنتواصل معك قريباً');
@@ -1927,7 +2358,7 @@ ${appointmentsList}
 
   const sendSMSNotification = (phoneNumber: string, serviceName: string) => {
     // محاكاة إرسال SMS
-    console.log(`SMS sent to ${phoneNumber}: تم نشر خدمة "${serviceName}" بنجاح في دليل خدمات المدنية`);
+    console.log(`SMS sent to ${phoneNumber}: تم نشر خدمة "${serviceName}" بنجاح في دليل خدمات حدائق أكتوبر`);
 
     // في التطبيق الحقيقي، هنا سنستخدم خدمة SMS API مثل Twilio أو أي خدمة أخرى
     // مثال:
@@ -1936,7 +2367,7 @@ ${appointmentsList}
     //   headers: { 'Content-Type': 'application/json' },
     //   body: JSON.stringify({
     //     to: phoneNumber,
-    //     message: `تم نشر خدمة "${serviceName}" بنجاح في دليل خدمات المدنية`
+    //     message: `تم نشر خدمة "${serviceName}" بنجاح في دليل خدمات حدائق أكتوبر`
     //   })
     // });
   };
@@ -2038,23 +2469,23 @@ ${appointmentsList}
     try {
       // نصوص ومحتوى خاص بالبيانات المحلية
       const localContext = `
-أنت مساعد ذكي لدليل خدمات المدنية في مصر. لديك معلومات عن الخدمات التالية:
+أنت مساعد ذكي لحدائق أكتوبر في مصر. لديك معلومات عن الخدمات التالية:
 
 المولات:
-- كارفور مول C3: مول C3، المجاورة الثالثة، المدنية، هاتف: 16789، الساعات: 9:00 ص - 12:00 ص
-- ميجا مول المدنية: القطعة 22، المجاورة الثالثة، مركز المدينة، هاتف: 02-38951200، الساعات: 10:00 ص - 11:00 م
+- كارفور مول C3: مول C3، المجاورة الثالثة، حدائق أكتوبر، هاتف: 16789، الساعات: 9:00 ص - 12:00 ص
+- ميجا مول حدائق أكتوبر: القطعة 22، المجاورة الثالثة، مركز المدينة، هاتف: 02-38951200، الساعات: 10:00 ص - 11:00 م
 
 المطاعم:
 - مطعم باك باك: المجاورة الثالثة، كمباوند وسط البلد، هاتف: 02-38951400، الساعات: 1:00 ظ - 12:00 ص
 
 الأسواق:
-- سوق المدنية الجديد: جنوب المدنية، بجوار الطريق الدائري، هاتف: 02-38951600، الساعات: 5:00 ص - 8:00 م
+- سوق حدائق أكتوبر الجديد: جنوب حدائق أكتوبر، بجوار الطريق الدائري، هاتف: 02-38951600، الساعات: 5:00 ص - 8:00 م
 
 المستشفيات:
-- مستشفى المدنية العام: المجاورة الأولى، المدنية، هاتف: 02-38951700، ساعات: 24 ساعة
+- مستشفى حدائق أكتوبر العام: المجاورة الأولى، حدائق أكتوبر، هاتف: 02-38951700، ساعات: 24 ساعة
 
 البنوك:
-- بنك الإسكندرية - فرع المدنية: المجاورة الثالثة، حي رجال الأعمال، هاتف: 16247، الساعات: 8:30 ص - 3:30 م
+- بنك الإسكندرية - فرع حدائق أكتوبر: المجاورة الثالثة، حي رجال الأعمال، هاتف: 16247، الساعات: 8:30 ص - 3:30 م
 
 استخدم هذه المعلومات للإجابة على أسئلة المستخدمين بطريقة مفيدة ودقيقة. إذا سأل المستخدم عن خدمة غير موجودة في القائمة، أعلمه بأنها غير متوفرة حالياً في قاعدة البيانات.
 `;
@@ -2091,7 +2522,7 @@ ${appointmentsList}
       // معلومات مفصلة عن الفئات
       if (message.includes('مول') || message.includes('تسوق') || message.includes('شراء')) {
         const malls = managedPlaces.filter(p => p.category === 'mall' && p.isVisible !== false);
-        return `🛍️ المولات المتاحة في المدنية (${malls.length} مول):
+        return `🛍️ المولات المتاحة في حدائق أكتوبر (${malls.length} مول):
 
 ${malls.map(mall => `• ${mall.name}
    📍 ${mall.address}
@@ -2106,7 +2537,7 @@ ${malls.map(mall => `• ${mall.name}
         const category = managedCategories[categoryKey];
         if (message.includes(category.name.toLowerCase())) {
           const places = managedPlaces.filter(p => p.category === categoryKey && p.isVisible !== false);
-          return `${category.icon} ${category.name} المتاحة في المدنية (${places.length} خدمة):
+          return `${category.icon} ${category.name} المتاحة في حدائق أكتوبر (${places.length} خدمة):
 
 ${places.map(place => `• ${place.name}
    📍 ${place.address}
@@ -2118,7 +2549,7 @@ ${places.map(place => `• ${place.name}
 
       if (message.includes('مطعم') || message.includes('أكل') || message.includes('طعام')) {
         const restaurants = managedPlaces.filter(p => p.category === 'restaurant');
-        return `🍽️ المطاعم المتاحة في المدنية (${restaurants.length} مطعم):
+        return `🍽️ المطاعم المتاحة في حدائق أكتوبر (${restaurants.length} مطعم):
 
 ${restaurants.map(restaurant => `• ${restaurant.name}
    📍 ${restaurant.address}
@@ -2130,7 +2561,7 @@ ${restaurants.map(restaurant => `• ${restaurant.name}
 
       if (message.includes('مستشفى') || message.includes('طبيب') || message.includes('علاج') || message.includes('صحة')) {
         const hospitals = managedPlaces.filter(p => p.category === 'hospital');
-        return `🏥 المستشفيات المتاحة في المدنية (${hospitals.length} مستشفى):
+        return `🏥 المستشفيات المتاحة في حدائق أكتوبر (${hospitals.length} مستشفى):
 
 ${hospitals.map(hospital => `• ${hospital.name}
    📍 ${hospital.address}
@@ -2143,7 +2574,7 @@ ${hospitals.map(hospital => `• ${hospital.name}
 
       if (message.includes('بنك') || message.includes('صراف') || message.includes('فلوس') || message.includes('حساب')) {
         const banks = managedPlaces.filter(p => p.category === 'bank');
-        return `🏦 البنوك المتاحة في المدنية (${banks.length} بنك):
+        return `🏦 البنوك المتاحة في حدائق أكتوبر (${banks.length} بنك):
 
 ${banks.map(bank => `• ${bank.name}
    📍 ${bank.address}
@@ -2156,7 +2587,7 @@ ${banks.map(bank => `• ${bank.name}
 
       if (message.includes('سوق') || message.includes('خضار') || message.includes('فاكهة') || message.includes('سمك')) {
         const markets = managedPlaces.filter(p => p.category === 'market');
-        return `🛒 الأسواق المتاحة في المدنية (${markets.length} سوق):
+        return `🛒 الأسواق المتاحة في حدائق أكتوبر (${markets.length} سوق):
 
 ${markets.map(market => `• ${market.name}
    📍 ${market.address}
@@ -2169,7 +2600,7 @@ ${markets.map(market => `• ${market.name}
 
       // ردود ذكية على الاستفسارات العامة
       if (message.includes('مساعدة') || message.includes('ساعدني') || message.includes('help')) {
-        return `🤖 أهلاً! أنا مساعدك الذكي في دليل خدمات المدنية
+        return `🤖 أهلاً! أنا مساعدك الذكي في دليل خدمات حدائق أكتوبر
 
 يمكنني مساعدتك في:
 🔍 البحث عن الخدمات والأماكن
@@ -2185,7 +2616,7 @@ ${markets.map(market => `• ${market.name}
       }
 
       if (message.includes('شكرا') || message.includes('شكراً') || message.includes('thanks')) {
-        return '😊 العفو! سعيد جداً لمساعدتك. إذا احتجت أي معلومات أخرى عن خدمات المدنية، أنا هنا دائماً!';
+        return '😊 العفو! سعيد جداً لمساعدتك. إذا احتجت أي معلومات أخرى عن خدمات حدائق أكتوبر، أنا هنا دائماً!';
       }
 
       if (message.includes('وقت') || message.includes('ساعة') || message.includes('متى')) {
@@ -2405,9 +2836,10 @@ ${markets.map(market => `• ${market.name}
           <a
             href={`tel:${place.phone.replace(/[\s-]/g, '')}`}
             onClick={(e) => e.stopPropagation()}
-            className="bg-green-500 text-white px-4 py-2 rounded-md text-sm hover:bg-green-600 flex items-center justify-center"
+            className="bg-green-500 text-white px-4 py-2 rounded-md text-sm hover:bg-green-600 flex items-center justify-center gap-1 min-w-[100px]"
           >
             <Phone className="w-4 h-4" />
+            <span>اتصال</span>
           </a>
         </div>
       </div>
@@ -2475,37 +2907,10 @@ ${markets.map(market => `• ${market.name}
           <div className="space-y-8">
             {/* Title */}
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-800 mb-6">دليل مدينة حدائق أكتوبر</h1>
+              <h1 className="text-3xl font-bold text-gray-800 mb-6">حدائق أكتوبر</h1>
             </div>
 
-            {/* Main Categories Grid */}
-            <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-              {Object.entries(managedMainCategories).map(([key, category]) => (
-                <div
-                  key={key}
-                  onClick={() => {
-                    setSelectedMainCategory(key);
-                    setCurrentView('category-details');
-                  }}
-                  className={`bg-gradient-to-r ${category.color} rounded-xl p-3 md:p-6 text-gray-800 cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:scale-105`}
-                >
-                  <div className="text-center">
-                    <div className="text-2xl md:text-4xl mb-2 md:mb-4">{category.icon}</div>
-                    <h3 className="text-sm md:text-xl font-bold mb-1 md:mb-2">{category.name}</h3>
-                    <p className="text-xs md:text-sm opacity-90 mb-2 md:mb-4">
-                      {category.subcategories.length} خدمة متاحة
-                    </p>
-                    <div className="flex justify-center">
-                      <svg className="w-4 h-4 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Latest City News Section */}
+            {/* City News Section */}
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-800 flex items-center justify-center gap-3">
@@ -2513,63 +2918,143 @@ ${markets.map(market => `• ${market.name}
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                {/* News Item 1 */}
-                <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full">عاجل</span>
-                    <span className="text-gray-500 text-xs">منذ ساعتين</span>
+              <div className="overflow-x-auto mb-6">
+                <div className="flex gap-4 pb-2">
+                  {/* News Item 1 */}
+                  <div className="flex-shrink-0 w-72 bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                    <div className="h-32 relative">
+                      <img
+                        src="https://via.placeholder.com/300x150/4ade80/ffffff?text=%D9%85%D8%B1%D9%83%D8%B2+%D8%B7%D8%A8%D9%8A"
+                        alt="مركز طبي جديد"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2">
+                        <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full">عاجل</span>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-gray-500 text-xs">منذ ساعتين</span>
+                      </div>
+                      <h4 className="font-semibold text-gray-800 mb-2">افتتاح مركز طبي جديد بالمدينة</h4>
+                      <p className="text-gray-600 text-sm mb-3">تم افتتاح المركز الطبي الشامل بالمجاورة الثالثة لخدمة سكان المنطقة</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-green-600 text-xs">أخبار الصحة</span>
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
-                  <h4 className="font-semibold text-gray-800 mb-2">افتتاح مركز طبي جديد بالمدينة</h4>
-                  <p className="text-gray-600 text-sm mb-3">تم افتتاح المركز الطبي الشامل بالمجاورة الثالثة لخدمة سكان المنطقة</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-green-600 text-xs">أخبار الصحة</span>
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
 
-                {/* News Item 2 */}
-                <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-blue-100 text-blue-600 text-xs font-bold px-2 py-1 rounded-full">جديد</span>
-                    <span className="text-gray-500 text-xs">منذ 4 ساعات</span>
+                  {/* News Item 2 */}
+                  <div className="flex-shrink-0 w-72 bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                    <div className="h-32 relative">
+                      <img
+                        src="https://via.placeholder.com/300x150/3b82f6/ffffff?text=%D9%86%D9%82%D9%84+%D8%B9%D8%A7%D9%85"
+                        alt="تطوير النقل العام"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2">
+                        <span className="bg-blue-100 text-blue-600 text-xs font-bold px-2 py-1 rounded-full">جديد</span>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-gray-500 text-xs">منذ 4 ساعات</span>
+                      </div>
+                      <h4 className="font-semibold text-gray-800 mb-2">تطوير شبكة النقل العام</h4>
+                      <p className="text-gray-600 text-sm mb-3">بدء أعمال تطوير محطات النقل العام وإضافة خطوط جديدة لربط المدينة</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-blue-600 text-xs">أخبار النقل</span>
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
-                  <h4 className="font-semibold text-gray-800 mb-2">تطوير شبكة النقل العام</h4>
-                  <p className="text-gray-600 text-sm mb-3">بدء أعمال تطوير محطات النقل العام وإضافة خطوط جديدة لربط المدينة</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-blue-600 text-xs">أخبار النقل</span>
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
 
-                {/* News Item 3 */}
-                <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-green-100 text-green-600 text-xs font-bold px-2 py-1 rounded-full">محلي</span>
-                    <span className="text-gray-500 text-xs">منذ 6 ساعات</span>
+                  {/* News Item 3 */}
+                  <div className="flex-shrink-0 w-72 bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                    <div className="h-32 relative">
+                      <img
+                        src="https://via.placeholder.com/300x150/8b5cf6/ffffff?text=%D9%85%D9%87%D8%B1%D8%AC%D8%A7%D9%86"
+                        alt="مهرجان التراث"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2">
+                        <span className="bg-green-100 text-green-600 text-xs font-bold px-2 py-1 rounded-full">محلي</span>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-gray-500 text-xs">منذ 6 ساعات</span>
+                      </div>
+                      <h4 className="font-semibold text-gray-800 mb-2">مهرجان المدينة للتراث الشعبي</h4>
+                      <p className="text-gray-600 text-sm mb-3">انطلاق فعاليات مهرجان التراث الشعبي بمشاركة الأسر المحلية</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-purple-600 text-xs">أخبار ثقافية</span>
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
-                  <h4 className="font-semibold text-gray-800 mb-2">مهرجان المدينة للتراث الشعبي</h4>
-                  <p className="text-gray-600 text-sm mb-3">انطلاق فعاليات مهرجان التراث الشعبي بمشاركة الأسر المحلية</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-purple-600 text-xs">أخبار ثقافية</span>
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+
+                  {/* News Item 4 */}
+                  <div className="flex-shrink-0 w-72 bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                    <div className="h-32 relative">
+                      <img
+                        src="https://via.placeholder.com/300x150/f59e0b/ffffff?text=%D9%85%D9%84%D8%B9%D8%A8+%D8%AC%D8%AF%D9%8A%D8%AF"
+                        alt="ملعب جديد"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2">
+                        <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">رياضة</span>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-gray-500 text-xs">منذ 8 ساعات</span>
+                      </div>
+                      <h4 className="font-semibold text-gray-800 mb-2">افتتاح ملعب كرة قدم حديث</h4>
+                      <p className="text-gray-600 text-sm mb-3">تدشين ملعب جديد بمواصفات عالمية لخدمة الشباب والفرق المحلية</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-orange-600 text-xs">أخبار رياضية</span>
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div className="text-center">
                 <button className="text-green-600 hover:text-green-800 text-sm font-medium bg-green-50 hover:bg-green-100 px-4 py-2 rounded-lg transition-colors">
-                  عرض المزيد من الأخبار
+                  عرض جميع الأخبار
                 </button>
               </div>
             </div>
 
+            {/* Main Categories Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+              {Object.entries(managedMainCategories).map(([key, category]) => (
+                <div
+                  key={key}
+                  onClick={() => {
+                    setSelectedMainCategory(key);
+                    setCurrentView('category-details');
+                  }}
+                  className={`bg-gradient-to-r ${category.color} rounded-lg p-3 text-gray-800 cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:scale-105`}
+                >
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">{category.icon}</div>
+                    <h3 className="text-sm font-bold">{category.name}</h3>
+                  </div>
+                </div>
+              ))}
+            </div>
 
             {/* Statistics Section at Bottom */}
             <div className="mt-12 bg-gray-100 rounded-lg p-6">
@@ -2623,6 +3108,29 @@ ${markets.map(market => `• ${market.name}
               العودة للصفحة الرئيسية
             </button>
 
+            {/* Category Banner */}
+            {categoryBanners[selectedMainCategory]?.visible && (
+              <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl overflow-hidden shadow-lg mb-6">
+                {categoryBanners[selectedMainCategory]?.image && (
+                  <div className="absolute inset-0">
+                    <img
+                      src={categoryBanners[selectedMainCategory].image}
+                      alt="Banner"
+                      className="w-full h-full object-cover opacity-80"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                  </div>
+                )}
+                <div className="relative z-10 p-8 text-white text-center">
+                  <h2 className="text-3xl font-bold mb-2">
+                    {categoryBanners[selectedMainCategory]?.title || managedMainCategories[selectedMainCategory].name}
+                  </h2>
+                  <p className="text-lg opacity-90">مرحباً بك في قسم {managedMainCategories[selectedMainCategory].name}</p>
+                </div>
+              </div>
+            )}
+
+
             {/* Category Header */}
             <div className={`bg-gradient-to-r ${managedMainCategories[selectedMainCategory].color} rounded-xl p-6 text-gray-800`}>
               <div className="text-center">
@@ -2642,6 +3150,16 @@ ${markets.map(market => `• ${market.name}
                       // Show emergency numbers modal
                       setShowEmergencyModal(true);
                     } else {
+                      // Add subcategory services to managedPlaces if they don't exist
+                      const subcatServices = subcategoryServices[subcat.key] || [];
+                      if (subcatServices.length > 0) {
+                        setManagedPlaces(prev => {
+                          const existingIds = prev.map(p => p.id);
+                          const newServices = subcatServices.filter(service => !existingIds.includes(service.id));
+                          return [...prev, ...newServices];
+                        });
+                      }
+
                       // Navigate to services with filter based on subcategory
                       setSelectedSubCategory(subcat.key);
                       setSelectedCategory('all'); // Reset main category filter
@@ -2962,6 +3480,24 @@ ${markets.map(market => `• ${market.name}
                     <h3 className="font-semibold text-lg">إدارة الأقسام الرئيسية</h3>
                     <p className="text-sm text-gray-500">
                       إضافة وتعديل وحذف الأقسام الرئيسية للتطبيق ({Object.keys(managedMainCategories).length} قسم)
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-6 h-6 text-gray-400" />
+              </button>
+
+              <button
+                onClick={() => setSettingsView('banners')}
+                className="w-full bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-indigo-100 p-3 rounded-lg">
+                    <div className="w-6 h-6 text-indigo-600">🖼️</div>
+                  </div>
+                  <div className="text-right">
+                    <h3 className="font-semibold text-lg">إدارة بنرات الأقسام</h3>
+                    <p className="text-sm text-gray-500">
+                      تخصيص بنرات وصور الأقسام
                     </p>
                   </div>
                 </div>
@@ -3403,6 +3939,49 @@ ${markets.map(market => `• ${market.name}
               </div>
             </div>
 
+            {/* ترتيب الأقسام */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h3 className="text-lg font-semibold text-blue-800 mb-3">ترتيب الأقسام</h3>
+              <p className="text-sm text-blue-600 mb-4">اسحب الأقسام لإعادة ترتيبها</p>
+              <div className="space-y-2">
+                {Object.entries(managedMainCategories).map(([key, category], index) => (
+                  <div key={key} className="bg-white rounded-lg p-3 border border-gray-200 flex items-center justify-between hover:shadow-md transition-shadow">
+                    <div className="flex items-center gap-3">
+                      <div className="cursor-grab active:cursor-grabbing p-1">
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+                        </svg>
+                      </div>
+                      <span className="text-xl">{category.icon}</span>
+                      <span className="font-medium">{category.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => moveCategoryUp(key)}
+                        disabled={index === 0}
+                        className="p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                        title="تحريك لأعلى"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => moveCategoryDown(key)}
+                        disabled={index === Object.keys(managedMainCategories).length - 1}
+                        className="p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                        title="تحريك لأسفل"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* قائمة الأقسام الحالية */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Object.entries(managedMainCategories).map(([key, category]) => (
@@ -3655,6 +4234,162 @@ ${markets.map(market => `• ${market.name}
           </div>
         )}
 
+        {currentView === 'settings' && settingsView === 'banners' && (
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={() => setSettingsView('main')}
+                className="text-green-600 hover:text-green-800 font-medium"
+              >
+                ← العودة للإعدادات
+              </button>
+              <h2 className="text-2xl font-bold">إدارة بنرات الأقسام</h2>
+            </div>
+
+            <div className="space-y-6">
+              {Object.entries(managedMainCategories).map(([key, category]) => (
+                <div key={key} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-2xl">{category.icon}</span>
+                    <h3 className="font-semibold text-xl">{category.name}</h3>
+                  </div>
+
+                  {/* Banner Preview */}
+                  {categoryBanners[key]?.visible && (
+                    <div className="mb-4">
+                      <h4 className="font-medium mb-2">معاينة البنر:</h4>
+                      <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl overflow-hidden shadow-lg">
+                        {categoryBanners[key]?.image && (
+                          <div className="absolute inset-0">
+                            <img
+                              src={categoryBanners[key].image}
+                              alt="Banner"
+                              className="w-full h-32 object-cover opacity-80"
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                          </div>
+                        )}
+                        <div className="relative z-10 p-6 text-white text-center">
+                          <h2 className="text-2xl font-bold">
+                            {categoryBanners[key]?.title || category.name}
+                          </h2>
+                          <p className="text-sm opacity-90">مرحباً بك في قسم {category.name}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Banner Controls */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <button
+                      onClick={() => {
+                        setCategoryBanners(prev => ({
+                          ...prev,
+                          [key]: {
+                            ...prev[key],
+                            visible: !prev[key]?.visible
+                          }
+                        }));
+                      }}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                        categoryBanners[key]?.visible
+                          ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                          : 'bg-green-100 text-green-700 hover:bg-green-200'
+                      }`}
+                    >
+                      {categoryBanners[key]?.visible ? (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                          </svg>
+                          إخفاء البنر
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          إظهار البنر
+                        </>
+                      )}
+                    </button>
+
+                    <label className="bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-2 rounded-lg font-medium transition-all cursor-pointer flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      رفع صورة
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                              setCategoryBanners(prev => ({
+                                ...prev,
+                                [key]: {
+                                  ...prev[key],
+                                  image: e.target?.result as string,
+                                  visible: true
+                                }
+                              }));
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+
+                    <button
+                      onClick={() => {
+                        const newTitle = prompt('ادخل عنوان البنر:', categoryBanners[key]?.title || category.name);
+                        if (newTitle !== null) {
+                          setCategoryBanners(prev => ({
+                            ...prev,
+                            [key]: {
+                              ...prev[key],
+                              title: newTitle,
+                              visible: true
+                            }
+                          }));
+                        }
+                      }}
+                      className="bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      تعديل العنوان
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        if (window.confirm('هل تريد حذف بنر هذا القسم؟')) {
+                          setCategoryBanners(prev => {
+                            const newBanners = { ...prev };
+                            delete newBanners[key];
+                            return newBanners;
+                          });
+                        }
+                      }}
+                      className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      حذف البنر
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {currentView === 'settings' && settingsView === 'about' && (
           <div>
             <div className="flex items-center gap-3 mb-6">
@@ -3670,7 +4405,7 @@ ${markets.map(market => `• ${market.name}
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="text-center mb-6">
                 <div className="text-6xl mb-4">🏪</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">دليل خدمات المدنية</h3>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">دليل خدمات حدائق أكتوبر</h3>
                 <p className="text-gray-600">الإصدار 1.0.0</p>
               </div>
 
@@ -3678,7 +4413,7 @@ ${markets.map(market => `• ${market.name}
                 <div className="border-t pt-4">
                   <h4 className="font-semibold mb-2">عن التطبيق</h4>
                   <p className="text-gray-600 text-sm">
-                    دليل شامل لجميع الخدمات والأماكن المهمة في المدنية، يتيح للمواطنين العثور على الخدمات بسهولة ومعرفة معلومات التواصل والمواقع.
+                    دليل شامل لجميع الخدمات والأماكن المهمة في حدائق أكتوبر، يتيح للمواطنين العثور على الخدمات بسهولة ومعرفة معلومات التواصل والمواقع.
                   </p>
                 </div>
 
@@ -3894,7 +4629,7 @@ ${markets.map(market => `• ${market.name}
                       name="address"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                      placeholder="مثال: المجاورة الثالثة، المدنية"
+                      placeholder="مثال: المجاورة الثالثة، حدائق أكتوبر"
                     />
                   </div>
 
@@ -5282,12 +6017,16 @@ ${markets.map(market => `• ${market.name}
 
                 <div>
                   <h3 className="font-semibold mb-2">الهاتف</h3>
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-5 h-5 text-gray-500" />
-                    <a href={`tel:${selectedPlace.phone}`} className="text-green-600 hover:underline">
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-5 h-5 text-green-500" />
+                    <a
+                      href={`tel:${selectedPlace.phone}`}
+                      className="text-lg font-semibold text-green-600 hover:text-green-700 hover:underline bg-green-50 px-3 py-2 rounded-lg border border-green-200 transition-all hover:shadow-sm"
+                    >
                       {selectedPlace.phone}
                     </a>
                   </div>
+                  <p className="text-sm text-gray-500 mt-1">اضغط للاتصال المباشر</p>
                 </div>
 
                 <div>
@@ -5626,10 +6365,11 @@ ${markets.map(market => `• ${market.name}
                 <div className="flex gap-3 pt-4">
                   <a
                     href={`tel:${selectedPlace.phone}`}
-                    className="flex-1 bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 flex items-center justify-center gap-2"
+                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-xl hover:from-green-600 hover:to-green-700 flex items-center justify-center gap-3 font-semibold text-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
                   >
-                    <Phone className="w-5 h-5" />
-                    اتصال
+                    <Phone className="w-6 h-6" />
+                    اتصال الآن
+                    <span className="text-sm opacity-90">📞</span>
                   </a>
                 </div>
               </div>
@@ -7002,7 +7742,7 @@ ${markets.map(market => `• ${market.name}
                         onChange={(e) => setShippingInfo({...shippingInfo, city: e.target.value})}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       >
-                        <option value="المدنية">المدنية</option>
+                        <option value="حدائق أكتوبر">حدائق أكتوبر</option>
                         <option value="القاهرة">القاهرة</option>
                         <option value="الجيزة">الجيزة</option>
                         <option value="أخرى">أخرى</option>
